@@ -115,6 +115,7 @@ Resources:
       FunctionName: synqsellProductDeleteWebhook
       CodeUri: deleteProducts/
       Handler: app.lambdaHandler
+      MemorySize: 128
       Timeout: 10
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:

@@ -3,6 +3,8 @@ import { APIGatewayProxyResult } from 'aws-lambda';
 import { SecretsManager } from 'aws-sdk';
 import { Pool, PoolClient } from 'pg';
 
+// sam local invoke -e ./deleteProducts/app_event.json DeleteProductsLambda
+
 type ProductDeletePayload = {
     id: number;
 };
@@ -22,6 +24,7 @@ async function getDbConfig() {
 async function initializePool() {
     if (!pool) {
         const dbConfig = await getDbConfig();
+        console.log(dbConfig);
         pool = new Pool(dbConfig);
     }
     return pool;
@@ -33,7 +36,9 @@ export const lambdaHandler = async (event: ProductDeletePayload): Promise<APIGat
         const pool = await initializePool();
         const { id } = event;
         const shopifyDeletedProductId = composeGid('Product', id);
+        console.log('Connecting to database');
         client = await pool.connect();
+        console.log('Connected to database');
         const deleteProductQuery = 'DELETE FROM "Product" WHERE shopifyProductId = $1';
         const res = await client.query(deleteProductQuery, [shopifyDeletedProductId]);
 
