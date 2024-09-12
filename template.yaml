@@ -1,12 +1,20 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  synqsell_lambda
+  SynqSell-SAM
 
   SAM Template For all Lambda Functions related to SynqSell
 
 # TODO: Remove the default values for the params for prod
+# Run the following commands
+# sam validate
+# sam deploy
 Parameters:
+  EventBusArn:
+    Type: String
+    Description: "The ARN of the Shopify Event Bus"
+    Default: arn:aws:events:us-east-2:149536473043:event-bus/aws.partner/shopify.com/144025485313/SynqSell
+
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: The ID of the VPC where the Lambda function will be deployed
@@ -29,7 +37,18 @@ Parameters:
 
   SecretArn:
     Type: String
-    Default: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:rds-db-credentials/synqsell-db-dev/postgres/1726084554591-8nmsnc"
+    Description: The Secrets Manager storing the database credentials
+    Default: "arn:aws:secretsmanager:us-east-2:149536473043:secret:rds-db-credentials/synqsell-db-dev/postgres/1726084554591-8nmsnc"
+
+  RdsSecurityGroupId:
+    Type: AWS::EC2::SecurityGroup::Id
+    Description: The ID of the security group attached to your RDS instance
+    Default: "sg-0e57c57cae80c1172"
+
+  ShopifySourceName:
+    Type: String
+    Description: The source name for Shopify Events
+    Default: "shopify"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
@@ -50,9 +69,50 @@ Globals:
         - !Ref PrivateSubnet3
 
 Resources:
-  "synqsell-productsDelete":
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
+      GroupDescription: Security group for Lambda function
+      VpcId: !Ref VpcId
+      SecurityGroupEgress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          DestinationSecurityGroupId: !Ref RdsSecurityGroupId
+
+  RdsSecurityGroupIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref RdsSecurityGroupId
+      IpProtocol: tcp
+      FromPort: 5432
+      ToPort: 5432
+      SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+
+  DeleteProductEventRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: "Rule to handle products/delete shopify webhook"
+      EventBusName: !Ref EventBusArn
+      Name: "ProductsDelete"
+      EventPattern:
+        source:
+          - !Ref ShopifySourceName
+        detail-type:
+          - "Products Deleted"
+        detail:
+          metadata:
+            X-Shopify-Topic:
+              - prefix: "products/delete"
+      State: "ENABLED"
+      Targets:
+        - Arn: !GetAtt DeleteProductsLambda.Arn
+          Id: "deleteProductsLambdaFunction"
+
+  DeleteProductsLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: synqsellProductDeleteWebhook
       CodeUri: deleteProducts/
       Handler: app.lambdaHandler
       Policies:
@@ -61,3 +121,11 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
