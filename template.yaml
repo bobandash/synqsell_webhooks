@@ -3,22 +3,61 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   synqsell_lambda
 
-  Sample SAM Template for synqsell_lambda
+  SAM Template For all Lambda Functions related to SynqSell
+
+# TODO: Remove the default values for the params for prod
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: The ID of the VPC where the Lambda function will be deployed
+    Default: vpc-060b0240b06df08e3
+
+  PrivateSubnet1:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the first private subnet for the Lambda function
+    Default: subnet-0957f80f9ece54aa9
+
+  PrivateSubnet2:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the second private subnet for the Lambda function
+    Default: subnet-06f0167a3889fd4a8
+
+  PrivateSubnet3:
+    Type: AWS::EC2::Subnet::Id
+    Description: The ID of the third private subnet for the Lambda function
+    Default: subnet-0cb1a9ce0ee9734d1
+
+  SecretArn:
+    Type: String
+    Default: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:rds-db-credentials/synqsell-db-dev/postgres/1726084554591-8nmsnc"
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+# You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
 Globals:
   Function:
     Timeout: 3
-
-    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    Environment:
+      Variables:
+        SECRET_MANAGER_ID: "1726084554591"
     LoggingConfig:
       LogFormat: JSON
+    VpcConfig:
+      SecurityGroupIds:
+        - !Ref LambdaSecurityGroup
+      SubnetIds:
+        - !Ref PrivateSubnet1
+        - !Ref PrivateSubnet2
+        - !Ref PrivateSubnet3
+
 Resources:
-  HelloWorldFunction:
+  "synqsell-productsDelete":
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello-world/
+      CodeUri: deleteProducts/
       Handler: app.lambdaHandler
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref SecretArn
       Runtime: nodejs20.x
       Architectures:
         - x86_64
