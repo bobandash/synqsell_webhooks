@@ -35,10 +35,10 @@ Parameters:
     Description: The ID of the third private subnet for the Lambda function
     Default: subnet-0cb1a9ce0ee9734d1
 
-  SecretArn:
-    Type: String
-    Description: The Secrets Manager storing the database credentials
-    Default: "arn:aws:secretsmanager:us-east-2:149536473043:secret:rds-db-credentials/synqsell-db-dev/postgres/1726084554591-8nmsnc"
+  # SecretArn:
+  #   Type: String
+  #   Description: The Secrets Manager storing the database credentials
+  #   Default: "arn:aws:secretsmanager:us-east-2:149536473043:secret:rds-db-credentials/synqsell-db-dev/postgres/1726084554591-8nmsnc"
 
   RdsSecurityGroupId:
     Type: AWS::EC2::SecurityGroup::Id
@@ -58,6 +58,11 @@ Globals:
     Environment:
       Variables:
         SECRET_MANAGER_ID: "1726084554591"
+        DB_USER: "postgres"
+        DB_PASSWORD: "game78910"
+        DB_HOST: "synqsell-db-dev.cd0y4ii40cdb.us-east-2.rds.amazonaws.com"
+        DB_PORT: 5432
+        DATABASE: "postgres"
     LoggingConfig:
       LogFormat: JSON
     VpcConfig:
@@ -115,14 +120,15 @@ Resources:
       FunctionName: synqsellProductDeleteWebhook
       CodeUri: deleteProducts/
       Handler: app.lambdaHandler
-      MemorySize: 128
+      MemorySize: 1028
       Timeout: 10
-      Policies:
-        - AWSSecretsManagerGetSecretValuePolicy:
-            SecretArn: !Ref SecretArn
+      # Policies:
+      #   - AWSSecretsManagerGetSecretValuePolicy:
+      #       SecretArn: !Ref SecretArn
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+
     Metadata:
       BuildMethod: esbuild
       BuildProperties:

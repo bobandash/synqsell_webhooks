@@ -1,31 +1,32 @@
 import { composeGid } from '@shopify/admin-graphql-api-utilities';
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { SecretsManager } from 'aws-sdk';
 import { Pool, PoolClient } from 'pg';
 
-// sam local invoke -e ./deleteProducts/app_event.json DeleteProductsLambda
+// Command to debug deleteProducts locally
+// sam local invoke DeleteProductsLambda --event ./deleteProducts/app_event.json
+
+// TODO: use secrets manager
 
 type ProductDeletePayload = {
     id: number;
 };
 
 let pool: Pool | null = null;
-const secretManagerClient = new SecretsManager();
-
-async function getDbConfig() {
-    const secretManagerResult = await secretManagerClient
-        .getSecretValue({
-            SecretId: process.env.SECRET_MANAGER_ID ?? '',
-        })
-        .promise();
-    return JSON.parse(secretManagerResult.SecretString as string);
-}
 
 async function initializePool() {
     if (!pool) {
-        const dbConfig = await getDbConfig();
-        console.log(dbConfig);
-        pool = new Pool(dbConfig);
+        // https://stackoverflow.com/questions/76899023/rds-while-connection-error-no-pg-hba-conf-entry-for-host
+        pool = new Pool({
+            user: process.env.DB_USER,
+            host: process.env.DB_HOST,
+            database: process.env.DATABASE,
+            password: process.env.DB_PASSWORD,
+            port: Number(process.env.DB_PORT) ?? 5432,
+            max: 20,
+            ssl: {
+                rejectUnauthorized: false,
+            },
+        });
     }
     return pool;
 }
@@ -36,13 +37,11 @@ export const lambdaHandler = async (event: ProductDeletePayload): Promise<APIGat
         const pool = await initializePool();
         const { id } = event;
         const shopifyDeletedProductId = composeGid('Product', id);
-        console.log('Connecting to database');
         client = await pool.connect();
-        console.log('Connected to database');
-        const deleteProductQuery = 'DELETE FROM "Product" WHERE shopifyProductId = $1';
+        const deleteProductQuery = `DELETE FROM "Product" WHERE "shopifyProductId" = $1`;
         const res = await client.query(deleteProductQuery, [shopifyDeletedProductId]);
 
-        if (res.rowCount) {
+        if (res.rowCount === 0) {
             return {
                 statusCode: 200,
                 body: JSON.stringify({
@@ -71,3 +70,14 @@ export const lambdaHandler = async (event: ProductDeletePayload): Promise<APIGat
         }
     }
 };
+
+// const secretManagerClient = new SecretsManager();
+
+// async function getDbConfig() {
+//     const secretManagerResult = await secretManagerClient
+//         .getSecretValue({
+//             SecretId: process.env.SECRET_MANAGER_ID ?? '',
+//         })
+//         .promise();
+//     return JSON.parse(secretManagerResult.SecretString as string);
+// }
