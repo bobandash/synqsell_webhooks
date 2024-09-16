@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  SynqSell-SAM
+  synqsellsam
 
   SAM Template For all Lambda Functions related to SynqSell
 
@@ -13,7 +13,7 @@ Parameters:
   EventBusArn:
     Type: String
     Description: "The ARN of the Shopify Event Bus"
-    Default: arn:aws:events:us-east-2:149536473043:event-bus/aws.partner/shopify.com/144025485313/SynqSell
+    Default: arn:aws:events:us-east-2:149536473043:event-bus/aws.partner/shopify.com/153436192769/aws
 
   VpcId:
     Type: AWS::EC2::VPC::Id
@@ -52,7 +52,14 @@ Parameters:
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+# TODO: change environments to secrets manager
 Globals:
+  Api:
+    Cors:
+      AllowMethods: "'POST,OPTIONS'"
+      AllowHeaders: "'Content-Type,X-Shopify-Shop-Domain,X-Shopify-Hmac-SHA256'"
+      AllowOrigin: "'https://*.myshopify.com'"
+      MaxAge: "'300'"
   Function:
     Timeout: 3
     Environment:
@@ -61,7 +68,7 @@ Globals:
         DB_USER: "postgres"
         DB_PASSWORD: "game78910"
         DB_HOST: "synqsell-db-dev.cd0y4ii40cdb.us-east-2.rds.amazonaws.com"
-        DB_PORT: 5432
+        DB_PORT: "5432"
         DATABASE: "postgres"
     LoggingConfig:
       LogFormat: JSON
@@ -94,40 +101,54 @@ Resources:
       ToPort: 5432
       SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
 
-  DeleteProductEventRule:
-    Type: AWS::Events::Rule
-    Properties:
-      Description: "Rule to handle products/delete shopify webhook"
-      EventBusName: !Ref EventBusArn
-      Name: "ProductsDelete"
-      EventPattern:
-        source:
-          - !Ref ShopifySourceName
-        detail-type:
-          - "Products Deleted"
-        detail:
-          metadata:
-            X-Shopify-Topic:
-              - prefix: "products/delete"
-      State: "ENABLED"
-      Targets:
-        - Arn: !GetAtt DeleteProductsLambda.Arn
-          Id: "deleteProductsLambdaFunction"
-
-  DeleteProductsLambda:
+  CarrierServiceFunction:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: synqsellProductDeleteWebhook
-      CodeUri: deleteProducts/
+      CodeUri: carrierService/
       Handler: app.lambdaHandler
-      MemorySize: 1028
-      Timeout: 10
-      # Policies:
-      #   - AWSSecretsManagerGetSecretValuePolicy:
-      #       SecretArn: !Ref SecretArn
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+      Events:
+        CarrierService:
+          Type: Api
+          Properties:
+            Path: /carrier-service
+            Method: post
+
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: true
+        EntryPoints:
+          - app.ts
+
+  DeleteProductsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: synqsell_products_delete
+      CodeUri: deleteProducts/
+      Handler: app.lambdaHandler
+      MemorySize: 1028
+      Timeout: 30
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+      Events:
+        ShopifyProductDeleteTrigger:
+          Type: EventBridgeRule
+          Properties:
+            Pattern:
+              detail-type:
+                - "shopifyWebhook"
+              detail:
+                metadata:
+                  X-Shopify-Topic:
+                    - prefix: "products/delete"
+            EventBusName: !Ref EventBusArn
+            RuleName: products_delete_webhook
 
     Metadata:
       BuildMethod: esbuild

@@ -16,11 +16,8 @@ lint = true
 [default.deploy.parameters]
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
-resolve_s3 = true
-stack_name = "SynqSell-SAM"
-s3_prefix = "SynqSell-SAM"
 region = "us-east-2"
-parameter_overrides = "EventBusArn=\"arn:aws:events:us-east-2:149536473043:event-bus/aws.partner/shopify.com/144025485313/SynqSell\" VpcId=\"vpc-060b0240b06df08e3\" PrivateSubnet1=\"subnet-0957f80f9ece54aa9\" PrivateSubnet2=\"subnet-06f0167a3889fd4a8\" PrivateSubnet3=\"subnet-0cb1a9ce0ee9734d1\" SecretArn=\"arn:aws:secretsmanager:us-east-2:149536473043:secret:rds-db-credentials/synqsell-db-dev/postgres/1726084554591-8nmsnc\" RdsSecurityGroupId=\"sg-0e57c57cae80c1172\" ShopifySourceName=\"shopify\""
+s3_bucket = "synqsell-sam"
 image_repositories = []
 
 [default.package.parameters]

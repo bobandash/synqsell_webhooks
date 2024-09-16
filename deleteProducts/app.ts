@@ -5,10 +5,26 @@ import { Pool, PoolClient } from 'pg';
 // Command to debug deleteProducts locally
 // sam local invoke DeleteProductsLambda --event ./deleteProducts/app_event.json
 
-// TODO: use secrets manager
-
-type ProductDeletePayload = {
-    id: number;
+type ShopifyEvent = {
+    version: string;
+    id: string;
+    'detail-type': string;
+    source: string;
+    account: string;
+    time: string;
+    region: string;
+    resources: string[];
+    detail: {
+        'X-Shopify-Topic': string;
+        'X-Shopify-Hmac-Sha256': string;
+        'X-Shopify-Shop-Domain': string;
+        'X-Shopify-Webhook-Id': string;
+        'X-Shopify-Triggered-At': string;
+        'X-Shopify-Event-Id': string;
+        payload: {
+            id: number;
+        };
+    };
 };
 
 let pool: Pool | null = null;
@@ -31,16 +47,18 @@ async function initializePool() {
     return pool;
 }
 
-export const lambdaHandler = async (event: ProductDeletePayload): Promise<APIGatewayProxyResult> => {
+export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProxyResult> => {
     let client: null | PoolClient = null;
     try {
         const pool = await initializePool();
-        const { id } = event;
+        const {
+            detail: { payload },
+        } = event;
+        const { id } = payload;
         const shopifyDeletedProductId = composeGid('Product', id);
         client = await pool.connect();
         const deleteProductQuery = `DELETE FROM "Product" WHERE "shopifyProductId" = $1`;
         const res = await client.query(deleteProductQuery, [shopifyDeletedProductId]);
-
         if (res.rowCount === 0) {
             return {
                 statusCode: 200,
@@ -49,7 +67,6 @@ export const lambdaHandler = async (event: ProductDeletePayload): Promise<APIGat
                 }),
             };
         }
-
         return {
             statusCode: 200,
             body: JSON.stringify({
@@ -70,14 +87,3 @@ export const lambdaHandler = async (event: ProductDeletePayload): Promise<APIGat
         }
     }
 };
-
-// const secretManagerClient = new SecretsManager();
-
-// async function getDbConfig() {
-//     const secretManagerResult = await secretManagerClient
-//         .getSecretValue({
-//             SecretId: process.env.SECRET_MANAGER_ID ?? '',
-//         })
-//         .promise();
-//     return JSON.parse(secretManagerResult.SecretString as string);
-// }
