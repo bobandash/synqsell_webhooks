@@ -16,6 +16,8 @@ const pool = new Pool({
   user: process.env.TEST_DB_USER || "postgres",
   password: process.env.TEST_DB_PASSWORD || "game789",
   ssl: false,
+  idleTimeoutMillis: 0,
+  connectionTimeoutMillis: 0,
 });
 
 async function clearAllTables() {

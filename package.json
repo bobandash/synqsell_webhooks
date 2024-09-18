@@ -1,10 +1,12 @@
 {
   "devDependencies": {
     "@types/pg": "^8.11.10",
+    "@types/uuid": "^10.0.0",
     "dotenv": "^16.4.5",
     "pg": "^8.13.0"
   },
   "dependencies": {
-    "@shopify/admin-graphql-api-utilities": "^2.2.0"
+    "@shopify/admin-graphql-api-utilities": "^2.2.0",
+    "uuid": "^10.0.0"
   }
 }
