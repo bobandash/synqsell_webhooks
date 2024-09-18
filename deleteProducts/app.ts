@@ -2,6 +2,7 @@ import { composeGid } from '@shopify/admin-graphql-api-utilities';
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { Pool, PoolClient } from 'pg';
 import { mutateAndValidateGraphQLData } from './util';
+import { DELETE_PRODUCT_MUTATION } from './graphql';
 
 // Command to debug deleteProducts locally
 // sam local invoke DeleteProductsLambda --event ./deleteProducts/app_event.json
