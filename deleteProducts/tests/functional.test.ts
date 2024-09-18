@@ -1,8 +1,15 @@
 import { lambdaHandler } from '../app';
 import { pool, clearAllTables } from '../../integration-setup';
-jest.mock('../db');
 import { initializePool } from '../db';
 import { Pool } from 'pg';
+import { DEFAULT_ITEMS, priceListWithProductAndImportedProductMutation } from '../../commonDataMutation';
+import * as utils from '../util';
+import { DELETE_PRODUCT_MUTATION } from '../graphql';
+import { composeGid } from '@shopify/admin-graphql-api-utilities';
+jest.mock('../db');
+jest.mock('../util', () => ({
+    mutateAndValidateGraphQLData: jest.fn().mockImplementation(() => Promise.resolve('Test')),
+}));
 const mockedInitializePool = initializePool as jest.Mock<Pool>;
 
 const deleteProductPayload = (id: number) => {
@@ -34,23 +41,45 @@ describe('Delete Products Lambda Function Integration Tests', () => {
         jest.clearAllMocks();
         mockedInitializePool.mockReturnValue(pool);
         await clearAllTables();
-    });
+    }, 30000);
 
     afterAll(async () => {
         await pool.end();
     });
 
     test('should return no products deleted', async () => {
-        const payload = deleteProductPayload(123);
+        const payload = deleteProductPayload(DEFAULT_ITEMS.SHOPIFY_PRODUCT_ID);
         const result = await lambdaHandler(payload);
         expect(result.statusCode).toBe(200);
         expect(result.body).toBe(JSON.stringify({ message: 'There were no products to delete.' }));
     });
 
     test(`should delete product, all variants, and all imported products and imported variants if supplier's product`, async () => {
-        const payload = deleteProductPayload(123);
+        const productDeleteMutationSpy = jest.spyOn(utils, 'mutateAndValidateGraphQLData');
+        const client = await pool.connect();
+        await client.query(priceListWithProductAndImportedProductMutation);
+
+        const payload = deleteProductPayload(DEFAULT_ITEMS.SHOPIFY_PRODUCT_ID);
         const result = await lambdaHandler(payload);
+        expect(result.body).toBe(JSON.stringify({ message: 'Successfully deleted products from database.' }));
         expect(result.statusCode).toBe(200);
-        expect(result.body).toBe(JSON.stringify({ message: 'There were no products to delete.' }));
+        // need to ensure the imported product is deleted from shopify
+        expect(productDeleteMutationSpy).toHaveBeenCalledWith(
+            DEFAULT_ITEMS.RETAILER_SHOP,
+            DEFAULT_ITEMS.RETAILER_ACCESS_TOKEN,
+            DELETE_PRODUCT_MUTATION,
+            {
+                productId: composeGid('Product', DEFAULT_ITEMS.IMPORTED_SHOPIFY_PRODUCT_ID),
+            },
+            'Could not delete product for retailer.',
+        );
+        // all the imported products and variants have been deleted from db
+        const countImportedVariantQuery = 'SELECT COUNT(*) FROM "ImportedVariant"';
+        const countVariantQuery = 'SELECT COUNT(*) FROM "Variant"';
+        const countImportedVariant = (await client.query(countImportedVariantQuery)).rows[0].count;
+        const countVariant = (await client.query(countVariantQuery)).rows[0].count;
+        expect(countImportedVariant).toBe('0');
+        expect(countVariant).toBe('0');
+        client.release();
     });
 });
