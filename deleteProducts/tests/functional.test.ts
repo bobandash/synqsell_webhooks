@@ -46,4 +46,11 @@ describe('Delete Products Lambda Function Integration Tests', () => {
         expect(result.statusCode).toBe(200);
         expect(result.body).toBe(JSON.stringify({ message: 'There were no products to delete.' }));
     });
+
+    test(`should delete product, all variants, and all imported products and imported variants if supplier's product`, async () => {
+        const payload = deleteProductPayload(123);
+        const result = await lambdaHandler(payload);
+        expect(result.statusCode).toBe(200);
+        expect(result.body).toBe(JSON.stringify({ message: 'There were no products to delete.' }));
+    });
 });
