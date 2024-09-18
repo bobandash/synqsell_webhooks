@@ -82,4 +82,25 @@ describe('Delete Products Lambda Function Integration Tests', () => {
         expect(countVariant).toBe('0');
         client.release();
     });
+
+    test(`should delete only imported product when imported product is deleted.`, async () => {
+        const productDeleteMutationSpy = jest.spyOn(utils, 'mutateAndValidateGraphQLData');
+        const client = await pool.connect();
+        await client.query(priceListWithProductAndImportedProductMutation);
+
+        const payload = deleteProductPayload(DEFAULT_ITEMS.IMPORTED_SHOPIFY_PRODUCT_ID);
+        const result = await lambdaHandler(payload);
+        expect(result.body).toBe(JSON.stringify({ message: 'Successfully deleted products from database.' }));
+        expect(result.statusCode).toBe(200);
+        // no call to shopify is made because it only affects retailer product
+        expect(productDeleteMutationSpy).toHaveBeenCalledTimes(0);
+        // all the imported products and variants have been deleted from db
+        const countProductQuery = 'SELECT COUNT(*) FROM "Product"';
+        const countImportedProductQuery = 'SELECT COUNT(*) FROM "ImportedProduct"';
+        const countImportedProduct = (await client.query(countImportedProductQuery)).rows[0].count;
+        const countProduct = (await client.query(countProductQuery)).rows[0].count;
+        expect(countProduct).toBe('1');
+        expect(countImportedProduct).toBe('0');
+        client.release();
+    });
 });
