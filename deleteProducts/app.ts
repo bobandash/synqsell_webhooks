@@ -1,8 +1,9 @@
 import { composeGid } from '@shopify/admin-graphql-api-utilities';
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { Pool, PoolClient } from 'pg';
+import { PoolClient } from 'pg';
 import { mutateAndValidateGraphQLData } from './util';
 import { DELETE_PRODUCT_MUTATION } from './graphql';
+import { initializePool } from './db';
 
 // Command to debug deleteProducts locally
 // sam local invoke DeleteProductsLambda --event ./deleteProducts/app_event.json
@@ -28,26 +29,6 @@ type ShopifyEvent = {
         };
     };
 };
-
-let pool: Pool | null = null;
-
-async function initializePool() {
-    if (!pool) {
-        // https://stackoverflow.com/questions/76899023/rds-while-connection-error-no-pg-hba-conf-entry-for-host
-        pool = new Pool({
-            user: process.env.DB_USER,
-            host: process.env.DB_HOST,
-            database: process.env.DATABASE,
-            password: process.env.DB_PASSWORD,
-            port: Number(process.env.DB_PORT) ?? 5432,
-            max: 20,
-            ssl: {
-                rejectUnauthorized: false,
-            },
-        });
-    }
-    return pool;
-}
 
 async function isSupplierProduct(shopifyDeletedProductId: string, client: PoolClient) {
     const productQuery = `SELECT FROM "Product" WHERE "shopifyProductId" = $1 LIMIT 1`;
@@ -102,7 +83,7 @@ async function handleDeletedProductIsRetailerProduct(shopifyDeletedProductId: st
 export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProxyResult> => {
     let client: null | PoolClient = null;
     try {
-        const pool = await initializePool();
+        const pool = initializePool();
         const {
             detail: { payload },
         } = event;
