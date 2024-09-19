@@ -50,6 +50,7 @@ type ShopifyVariantIdAndSupplierProfit = {
 // Price Lists can have two strategies: a pricing strategy based on margin and pricing strategy based on fixed wholesale rate
 // If it's based on margin, we have to recalculate the supplier profit
 // If it's based on fixed wholesale rate, we don't have to calculate supplier profit
+
 // START: Functions related to updating prices in the database
 function round(value: number, decimals: number): number {
     const factor = Math.pow(10, decimals);
@@ -61,7 +62,6 @@ function getNewPricingDetails(editedVariants: EditedVariant[], priceList: PriceL
     if (priceList.pricingStrategy !== PRICE_LIST_PRICING_STRATEGY.MARGIN) {
         throw new Error('Cannot include supplier profit calculation for margin price list.');
     }
-    console.log(priceList);
     const margin = priceList.margin;
     if (!margin) {
         throw new Error('Margin rate is undefined in price list, even though price list is margin.');
@@ -103,8 +103,6 @@ async function handleUpdateVariantsInMarginPriceList(
             "shopifyVariantId" = $4 AND
             "productId" = $5
     `;
-
-    console.log(variantPrices);
     await Promise.all(
         variantPrices.map(({ shopifyVariantId, retailPrice, retailerPayment, supplierProfit }) => {
             return client.query(updateVariantPriceQuery, [
