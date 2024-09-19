@@ -1,4 +1,4 @@
-import { PoolClient, Query } from 'pg';
+import { PoolClient } from 'pg';
 import { EditedVariant } from '../types';
 import { createMapIdToRestObj, mutateAndValidateGraphQLData } from '../util';
 import { PRODUCT_VARIANT_BULK_UPDATE } from '../graphql';
