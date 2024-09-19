@@ -6,6 +6,7 @@ import { createMapIdToRestObj, fetchAndValidateGraphQLData, mutateAndValidateGra
 import { PRODUCT_VARIANT_BULK_UPDATE, PRODUCT_VARIANT_INFO } from './graphql';
 import { ProductVariantInfoQuery } from './types/admin.generated';
 import { EditedVariant } from './types';
+import { broadcastSupplierProductModifications, revertRetailerProductModifications } from './helper';
 // Command to debug deleteProducts locally
 // sam local invoke DeleteProductsLambda --event ./deleteProducts/app_event.json
 
@@ -74,11 +75,6 @@ type ShopifyEvent = {
     };
 };
 
-type VariantAndImportedVariant = {
-    retailerShopifyVariantId: string;
-    supplierShopifyVariantId: string;
-};
-
 async function isRetailerProduct(shopifyDeletedProductId: string, client: PoolClient) {
     const productQuery = `SELECT FROM "ImportedProduct" WHERE "shopifyProductId" = $1 LIMIT 1`;
     const res = await client.query(productQuery, [shopifyDeletedProductId]);
@@ -95,116 +91,6 @@ async function isSupplierProduct(shopifyDeletedProductId: string, client: PoolCl
         return true;
     }
     return false;
-}
-
-async function getSessionsFromImportedProduct(shopifyProductId: string, client: PoolClient) {
-    const retailerSessionQuery = `
-        SELECT session.* 
-        FROM "ImportedProduct"
-        JOIN "Session" session ON "ImportedProduct"."retailerId" = session.id 
-        WHERE "shopifyProductId" = $1 
-    `;
-    const supplierSessionQuery = `
-        SELECT "Session".* 
-        FROM "ImportedProduct"
-        JOIN "Product" ON "ImportedProduct"."prismaProductId" = "Product".id
-        JOIN "PriceList" ON "Product"."priceListId" = "PriceList".id
-        JOIN "Session" ON "PriceList"."supplierId" = "Session".id
-        WHERE "ImportedProduct"."shopifyProductId" = $1 
-    `;
-
-    const retailerSession = (await client.query(retailerSessionQuery)).rows[0];
-    const supplierSession = (await client.query(supplierSessionQuery)).rows[0];
-
-    return { retailerSession, supplierSession };
-}
-
-async function getFulfillmentService(sessionId: string, client: PoolClient) {
-    try {
-        const fulfillmentServiceQuery = `SELECT * FROM "FulfillmentService" WHERE "sessionId" = $1 LIMIT 1`;
-        const res = await client.query(fulfillmentServiceQuery, [sessionId]);
-        if (res.rows.length < 1) {
-            throw new Error('Could not fetch fulfillment service.');
-        }
-        const fulfillmentService = res.rows[0];
-        return fulfillmentService;
-    } catch (error) {
-        throw error;
-    }
-}
-
-// if the retailer changes the inventory or retail price, it is should be reverted back to the supplier's data
-// TODO: right now, this triggers an infinite loop, you should
-async function revertRetailerProductModifications(
-    editedVariants: EditedVariant[],
-    importedShopifyProductId: string,
-    client: PoolClient,
-) {
-    const { supplierSession, retailerSession } = await getSessionsFromImportedProduct(importedShopifyProductId, client);
-    // returns { retailerShopifyVariantId: "", supplierShopifyVariantId: ""}[]
-    const productVariantIdsAndImportedVariantIdsQuery = `
-        SELECT 
-            "ImportedVariant"."shopifyVariantId" as "retailerShopifyVariantId",
-            "Variant"."shopifyVariantId" as "supplierShopifyVariantId"
-        FROM "ImportedVariant"
-        INNER JOIN "Variant" ON "ImportedVariant"."prismaVariantId" = "Variant"."id"
-        WHERE "ImportedVariant"."shopifyVariantId" = ANY($1)  
-    `;
-    const importedVariantShopifyIds = editedVariants.map(({ shopifyVariantId }) => shopifyVariantId);
-    const productVariantIdAndImportedVariantIdData: VariantAndImportedVariant[] = (
-        await client.query(productVariantIdsAndImportedVariantIdsQuery, [importedVariantShopifyIds])
-    ).rows;
-    const supplierToRetailerVariantId = createMapIdToRestObj(
-        productVariantIdAndImportedVariantIdData,
-        'supplierShopifyVariantId',
-    );
-    const retailerFulfillmentService = await getFulfillmentService(retailerSession.id, client);
-    const supplierShopifyVariantIds = productVariantIdAndImportedVariantIdData.map(
-        ({ supplierShopifyVariantId }) => supplierShopifyVariantId,
-    );
-    const supplierVariantInfo = await Promise.all(
-        supplierShopifyVariantIds.map((variantId) => {
-            return fetchAndValidateGraphQLData<ProductVariantInfoQuery>(
-                supplierSession.shop,
-                supplierSession.accessToken,
-                PRODUCT_VARIANT_INFO,
-                {
-                    id: variantId,
-                },
-            );
-        }),
-    );
-
-    const retailerVariantEditInput = supplierVariantInfo.map((variant) => {
-        const supplierVariantId = variant.productVariant?.id;
-        const supplierInventory = variant.productVariant?.inventoryQuantity ?? 0;
-        const supplierPrice = variant.productVariant?.price;
-        const retailerVariantId = supplierToRetailerVariantId.get(supplierVariantId ?? '') ?? '';
-        if (!retailerVariantId) {
-            throw new Error(`Retailer's variant id is invalid,`);
-        }
-        return {
-            id: retailerVariantId,
-            inventoryQuantities: [
-                {
-                    availableQuantity: supplierInventory,
-                    locationId: retailerFulfillmentService.shopifyLocationId,
-                },
-            ],
-            price: supplierPrice,
-        };
-    });
-
-    await mutateAndValidateGraphQLData(
-        retailerSession.shop,
-        retailerSession.accessToken,
-        PRODUCT_VARIANT_BULK_UPDATE,
-        {
-            productId: importedShopifyProductId,
-            variants: retailerVariantEditInput,
-        },
-        'Failed to update product variant information for retailer.',
-    );
 }
 
 export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProxyResult> => {
@@ -232,7 +118,7 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
             return {
                 statusCode: 200,
                 body: JSON.stringify({
-                    message: 'SynqSell does not need to handle logic for products not in its marketplace.',
+                    message: 'Do not need to handle logic for products not in Synqsell.',
                 }),
             };
         }
@@ -253,7 +139,7 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         return {
             statusCode: 500,
             body: JSON.stringify({
-                message: 'Could not delete products.',
+                message: 'Failed to handle product update webhook.',
                 error: (error as Error).message,
             }),
         };
