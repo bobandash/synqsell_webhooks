@@ -9,6 +9,7 @@ export const DEFAULT_ITEMS = {
   SUPPLIER_SESSION_ID: "offline_quickstart-2.myshopify.com",
   SHOPIFY_PRODUCT_ID: 8688664903915,
   SHOPIFY_VARIANT_ID: 45667254599915,
+  SHOPIFY_VARIANT_RETAIL_PRICE: "50.00",
   SHOPIFY_INVENTORY_ITEM_ID: 47905097187563,
   IMPORTED_SHOPIFY_PRODUCT_ID: 8740026417387,
   IMPORTED_SHOPIFY_VARIANT_ID: 45806359675115,
@@ -17,6 +18,8 @@ export const DEFAULT_ITEMS = {
   RETAILER_ACCESS_TOKEN: "shpat_2cd4b723a6508644",
   SUPPLIER_SHOP: "quickstart-2.myshopify.com",
   SUPPLIER_ACCESS_TOKEN: "shpat_2cd4b723a6508644",
+  RETAILER_SHOPIFY_FULFILLMENT_SERVICE_ID: "123",
+  RETAILER_SHOPIFY_LOCATION_ID: "1234",
 };
 
 // most common sample case
@@ -66,7 +69,7 @@ export const priceListWithProductAndImportedProductMutation = `
       "Product",
       DEFAULT_ITEMS.SHOPIFY_PRODUCT_ID
     )}'),
-    '50',
+    '${DEFAULT_ITEMS.SHOPIFY_VARIANT_RETAIL_PRICE}',
     '5',
     '45'
   );
@@ -123,5 +126,13 @@ export const priceListWithProductAndImportedProductMutation = `
     )}')
   );
 
+
+  INSERT INTO "FulfillmentService" (id, "sessionId", "shopifyFulfillmentServiceId", "shopifyLocationId")
+  VALUES (
+    '${uuidv4()}',
+    '${DEFAULT_ITEMS.RETAILER_SESSION_ID}',
+    '${DEFAULT_ITEMS.RETAILER_SHOPIFY_FULFILLMENT_SERVICE_ID}',
+    '${DEFAULT_ITEMS.RETAILER_SHOPIFY_LOCATION_ID}'
+  );
   COMMIT;
 `;

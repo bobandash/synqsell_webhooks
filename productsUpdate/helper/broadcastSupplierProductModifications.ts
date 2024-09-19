@@ -1,6 +1,6 @@
 import { PoolClient } from 'pg';
 import { EditedVariant } from '../types';
-import { createMapIdToRestObj, mutateAndValidateGraphQLData } from '../util';
+import { createMapToRestObj, mutateAndValidateGraphQLData } from '../util';
 import { PRODUCT_VARIANT_BULK_UPDATE } from '../graphql';
 
 type QueryData = {
@@ -13,7 +13,7 @@ type QueryData = {
 };
 
 type GroupedQueryDataWithUpdateFields = Map<
-    string, // retailerShopifyProductId
+    string,
     {
         retailerAccessToken: string;
         retailerShop: string;
@@ -63,18 +63,20 @@ async function updateRetailerDataOnShopify(data: GroupedQueryDataWithUpdateField
     }
 }
 
-async function getRetailerProductData(
+function getRetailerProductData(
     queryData: QueryData[],
     editedVariantMap: Map<string, Omit<EditedVariant, 'shopifyVariantId'>>,
 ) {
     const retailerProductData: GroupedQueryDataWithUpdateFields = new Map();
     queryData.forEach((row) => {
         const prevValue = retailerProductData.get(row.retailerShopifyProductId);
-        const newRetailPrice = editedVariantMap.get(row.supplierShopifyVariantId)?.price;
-        const newInventory = editedVariantMap.get(row.supplierShopifyVariantId)?.newInventory;
-        if (!newRetailPrice || newInventory) {
+        const supplierVariantDetails = editedVariantMap.get(row.supplierShopifyVariantId);
+        const newRetailPrice = supplierVariantDetails?.price;
+        const newInventory = supplierVariantDetails?.newInventory;
+        if (!newRetailPrice || !newInventory) {
             throw new Error('Retail price or inventory is not defined.');
         }
+
         const prevVariants = prevValue?.variants ?? [];
         const newVariants = [
             ...prevVariants,
@@ -91,7 +93,6 @@ async function getRetailerProductData(
             variants: newVariants,
         });
     });
-
     return retailerProductData;
 }
 
@@ -103,7 +104,7 @@ async function broadcastSupplierProductModifications(
     supplierShopifyProductId: string,
     client: PoolClient,
 ) {
-    const editedVariantMap = createMapIdToRestObj(editedVariants, 'shopifyVariantId');
+    const editedVariantMap = createMapToRestObj(editedVariants, 'shopifyVariantId');
     const importedVariantDataQuery = `
       SELECT 
         "ImportedProduct"."shopifyProductId" as "retailerShopifyId",
@@ -118,14 +119,14 @@ async function broadcastSupplierProductModifications(
       INNER JOIN "ImportedProduct" ON "ImportedProduct"."id" = "ImportedVariant"."importedProductId"
       INNER JOIN "Session" ON "ImportedProduct"."retailerId" = "Session"."id"
       INNER JOIN "FulfillmentService" ON "FulfillmentService"."sessionId" = "Session"."id"
-      WHERE "Product"."id" = $1  
+      WHERE "Product"."shopifyProductId" = $1  
     `;
     const res = await client.query(importedVariantDataQuery, [supplierShopifyProductId]);
     if (res.rows.length === 0) {
         return;
     }
     const data: QueryData[] = res.rows;
-    const retailerProductData = await getRetailerProductData(data, editedVariantMap);
+    const retailerProductData = getRetailerProductData(data, editedVariantMap);
     await updateRetailerDataOnShopify(retailerProductData);
 }
 

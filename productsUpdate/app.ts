@@ -7,18 +7,18 @@ import { ShopifyEvent } from './types';
 // Command to debug deleteProducts locally
 // sam local invoke DeleteProductsLambda --event ./deleteProducts/app_event.json
 
-async function isRetailerProduct(shopifyDeletedProductId: string, client: PoolClient) {
+async function isRetailerProduct(shopifyProductId: string, client: PoolClient) {
     const productQuery = `SELECT FROM "ImportedProduct" WHERE "shopifyProductId" = $1 LIMIT 1`;
-    const res = await client.query(productQuery, [shopifyDeletedProductId]);
+    const res = await client.query(productQuery, [shopifyProductId]);
     if (res.rows.length > 0) {
         return true;
     }
     return false;
 }
 
-async function isSupplierProduct(shopifyDeletedProductId: string, client: PoolClient) {
+async function isSupplierProduct(shopifyProductId: string, client: PoolClient) {
     const productQuery = `SELECT FROM "Product" WHERE "shopifyProductId" = $1 LIMIT 1`;
-    const res = await client.query(productQuery, [shopifyDeletedProductId]);
+    const res = await client.query(productQuery, [shopifyProductId]);
     if (res.rows.length > 0) {
         return true;
     }
