@@ -33,6 +33,7 @@ describe('', () => {
     });
 
     afterAll(async () => {
+        await clearAllTables();
         await pool.end();
     });
 

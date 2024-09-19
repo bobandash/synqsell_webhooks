@@ -44,13 +44,14 @@ export const priceListWithProductAndImportedProductMutation = `
     '${DEFAULT_ITEMS.RETAILER_ACCESS_TOKEN}'
   );
 
-  INSERT INTO "PriceList" (id, name, "isGeneral", "requiresApprovalToImport", "pricingStrategy", "supplierId")
+  INSERT INTO "PriceList" (id, name, "isGeneral", "requiresApprovalToImport", "pricingStrategy", "margin", "supplierId")
   VALUES (
     '${uuidv4()}',
     'General',
     true,
     false,
     'MARGIN',
+    10,
     (SELECT id FROM "Session" WHERE id = '${DEFAULT_ITEMS.SUPPLIER_SESSION_ID}')
   );
 

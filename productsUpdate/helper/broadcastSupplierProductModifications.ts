@@ -1,4 +1,4 @@
-import { Pool, PoolClient } from 'pg';
+import { PoolClient } from 'pg';
 import { EditedVariant } from '../types';
 import { createMapToRestObj, mutateAndValidateGraphQLData } from '../util';
 import { PRODUCT_VARIANT_BULK_UPDATE } from '../graphql';
@@ -61,7 +61,7 @@ function getNewPricingDetails(editedVariants: EditedVariant[], priceList: PriceL
     if (priceList.pricingStrategy !== PRICE_LIST_PRICING_STRATEGY.MARGIN) {
         throw new Error('Cannot include supplier profit calculation for margin price list.');
     }
-
+    console.log(priceList);
     const margin = priceList.margin;
     if (!margin) {
         throw new Error('Margin rate is undefined in price list, even though price list is margin.');
@@ -103,6 +103,8 @@ async function handleUpdateVariantsInMarginPriceList(
             "shopifyVariantId" = $4 AND
             "productId" = $5
     `;
+
+    console.log(variantPrices);
     await Promise.all(
         variantPrices.map(({ shopifyVariantId, retailPrice, retailerPayment, supplierProfit }) => {
             return client.query(updateVariantPriceQuery, [
@@ -180,7 +182,7 @@ async function updateVariantPricesDatabase(
                 "Product"."shopifyProductId" = $2
             LIMIT 1
         `;
-        const dbProductIdRes = await client.query(dbProductIdQuery);
+        const dbProductIdRes = await client.query(dbProductIdQuery, [priceList.id, supplierShopifyProductId]);
         if (dbProductIdRes.rows.length === 0) {
             throw new Error('Product for specified price list and shopify product id does not exist in database.');
         }

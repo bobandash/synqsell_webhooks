@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@types/jest": "^29.5.13",
     "@types/pg": "^8.11.10",
     "@types/uuid": "^10.0.0",
     "dotenv": "^16.4.5",
