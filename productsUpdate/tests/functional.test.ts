@@ -12,6 +12,7 @@ import * as utils from '../util';
 import * as helperFunctions from '../helper';
 import { composeGid } from '@shopify/admin-graphql-api-utilities';
 
+// TODO: Not important right not, but verify that wholesale price list functions properly
 jest.mock('../db');
 jest.mock('../util', () => {
     const actualUtil = jest.requireActual('../util');
@@ -149,6 +150,4 @@ describe('Shopify products/update webhook', () => {
             client.release();
         });
     });
-
-    // test(`should update variant's price if supplier product changed`, async () => {});
 });
