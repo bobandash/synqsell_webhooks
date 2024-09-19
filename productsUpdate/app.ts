@@ -1,10 +1,11 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { Pool, PoolClient } from 'pg';
+import { PoolClient } from 'pg';
 import { initializePool } from './db';
 import { composeGid } from '@shopify/admin-graphql-api-utilities';
 import { createMapIdToRestObj, fetchAndValidateGraphQLData, mutateAndValidateGraphQLData } from './util';
 import { PRODUCT_VARIANT_BULK_UPDATE, PRODUCT_VARIANT_INFO } from './graphql';
 import { ProductVariantInfoQuery } from './types/admin.generated';
+import { EditedVariant } from './types';
 // Command to debug deleteProducts locally
 // sam local invoke DeleteProductsLambda --event ./deleteProducts/app_event.json
 
@@ -73,13 +74,6 @@ type ShopifyEvent = {
     };
 };
 
-type EditedVariant = {
-    shopifyVariantId: string;
-    hasUpdatedInventory: boolean;
-    newInventory: number;
-    price: string;
-};
-
 type VariantAndImportedVariant = {
     retailerShopifyVariantId: string;
     supplierShopifyVariantId: string;
@@ -139,11 +133,8 @@ async function getFulfillmentService(sessionId: string, client: PoolClient) {
     }
 }
 
-async function broadcastSupplierProductModifications(editedVariants: EditedVariant[], client: PoolClient) {
-    // if the supplier changes the inventory or retail price, it should be updated for all the retailers
-}
-
 // if the retailer changes the inventory or retail price, it is should be reverted back to the supplier's data
+// TODO: right now, this triggers an infinite loop, you should
 async function revertRetailerProductModifications(
     editedVariants: EditedVariant[],
     importedShopifyProductId: string,
@@ -247,7 +238,7 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         }
 
         if (isSupplierProductResult) {
-            await broadcastSupplierProductModifications(editedVariants, client);
+            await broadcastSupplierProductModifications(editedVariants, shopifyProductId, client);
         } else if (isRetailerProductResult) {
             await revertRetailerProductModifications(editedVariants, shopifyProductId, client);
         }
