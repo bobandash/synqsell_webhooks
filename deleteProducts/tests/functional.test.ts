@@ -57,8 +57,8 @@ describe('Delete Products Lambda Function Integration Tests', () => {
     test(`should delete product, all variants, and all imported products and imported variants if supplier's product`, async () => {
         const productDeleteMutationSpy = jest.spyOn(utils, 'mutateAndValidateGraphQLData');
         const client = await pool.connect();
-        await client.query(priceListWithProductAndImportedProductMutation);
 
+        await client.query(priceListWithProductAndImportedProductMutation);
         const payload = deleteProductPayload(DEFAULT_ITEMS.SHOPIFY_PRODUCT_ID);
         const result = await lambdaHandler(payload);
         expect(result.body).toBe(JSON.stringify({ message: 'Successfully deleted products from database.' }));
@@ -73,13 +73,22 @@ describe('Delete Products Lambda Function Integration Tests', () => {
             },
             'Could not delete product for retailer.',
         );
-        // all the imported products and variants have been deleted from db
+        // all the products, imported products, variants, and imported products have been deleted from db
+
+        const countImportedProductQuery = 'SELECT COUNT(*) FROM "ImportedProduct"';
         const countImportedVariantQuery = 'SELECT COUNT(*) FROM "ImportedVariant"';
         const countVariantQuery = 'SELECT COUNT(*) FROM "Variant"';
+        const countProductQuery = 'SELECT COUNT(*) FROM "Product"';
+
+        const countProduct = (await client.query(countProductQuery)).rows[0].count;
+        const countImportedProduct = (await client.query(countImportedProductQuery)).rows[0].count;
         const countImportedVariant = (await client.query(countImportedVariantQuery)).rows[0].count;
         const countVariant = (await client.query(countVariantQuery)).rows[0].count;
+
+        expect(countProduct).toBe('0');
         expect(countImportedVariant).toBe('0');
         expect(countVariant).toBe('0');
+        expect(countImportedProduct).toBe('0');
         client.release();
     });
 

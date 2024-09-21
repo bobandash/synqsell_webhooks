@@ -10,7 +10,8 @@
         "lint": "eslint '*.ts' --quiet --fix",
         "compile": "tsc",
         "test": "npm run compile && npm run jest",
-        "test:watch": "jest --watch"
+        "test:watch": "jest --watch",
+        "graphql-codegen": "graphql-codegen"
     },
     "dependencies": {
         "@aws-sdk/client-secrets-manager": "^3.650.0",

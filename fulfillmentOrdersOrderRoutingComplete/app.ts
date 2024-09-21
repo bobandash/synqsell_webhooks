@@ -1,6 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { Pool, PoolClient } from 'pg';
+import { PoolClient } from 'pg';
+import { initializePool } from './db';
+import { ShopifyEvent } from './types';
+import { fetchAndValidateGraphQLData, mutateAndValidateGraphQLData } from './util';
 import {
     FULFILLMENT_ORDER_SPLIT_MUTATION,
     GET_FULFILLMENT_ORDER_LOCATION,
@@ -13,32 +15,6 @@ import {
     InitialFulfillmentOrderDetailsQuery,
     SubsequentFulfillmentOrderDetailsQuery,
 } from './types/admin.generated';
-import { fetchAndValidateGraphQLData, mutateAndValidateGraphQLData } from './util';
-
-type Event = {
-    version: string;
-    id: string;
-    'detail-type': string;
-    source: string;
-    account: string;
-    time: string;
-    region: string;
-    resources: [];
-    detail: {
-        'X-Shopify-Topic': string;
-        'X-Shopify-Hmac-Sha256': string;
-        'X-Shopify-Shop-Domain': string;
-        'X-Shopify-Webhook-Id': string;
-        'X-Shopify-Triggered-At': string;
-        'X-Shopify-Event-Id': string;
-        payload: {
-            fulfillment_order: {
-                id: string;
-                status: string;
-            };
-        };
-    };
-};
 
 type OrderLineDetail = {
     fulfillmentOrderLineItemId: string;
@@ -61,26 +37,6 @@ type FulfillmentOrderForRetailer = {
     orderLineDetails: OrderLineDetail[];
 };
 
-let pool: Pool | null = null;
-
-async function initializePool() {
-    if (!pool) {
-        // https://stackoverflow.com/questions/76899023/rds-while-connection-error-no-pg-hba-conf-entry-for-host
-        pool = new Pool({
-            user: process.env.DB_USER,
-            host: process.env.DB_HOST,
-            database: process.env.DATABASE,
-            password: process.env.DB_PASSWORD,
-            port: Number(process.env.DB_PORT) ?? 5432,
-            max: 20,
-            ssl: {
-                rejectUnauthorized: false,
-            },
-        });
-    }
-    return pool;
-}
-
 async function getSession(shop: string, client: PoolClient) {
     const sessionQuery = `SELECT * FROM "Session" WHERE shop = $1 LIMIT 1`;
     const sessionData = await client.query(sessionQuery, [shop]);
@@ -98,11 +54,16 @@ async function isAppFulfillmentLocation(
     fulfillmentOrderId: string,
     client: PoolClient,
 ) {
-    const locationQuery = (await fetchAndValidateGraphQLData(shop, accessToken, GET_FULFILLMENT_ORDER_LOCATION, {
-        id: fulfillmentOrderId,
-    })) as FulfillmentOrderLocationQuery;
-    const locationId = locationQuery.fulfillmentOrder?.assignedLocation.location?.id ?? '';
-    if (!locationId) {
+    const locationQuery = await fetchAndValidateGraphQLData<FulfillmentOrderLocationQuery>(
+        shop,
+        accessToken,
+        GET_FULFILLMENT_ORDER_LOCATION,
+        {
+            id: fulfillmentOrderId,
+        },
+    );
+    const fulfillmentOrderShopifyLocationId = locationQuery.fulfillmentOrder?.assignedLocation.location?.id ?? '';
+    if (!fulfillmentOrderShopifyLocationId) {
         return false;
     }
     const fulfillmentServiceQuery = `
@@ -111,7 +72,10 @@ async function isAppFulfillmentLocation(
         AND "sessionId" = $2 
         LIMIT 1
     `;
-    const fulfillmentService = await client.query(fulfillmentServiceQuery, [locationId, sessionId]);
+    const fulfillmentService = await client.query(fulfillmentServiceQuery, [
+        fulfillmentOrderShopifyLocationId,
+        sessionId,
+    ]);
     if (fulfillmentService && fulfillmentService.rows.length > 0) {
         return true;
     }
@@ -130,8 +94,9 @@ async function getAllOrderLineDetails(fulfillmentOrderId: string, shop: string, 
         const variables = isInitialFetch
             ? { variables: { id: fulfillmentOrderId } }
             : { variables: { id: fulfillmentOrderId, after: endCursor } };
-        const data: SubsequentFulfillmentOrderDetailsQuery | InitialFulfillmentOrderDetailsQuery =
-            await fetchAndValidateGraphQLData(shop, accessToken, query, variables);
+        const data = await fetchAndValidateGraphQLData<
+            SubsequentFulfillmentOrderDetailsQuery | InitialFulfillmentOrderDetailsQuery
+        >(shop, accessToken, query, variables);
 
         const edgesData = Object.values(data)[0];
         if (edgesData) {
@@ -152,12 +117,13 @@ async function getAllOrderLineDetails(fulfillmentOrderId: string, shop: string, 
     return orderLineDetails;
 }
 
-async function splitFulfillmentOrderForRetailer(
+async function splitFulfillmentOrderBySupplier(
     originalFulfillmentOrderId: string,
     shop: string,
     accessToken: string,
     client: PoolClient,
 ) {
+    // splits fulfillment order by supplier
     const orderLineDetails = await getAllOrderLineDetails(originalFulfillmentOrderId, shop, accessToken);
     const supplierIdToOrderLineDetails = new Map<string, OrderLineDetail[]>();
     const supplierIdToFulfillmentOrderDetails = new Map<string, FulfillmentOrderDetails>();
@@ -206,7 +172,7 @@ async function splitFulfillmentOrderForRetailer(
                     };
                 }),
             };
-            const splitFulfillmentOrderPayload: FulfillmentOrderSplitMutation = await mutateAndValidateGraphQLData(
+            const splitFulfillmentOrderPayload = await mutateAndValidateGraphQLData<FulfillmentOrderSplitMutation>(
                 shop,
                 accessToken,
                 FULFILLMENT_ORDER_SPLIT_MUTATION,
@@ -231,27 +197,28 @@ async function splitFulfillmentOrderForRetailer(
 }
 
 async function createSupplierOrders(newFulfillmentOrders: Map<string, FulfillmentOrderDetails>) {
+    // TODO: now, figure out how you want to handle payments
     return;
 }
 
 // TODO: Figure out how you want to store shipping rates / fulfillment details to remit later
 // TODO: For now, focus on the logic to just split, the order, create the order for the suppliers
-export const lambdaHandler = async (event: Event): Promise<APIGatewayProxyResult> => {
+export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProxyResult> => {
     let client: null | PoolClient = null;
     try {
-        const pool = await initializePool();
+        const pool = initializePool();
         client = await pool.connect();
         const shop = event.detail['X-Shopify-Shop-Domain'];
         const fulfillmentOrderId = event.detail.payload.fulfillment_order.id;
         const session = await getSession(shop, client);
-        const isInterestedLocation = await isAppFulfillmentLocation(
+        const isSynqsellFulfillmentLocation = await isAppFulfillmentLocation(
             shop,
             session.accessToken,
             session.id,
             fulfillmentOrderId,
             client,
         );
-        if (!isInterestedLocation) {
+        if (!isSynqsellFulfillmentLocation) {
             return {
                 statusCode: 200,
                 body: JSON.stringify({
@@ -259,7 +226,8 @@ export const lambdaHandler = async (event: Event): Promise<APIGatewayProxyResult
                 }),
             };
         }
-        const newFulfillmentOrders = await splitFulfillmentOrderForRetailer(
+
+        const newFulfillmentOrders = await splitFulfillmentOrderBySupplier(
             fulfillmentOrderId,
             shop,
             session.accessToken,

@@ -14562,20 +14562,20 @@ export type DraftOrderLineItemInput = {
   customAttributes?: InputMaybe<Array<AttributeInput>>;
   /**
    * The price in presentment currency, without any discounts applied, for a custom line item.
-   * If this value is provided, `original_unit_price` will be ignored. This field is ignored when `variantId` is provided..
+   * If this value is provided, `original_unit_price` will be ignored. This field is ignored when `variantId` is provided.
    * Note: All presentment currencies for a single draft should be the same and match the
    * presentment currency of the draft order.
    */
   originalUnitPriceWithCurrency?: InputMaybe<MoneyInput>;
   /** The line item quantity. */
   quantity: Scalars['Int']['input'];
-  /** Whether physical shipping is required for a custom line item. This field is ignored when `variantId` is provided.. */
+  /** Whether physical shipping is required for a custom line item. This field is ignored when `variantId` is provided. */
   requiresShipping?: InputMaybe<Scalars['Boolean']['input']>;
-  /** The SKU number for custom line items only. This field is ignored when `variantId` is provided.. */
+  /** The SKU number for custom line items only. This field is ignored when `variantId` is provided. */
   sku?: InputMaybe<Scalars['String']['input']>;
-  /** Whether the custom line item is taxable. This field is ignored when `variantId` is provided.. */
+  /** Whether the custom line item is taxable. This field is ignored when `variantId` is provided. */
   taxable?: InputMaybe<Scalars['Boolean']['input']>;
-  /** Title of the line item. This field is ignored when `variantId` is provided.. */
+  /** Title of the line item. This field is ignored when `variantId` is provided. */
   title?: InputMaybe<Scalars['String']['input']>;
   /**
    * The UUID of the draft order line item. Must be unique and consistent across requests.
@@ -14589,7 +14589,7 @@ export type DraftOrderLineItemInput = {
   variantId?: InputMaybe<Scalars['ID']['input']>;
   /**
    * The weight unit and value inputs for custom line items only.
-   * This field is ignored when `variantId` is provided..
+   * This field is ignored when `variantId` is provided.
    */
   weight?: InputMaybe<WeightInput>;
 };
@@ -18142,13 +18142,7 @@ export type FulfillmentOriginAddressInput = {
  * mutation.
  *
  * - Shopify sends POST requests to the `<callbackUrl>/fulfillment_order_notification` endpoint
- *   to notify the fulfillment service about fulfillment requests and fulfillment cancellation requests,
- *   if `fulfillment_orders_opt_in` is set to `true`.
- *
- *   [As of the 2022-07 API version](https://shopify.dev/changelog/legacy-fulfillment-api-deprecation),
- *   it's mandatory for a fulfillment service to follow a fulfillment order based workflow by
- *   having `fulfillment_orders_opt_in` set to `true`,
- *   hosting the `<callbackUrl>/fulfillment_order_notification` endpoint, and acting on fulfillment requests and cancellations.
+ *   to notify the fulfillment service about fulfillment requests and fulfillment cancellation requests.
  *
  *   For more information, refer to
  *   [Receive fulfillment requests and cancellations](https://shopify.dev/apps/fulfillment/fulfillment-service-apps/manage-fulfillments#step-2-receive-fulfillment-requests-and-cancellations).
@@ -26579,13 +26573,13 @@ export type Mutation = {
   /**
    * Creates a new Amazon EventBridge webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   eventBridgeWebhookSubscriptionCreate?: Maybe<EventBridgeWebhookSubscriptionCreatePayload>;
   /**
    * Updates an Amazon EventBridge webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   eventBridgeWebhookSubscriptionUpdate?: Maybe<EventBridgeWebhookSubscriptionUpdatePayload>;
   /** Acknowledges file update failure by resetting FAILED status to READY and clearing any media errors. */
@@ -27357,13 +27351,13 @@ export type Mutation = {
   /**
    * Creates a new Google Cloud Pub/Sub webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   pubSubWebhookSubscriptionCreate?: Maybe<PubSubWebhookSubscriptionCreatePayload>;
   /**
    * Updates a Google Cloud Pub/Sub webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   pubSubWebhookSubscriptionUpdate?: Maybe<PubSubWebhookSubscriptionUpdatePayload>;
   /** Creates a publication. */
@@ -27493,7 +27487,7 @@ export type Mutation = {
   sellingPlanGroupAddProducts?: Maybe<SellingPlanGroupAddProductsPayload>;
   /** Creates a Selling Plan Group. */
   sellingPlanGroupCreate?: Maybe<SellingPlanGroupCreatePayload>;
-  /** Delete a Selling Plan Group. */
+  /** Delete a Selling Plan Group. This does not affect subscription contracts. */
   sellingPlanGroupDelete?: Maybe<SellingPlanGroupDeletePayload>;
   /** Removes multiple product variants from a selling plan group. */
   sellingPlanGroupRemoveProductVariants?: Maybe<SellingPlanGroupRemoveProductVariantsPayload>;
@@ -27724,19 +27718,19 @@ export type Mutation = {
   /**
    * Creates a new webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscriptionCreate?: Maybe<WebhookSubscriptionCreatePayload>;
   /**
    * Deletes a webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscriptionDelete?: Maybe<WebhookSubscriptionDeletePayload>;
   /**
    * Updates a webhook subscription.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscriptionUpdate?: Maybe<WebhookSubscriptionUpdatePayload>;
 };
@@ -39809,19 +39803,19 @@ export type QueryRoot = {
   /**
    * Returns a webhook subscription by ID.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscription?: Maybe<WebhookSubscription>;
   /**
    * Returns a list of webhook subscriptions.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks).
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe).
    */
   webhookSubscriptions: WebhookSubscriptionConnection;
   /**
    * The count of webhook subscriptions.
    *
-   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/apps/build/app-webhooks). Limited to a maximum of 10000.
+   * Building an app? If you only use app-specific webhooks, you won't need this. App-specific webhook subscriptions specified in your `shopify.app.toml` may be easier. They are automatically kept up to date by Shopify & require less maintenance. Please read [About managing webhook subscriptions](https://shopify.dev/docs/apps/build/webhooks/subscribe). Limited to a maximum of 10000.
    */
   webhookSubscriptionsCount?: Maybe<Count>;
 };
@@ -43473,8 +43467,11 @@ export enum SearchResultType {
   DraftOrder = 'DRAFT_ORDER',
   /** A file. */
   File = 'FILE',
+  /** An article. */
   OnlineStoreArticle = 'ONLINE_STORE_ARTICLE',
+  /** A blog. */
   OnlineStoreBlog = 'ONLINE_STORE_BLOG',
+  /** A page. */
   OnlineStorePage = 'ONLINE_STORE_PAGE',
   Order = 'ORDER',
   PriceRule = 'PRICE_RULE',
@@ -43991,11 +43988,23 @@ export type SellingPlanTranslationsArgs = {
   marketId?: InputMaybe<Scalars['ID']['input']>;
 };
 
-/** Represents a selling plan policy anchor. */
+/**
+ * Specifies the date when delivery or fulfillment is completed by a merchant for a given time cycle. You can also
+ * define a cutoff for which customers are eligible to enter this cycle and the desired behavior for customers who
+ * start their subscription inside the cutoff period.
+ *
+ * Some example scenarios where anchors can be useful to implement advanced delivery behavior:
+ * - A merchant starts fulfillment on a specific date every month.
+ * - A merchant wants to bill the 1st of every quarter.
+ * - A customer expects their delivery every Tuesday.
+ *
+ * For more details, see [About Selling Plans](https://shopify.dev/docs/apps/build/purchase-options/subscriptions/selling-plans#anchors).
+ */
 export type SellingPlanAnchor = {
   __typename?: 'SellingPlanAnchor';
   /**
-   * The cutoff day for the anchor.
+   * The cutoff day for the anchor. Specifies a buffer period before the anchor date for orders to be included in a
+   * delivery or fulfillment cycle.
    *
    * If `type` is WEEKDAY, then the value must be between 1-7. Shopify interprets
    * the days of the week according to ISO 8601, where 1 is Monday.
@@ -52466,11 +52475,11 @@ export enum WebhookSubscriptionTopic {
   ProductListingsRemove = 'PRODUCT_LISTINGS_REMOVE',
   /** The webhook topic for `product_listings/update` events. Occurs whenever a product publication is updated. Requires the `read_product_listings` scope. */
   ProductListingsUpdate = 'PRODUCT_LISTINGS_UPDATE',
-  /** The webhook topic for `product_publications/create` events. Occurs whenever a product publication for an active product is created, or whenever an existing product publication is published. Requires the `read_publications` scope. */
+  /** The webhook topic for `product_publications/create` events. Occurs whenever a product publication for an active product is created, or whenever an existing product publication is published on the app that is subscribed to this webhook topic. Note that a webhook is only emitted when there are publishing changes to the app that is subscribed to the topic (ie. no webhook will be emitted if there is a publishing change to the online store and the webhook subscriber of the topic is a third-party app). Requires the `read_publications` scope. */
   ProductPublicationsCreate = 'PRODUCT_PUBLICATIONS_CREATE',
-  /** The webhook topic for `product_publications/delete` events. Occurs whenever a product publication for an active product is removed, or whenever an existing product publication is unpublished. Requires the `read_publications` scope. */
+  /** The webhook topic for `product_publications/delete` events. Occurs whenever a product publication for an active product is removed, or whenever an existing product publication is unpublished from the app that is subscribed to this webhook topic. Note that a webhook is only emitted when there are publishing changes to the app that is subscribed to the topic (ie. no webhook will be emitted if there is a publishing change to the online store and the webhook subscriber of the topic is a third-party app). Requires the `read_publications` scope. */
   ProductPublicationsDelete = 'PRODUCT_PUBLICATIONS_DELETE',
-  /** The webhook topic for `product_publications/update` events. Occurs whenever a product publication is updated. Requires the `read_publications` scope. */
+  /** The webhook topic for `product_publications/update` events. Occurs whenever a product publication is updated from the app that is subscribed to this webhook topic. Note that a webhook is only emitted when there are publishing changes to the app that is subscribed to the topic (ie. no webhook will be emitted if there is a publishing change to the online store and the webhook subscriber of the topic is a third-party app). Requires the `read_publications` scope. */
   ProductPublicationsUpdate = 'PRODUCT_PUBLICATIONS_UPDATE',
   /** The webhook topic for `profiles/create` events. Occurs whenever a delivery profile is created Requires at least one of the following scopes: read_shipping, read_assigned_shipping. */
   ProfilesCreate = 'PROFILES_CREATE',

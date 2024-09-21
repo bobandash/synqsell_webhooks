@@ -8,7 +8,7 @@
     "region": "us-east-1",
     "resources": [],
     "detail": {
-        "X-Shopify-Topic": "products/delete",
+        "X-Shopify-Topic": "fulfillment_orders/order_routing_complete",
         "X-Shopify-Hmac-Sha256": "hmac_value",
         "X-Shopify-Shop-Domain": "example.myshopify.com",
         "X-Shopify-Webhook-Id": "webhook_id",
