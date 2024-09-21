@@ -6,7 +6,7 @@ import { DELETE_PRODUCT_MUTATION } from './graphql';
 import { initializePool } from './db';
 
 // Command to debug deleteProducts locally
-// sam local invoke DeleteProductsLambda --event ./deleteProducts/app_event.json
+// sam local invoke DeleteProductsFunction --event ./deleteProducts/app_event.json
 
 type ShopifyEvent = {
     version: string;
@@ -51,28 +51,32 @@ async function isSupplierProduct(shopifyDeletedProductId: string, client: PoolCl
 async function handleDeletedProductIsSupplierProduct(shopifyDeletedProductId: string, client: PoolClient) {
     // delete all the retailer's products,
     try {
+        console.log(shopifyDeletedProductId);
         const allRetailerImportedProductsQuery = `
-        SELECT "ImportedProduct"."shopifyProductId", "Session"."shop", "Session"."accessToken"
-        FROM "Product"
-        INNER JOIN "ImportedProduct" ON "Product"."id" = "ImportedProduct"."prismaProductId"
-        INNER JOIN "Session" ON "ImportedProduct"."retailerId" = "Session"."id"
-        WHERE "Product"."shopifyProductId" = $1
-    `;
+            SELECT "ImportedProduct"."shopifyProductId", "Session"."shop", "Session"."accessToken"
+            FROM "Product"
+            INNER JOIN "ImportedProduct" ON "Product"."id" = "ImportedProduct"."prismaProductId"
+            INNER JOIN "Session" ON "ImportedProduct"."retailerId" = "Session"."id"
+            WHERE "Product"."shopifyProductId" = $1
+        `;
         const res = await client.query(allRetailerImportedProductsQuery, [shopifyDeletedProductId]);
+        console.log(`Imported Products Count: ` + res.rows.length);
         const deleteRetailerImportedProductPromises = res.rows.map(({ shopifyProductId, shop, accessToken }) =>
             mutateAndValidateGraphQLData(
                 shop,
                 accessToken,
                 DELETE_PRODUCT_MUTATION,
                 {
-                    productId: shopifyProductId,
+                    id: shopifyProductId,
                 },
                 'Could not delete product for retailer.',
             ),
         );
         await Promise.all(deleteRetailerImportedProductPromises);
+        console.log('deleted imported products from shopify.');
         const deleteSupplierProductMutation = `DELETE FROM "Product" WHERE "shopifyProductId" = $1`;
         await client.query(deleteSupplierProductMutation, [shopifyDeletedProductId]);
+        console.log('Successfully deleted product and all imported products ' + shopifyDeletedProductId + '.');
     } catch (error) {
         console.error(error);
         throw new Error('Failed to handle supplier product deletion');
@@ -97,6 +101,10 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         client = await pool.connect();
         const isRetailerProductResult = await isRetailerProduct(shopifyDeletedProductId, client);
         const isSupplierProductResult = await isSupplierProduct(shopifyDeletedProductId, client);
+
+        console.log(event);
+        console.log(`isSupplierProduct: ${isSupplierProductResult}`);
+        console.log(`isRetailerProduct: ${isRetailerProduct}`);
 
         if (!isSupplierProductResult && !isRetailerProductResult) {
             return {
