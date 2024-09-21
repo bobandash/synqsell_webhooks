@@ -101,28 +101,45 @@ Resources:
       ToPort: 5432
       SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
 
-  CarrierServiceFunction:
-    Type: AWS::Serverless::Function
+  # CarrierServiceFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     CodeUri: carrierService/
+  #     Handler: app.lambdaHandler
+  #     Runtime: nodejs20.x
+  #     Architectures:
+  #       - x86_64
+  #     Events:
+  #       CarrierService:
+  #         Type: Api
+  #         Properties:
+  #           Path: /carrier-service
+  #           Method: post
+  #   Metadata:
+  #     BuildMethod: esbuild
+  #     BuildProperties:
+  #       Minify: true
+  #       Target: es2020
+  #       Sourcemap: true
+  #       EntryPoints:
+  #         - app.ts
+
+  # PRODUCTS/DELETE WEBHOOK SHOPIFY
+  ProductsDeleteRule:
+    Type: AWS::Events::Rule
     Properties:
-      CodeUri: carrierService/
-      Handler: app.lambdaHandler
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      Events:
-        CarrierService:
-          Type: Api
-          Properties:
-            Path: /carrier-service
-            Method: post
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: es2020
-        Sourcemap: true
-        EntryPoints:
-          - app.ts
+      Name: products_delete_rule
+      EventPattern:
+        detail-type:
+          - "shopifyWebhook"
+        detail:
+          metadata:
+            X-Shopify-Topic:
+              - prefix: "products/delete"
+      EventBusName: !Ref EventBusArn
+      Targets:
+        - Arn: !GetAtt DeleteProductsFunction.Arn
+          Id: "DeleteProductsFunctionTarget"
 
   DeleteProductsFunction:
     Type: AWS::Serverless::Function
@@ -135,19 +152,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        ShopifyProductDeleteTrigger:
-          Type: EventBridgeRule
-          Properties:
-            Pattern:
-              detail-type:
-                - "shopifyWebhook"
-              detail:
-                metadata:
-                  X-Shopify-Topic:
-                    - prefix: "products/delete"
-            EventBusName: !Ref EventBusArn
-            RuleName: products_delete_webhook
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -157,38 +161,30 @@ Resources:
         EntryPoints:
           - app.ts
 
-  FulfillmentOrdersOrderRoutingCompleteFunction:
-    Type: AWS::Serverless::Function
+  ProductsDeletePermission:
+    Type: AWS::Lambda::Permission
     Properties:
-      FunctionName: synqsell_fulfillment_orders_order_routing_complete
-      CodeUri: fulfillmentOrdersOrderRoutingComplete/
-      Handler: app.lambdaHandler
-      MemorySize: 1028
-      Timeout: 30
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-      Events:
-        ShopifyProductDeleteTrigger:
-          Type: EventBridgeRule
-          Properties:
-            Pattern:
-              detail-type:
-                - "shopifyWebhook"
-              detail:
-                metadata:
-                  X-Shopify-Topic:
-                    - prefix: "fulfillment_orders/order_routing_complete"
-            EventBusName: !Ref EventBusArn
-            RuleName: order_routing_complete_webhook
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: es2020
-        Sourcemap: true
-        EntryPoints:
-          - app.ts
+      FunctionName: !Ref DeleteProductsFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt ProductsDeleteRule.Arn
+
+  # PRODUCTS/UPDATE WEBHOOK SHOPIFY
+  ProductsUpdateRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: products_update_rule
+      EventPattern:
+        detail-type:
+          - "shopifyWebhook"
+        detail:
+          metadata:
+            X-Shopify-Topic:
+              - prefix: "products/update"
+      EventBusName: !Ref EventBusArn
+      Targets:
+        - Arn: !GetAtt ProductsUpdateFunction.Arn
+          Id: "ProductsUpdateFunctionTarget"
 
   ProductsUpdateFunction:
     Type: AWS::Serverless::Function
@@ -201,19 +197,6 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
-      Events:
-        ShopifyProductsUpdateTrigger:
-          Type: EventBridgeRule
-          Properties:
-            Pattern:
-              detail-type:
-                - "shopifyWebhook"
-              detail:
-                metadata:
-                  X-Shopify-Topic:
-                    - prefix: "products/update"
-            EventBusName: !Ref EventBusArn
-            RuleName: products_update_webhook
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
@@ -222,3 +205,44 @@ Resources:
         Sourcemap: true
         EntryPoints:
           - app.ts
+
+  ProductsUpdatePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ProductsUpdateFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt ProductsUpdateRule.Arn
+
+  # FulfillmentOrdersOrderRoutingCompleteFunction:
+  #   Type: AWS::Serverless::Function
+  #   Properties:
+  #     FunctionName: synqsell_fulfillment_orders_order_routing_complete
+  #     CodeUri: fulfillmentOrdersOrderRoutingComplete/
+  #     Handler: app.lambdaHandler
+  #     MemorySize: 1028
+  #     Timeout: 30
+  #     Runtime: nodejs20.x
+  #     Architectures:
+  #       - x86_64
+  #     Events:
+  #       ShopifyProductDeleteTrigger:
+  #         Type: EventBridgeRule
+  #         Properties:
+  #           Pattern:
+  #             detail-type:
+  #               - "shopifyWebhook"
+  #             detail:
+  #               metadata:
+  #                 X-Shopify-Topic:
+  #                   - prefix: "fulfillment_orders/order_routing_complete"
+  #           EventBusName: !Ref EventBusArn
+  #           RuleName: order_routing_complete_webhook
+  #   Metadata:
+  #     BuildMethod: esbuild
+  #     BuildProperties:
+  #       Minify: true
+  #       Target: es2020
+  #       Sourcemap: true
+  #       EntryPoints:
+  #         - app.ts
