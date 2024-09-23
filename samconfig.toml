@@ -4,7 +4,7 @@ version = 0.1
 
 [default]
 [default.global.parameters]
-stack_name = "SynqSell-SAM"
+stack_name = "Synqsell"
 
 [default.build.parameters]
 cached = true

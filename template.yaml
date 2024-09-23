@@ -1,58 +1,31 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Transform: AWS::Serverless-2016-10-31
+Transform:
+  - AWS::Serverless-2016-10-31
+  - AWS::LanguageExtensions
 Description: >
-  synqsellsam
+  SAM Template For all infrastructure for SynqSell
 
-  SAM Template For all Lambda Functions related to SynqSell
-
-# TODO: Remove the default values for the params for prod
-# Run the following commands
-# sam validate
-# sam deploy
 Parameters:
   EventBusArn:
     Type: String
     Description: "The ARN of the Shopify Event Bus"
     Default: arn:aws:events:us-east-2:149536473043:event-bus/aws.partner/shopify.com/153436192769/aws
 
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: The ID of the VPC where the Lambda function will be deployed
-    Default: vpc-060b0240b06df08e3
-
-  PrivateSubnet1:
-    Type: AWS::EC2::Subnet::Id
-    Description: The ID of the first private subnet for the Lambda function
-    Default: subnet-0957f80f9ece54aa9
-
-  PrivateSubnet2:
-    Type: AWS::EC2::Subnet::Id
-    Description: The ID of the second private subnet for the Lambda function
-    Default: subnet-06f0167a3889fd4a8
-
-  PrivateSubnet3:
-    Type: AWS::EC2::Subnet::Id
-    Description: The ID of the third private subnet for the Lambda function
-    Default: subnet-0cb1a9ce0ee9734d1
-
-  # SecretArn:
-  #   Type: String
-  #   Description: The Secrets Manager storing the database credentials
-  #   Default: "arn:aws:secretsmanager:us-east-2:149536473043:secret:rds-db-credentials/synqsell-db-dev/postgres/1726084554591-8nmsnc"
-
-  RdsSecurityGroupId:
-    Type: AWS::EC2::SecurityGroup::Id
-    Description: The ID of the security group attached to your RDS instance
-    Default: "sg-0e57c57cae80c1172"
-
   ShopifySourceName:
     Type: String
     Description: The source name for Shopify Events
     Default: "shopify"
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
-# You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
-# TODO: change environments to secrets manager
+  RDSDatabaseName:
+    Type: String
+    Description: The name of the database
+    Default: "postgres"
+
+  RDSDatabaseUsername:
+    Type: String
+    Description: The username of the master user
+    Default: "postgres"
+
 Globals:
   Api:
     Cors:
@@ -64,65 +37,243 @@ Globals:
     Timeout: 3
     Environment:
       Variables:
-        SECRET_MANAGER_ID: "1726084554591"
-        DB_USER: "postgres"
-        DB_PASSWORD: "game78910"
-        DB_HOST: "synqsell-db-dev.cd0y4ii40cdb.us-east-2.rds.amazonaws.com"
-        DB_PORT: "5432"
-        DATABASE: "postgres"
+        DB_USER: !Ref RDSDatabaseUsername
+        DB_PASSWORD: !Sub "{{resolve:secretsmanager:${DatabaseRotationSecret}:SecretString:password}}"
+        DB_HOST: !GetAtt DatabaseRDS.Endpoint.Address
+        DB_PORT: !GetAtt DatabaseRDS.Endpoint.Port
+        DATABASE: !Ref RDSDatabaseName
     LoggingConfig:
       LogFormat: JSON
     VpcConfig:
       SecurityGroupIds:
         - !Ref LambdaSecurityGroup
       SubnetIds:
-        - !Ref PrivateSubnet1
-        - !Ref PrivateSubnet2
-        - !Ref PrivateSubnet3
+        - !Ref PrivateSubnetOne
+        - !Ref PrivateSubnetTwo
 
 Resources:
-  LambdaSecurityGroup:
+  ImageHostingS3:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "synqsell-image-hosting"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+    Metadata:
+      Description: "Public S3 bucket for hosting publicly accessible images such logos for SynqSell"
+
+  ImageHostingS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ImageHostingS3
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: !Sub arn:aws:s3:::${ImageHostingS3}/*
+
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+
+  GatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref MyVPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PrivateSubnetOne:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: !Select [0, !Cidr [!GetAtt MyVPC.CidrBlock, 3, 8]]
+      MapPublicIpOnLaunch: false
+      AvailabilityZone: !Select [0, !GetAZs ""]
+
+  PrivateSubnetTwo:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: !Select [1, !Cidr [!GetAtt MyVPC.CidrBlock, 3, 8]]
+      MapPublicIpOnLaunch: false
+      AvailabilityZone: !Select [1, !GetAZs ""]
+
+  PublicSubnetOne:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      MapPublicIpOnLaunch: True
+      CidrBlock: !Select [2, !Cidr [!GetAtt MyVPC.CidrBlock, 3, 8]]
+      AvailabilityZone: !Select [0, !GetAZs ""]
+
+  PublicSubnetTwo:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref MyVPC
+      CidrBlock: !Select [3, !Cidr [!GetAtt MyVPC.CidrBlock, 4, 8]]
+      MapPublicIpOnLaunch: false
+      AvailabilityZone: !Select [1, !GetAZs ""]
+
+  # TODO: After confirm prod traction, add db password rotation
+  # https://aws.amazon.com/blogs/security/how-to-securely-provide-database-credentials-to-lambda-functions-by-using-aws-secrets-manager/#:~:text=Dynamic%20references%20provide%20a%20compact%2C%20powerful%20way%20for,the%20resolved%20value%2C%20keeping%20the%20database%20password%20safe.
+  DatabaseRotationSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: RDS database credentials
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "${!Ref RDSDatabaseUsername}"}'
+        GenerateStringKey: "password"
+        PasswordLength: 16
+        ExcludeCharacters: '"@/\'
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  DatabaseSubnets:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS instance
+      SubnetIds:
+        - !Ref PrivateSubnetOne
+        - !Ref PrivateSubnetTwo
+
+  DatabaseRDS:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBName: !Ref RDSDatabaseName
+      Engine: "postgres"
+      MasterUsername: !Ref RDSDatabaseUsername
+      MasterUserPassword: !Sub "{{resolve:secretsmanager:${DatabaseRotationSecret}:SecretString:password}}"
+      Port: "5432"
+      DBInstanceClass: "db.t3.micro"
+      AllocatedStorage: "20"
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 7
+      MultiAZ: false
+      DBSubnetGroupName: !Ref DatabaseSubnets
+      VPCSecurityGroups:
+        - !GetAtt DatabaseSecurityGroup.GroupId
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
+
+  DatabaseSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Security group for Lambda function
-      VpcId: !Ref VpcId
-      SecurityGroupEgress:
+      GroupDescription: Security group for database access
+      SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 5432
           ToPort: 5432
-          DestinationSecurityGroupId: !Ref RdsSecurityGroupId
+          SourceSecurityGroupId: !Ref LambdaSecurityGroup
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: "76.18.73.68/32" # TODO: Change to EC2 application or add logic to change depending on dev or prod env
+      VpcId: !Ref MyVPC
 
-  RdsSecurityGroupIngress:
-    Type: AWS::EC2::SecurityGroupIngress
+  LambdaSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupId: !Ref RdsSecurityGroupId
-      IpProtocol: tcp
-      FromPort: 5432
-      ToPort: 5432
-      SourceSecurityGroupId: !GetAtt LambdaSecurityGroup.GroupId
+      GroupDescription: Security group for Lambda functions
+      VpcId: !Ref MyVPC
 
-  # CarrierServiceFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     CodeUri: carrierService/
-  #     Handler: app.lambdaHandler
-  #     Runtime: nodejs20.x
-  #     Architectures:
-  #       - x86_64
-  #     Events:
-  #       CarrierService:
-  #         Type: Api
-  #         Properties:
-  #           Path: /carrier-service
-  #           Method: post
-  #   Metadata:
-  #     BuildMethod: esbuild
-  #     BuildProperties:
-  #       Minify: true
-  #       Target: es2020
-  #       Sourcemap: true
-  #       EntryPoints:
-  #         - app.ts
+  # Create a NAT instance so Lambda functions have access to Shopify's APIs
+  # TODO: after product is confirmed to be viable, either switch to multi-AZ NAT Instance or NAT Gateway
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: GatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetOneTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetOne
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnetTwoTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnetTwo
+      RouteTableId: !Ref PublicRouteTable
+
+  NATSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow HTTP and HTTPS from private subnet
+      VpcId: !Ref MyVPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !GetAtt PrivateSubnetOne.CidrBlock
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !GetAtt PrivateSubnetOne.CidrBlock
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: !GetAtt PrivateSubnetTwo.CidrBlock
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: !GetAtt PrivateSubnetTwo.CidrBlock
+
+  NATInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-037774efca2da0726
+      InstanceType: t2.micro
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref NATSecurityGroup
+          SubnetId: !Ref PublicSubnetOne
+      SourceDestCheck: false
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+
+  PrivateSubnetOneTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetOne
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateSubnetTwoTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PrivateSubnetTwo
+      RouteTableId: !Ref PrivateRouteTable
+
+  PrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      InstanceId: !Ref NATInstance
 
   # PRODUCTS/DELETE WEBHOOK SHOPIFY
   ProductsDeleteRule:
@@ -157,7 +308,7 @@ Resources:
       BuildProperties:
         Minify: true
         Target: es2020
-        Sourcemap: true
+        Sourcemap: false
         EntryPoints:
           - app.ts
 
@@ -202,7 +353,7 @@ Resources:
       BuildProperties:
         Minify: true
         Target: es2020
-        Sourcemap: true
+        Sourcemap: false
         EntryPoints:
           - app.ts
 
