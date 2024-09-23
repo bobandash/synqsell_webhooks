@@ -5,7 +5,13 @@ Transform:
 Description: >
   SAM Template For all infrastructure for SynqSell
 
+# INITIAL SET UP: NEED TO PROVIDE A KEY-PAIR TO ACCESS BASTION HOST, can only be created manually because pem is only accessible in the beginning
 Parameters:
+  BastionHostKeyName:
+    Type: String
+    Description: Key name for SSH into bastion host for database access
+    Default: synqsell-key-pair
+
   EventBusArn:
     Type: String
     Description: "The ARN of the Shopify Event Bus"
@@ -25,6 +31,11 @@ Parameters:
     Type: String
     Description: The username of the master user
     Default: "postgres"
+
+  MyCidrIP:
+    Type: String
+    Description: IP for rds access
+    Default: "76.18.73.68/32"
 
 Globals:
   Api:
@@ -136,7 +147,7 @@ Resources:
         SecretStringTemplate: '{"username": "${!Ref RDSDatabaseUsername}"}'
         GenerateStringKey: "password"
         PasswordLength: 16
-        ExcludeCharacters: '"@/\'
+        ExcludeCharacters: '$'';|&<>()[]{}!?*%^~`,:#\"'
     DeletionPolicy: Delete
     UpdateReplacePolicy: Delete
 
@@ -179,8 +190,33 @@ Resources:
         - IpProtocol: tcp
           FromPort: 5432
           ToPort: 5432
-          CidrIp: "76.18.73.68/32" # TODO: Change to EC2 application or add logic to change depending on dev or prod env
+          SourceSecurityGroupId: !Ref BastionHostSecurityGroup
       VpcId: !Ref MyVPC
+
+  # Need a Bastion host in public subnet
+  BastionHostSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for bastion host (local db access)
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref MyCidrIP
+      VpcId: !Ref MyVPC
+
+  BastionHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-037774efca2da0726
+      InstanceType: t2.micro
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref BastionHostSecurityGroup
+          SubnetId: !Ref PublicSubnetOne
+      KeyName: !Ref BastionHostKeyName
 
   LambdaSecurityGroup:
     Type: AWS::EC2::SecurityGroup
