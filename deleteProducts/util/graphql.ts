@@ -35,7 +35,7 @@ async function mutateAndValidateGraphQLData<T>(
             'Content-Type': 'application/json',
             'X-Shopify-Access-Token': accessToken,
         },
-        body: JSON.stringify({ mutation, variables }),
+        body: JSON.stringify({ query: mutation, variables }),
     });
     const { data } = await response.json();
     if (!data) {

@@ -61,8 +61,9 @@ async function handleDeletedProductIsSupplierProduct(shopifyDeletedProductId: st
         `;
         const res = await client.query(allRetailerImportedProductsQuery, [shopifyDeletedProductId]);
         console.log(`Imported Products Count: ` + res.rows.length);
-        const deleteRetailerImportedProductPromises = res.rows.map(({ shopifyProductId, shop, accessToken }) =>
-            mutateAndValidateGraphQLData(
+        const deleteRetailerImportedProductPromises = res.rows.map(({ shopifyProductId, shop, accessToken }) => {
+            console.error(shopifyProductId, shop, accessToken);
+            return mutateAndValidateGraphQLData(
                 shop,
                 accessToken,
                 DELETE_PRODUCT_MUTATION,
@@ -70,8 +71,8 @@ async function handleDeletedProductIsSupplierProduct(shopifyDeletedProductId: st
                     id: shopifyProductId,
                 },
                 'Could not delete product for retailer.',
-            ),
-        );
+            );
+        });
         await Promise.all(deleteRetailerImportedProductPromises);
         console.log('deleted imported products from shopify.');
         const deleteSupplierProductMutation = `DELETE FROM "Product" WHERE "shopifyProductId" = $1`;

@@ -69,7 +69,7 @@ describe('Delete Products Lambda Function Integration Tests', () => {
             DEFAULT_ITEMS.RETAILER_ACCESS_TOKEN,
             DELETE_PRODUCT_MUTATION,
             {
-                productId: composeGid('Product', DEFAULT_ITEMS.IMPORTED_SHOPIFY_PRODUCT_ID),
+                id: composeGid('Product', DEFAULT_ITEMS.IMPORTED_SHOPIFY_PRODUCT_ID),
             },
             'Could not delete product for retailer.',
         );
