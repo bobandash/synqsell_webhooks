@@ -224,8 +224,6 @@ Resources:
       GroupDescription: Security group for Lambda functions
       VpcId: !Ref MyVPC
 
-  # Create a NAT instance so Lambda functions have access to Shopify's APIs
-  # TODO: after product is confirmed to be viable, either switch to multi-AZ NAT Instance or NAT Gateway
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -251,41 +249,19 @@ Resources:
       SubnetId: !Ref PublicSubnetTwo
       RouteTableId: !Ref PublicRouteTable
 
-  NATSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
+  NATGateway:
+    Type: AWS::EC2::NatGateway
     Properties:
-      GroupDescription: Allow HTTP and HTTPS from private subnet
-      VpcId: !Ref MyVPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: !GetAtt PrivateSubnetOne.CidrBlock
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: !GetAtt PrivateSubnetOne.CidrBlock
-        - IpProtocol: tcp
-          FromPort: 80
-          ToPort: 80
-          CidrIp: !GetAtt PrivateSubnetTwo.CidrBlock
-        - IpProtocol: tcp
-          FromPort: 443
-          ToPort: 443
-          CidrIp: !GetAtt PrivateSubnetTwo.CidrBlock
+      AllocationId: !GetAtt NATGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnetOne
+      Tags:
+        - Key: Name
+          Value: NATGateway
 
-  NATInstance:
-    Type: AWS::EC2::Instance
+  NATGatewayEIP:
+    Type: AWS::EC2::EIP
     Properties:
-      ImageId: ami-037774efca2da0726
-      InstanceType: t2.micro
-      NetworkInterfaces:
-        - AssociatePublicIpAddress: "true"
-          DeviceIndex: "0"
-          GroupSet:
-            - !Ref NATSecurityGroup
-          SubnetId: !Ref PublicSubnetOne
-      SourceDestCheck: false
+      Domain: vpc
 
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
@@ -309,9 +285,9 @@ Resources:
     Properties:
       RouteTableId: !Ref PrivateRouteTable
       DestinationCidrBlock: 0.0.0.0/0
-      InstanceId: !Ref NATInstance
+      NatGatewayId: !Ref NATGateway
 
-  # PRODUCTS/DELETE WEBHOOK SHOPIFY
+  # Start Lambda Functions For Handling Shopify Webhooks
   ProductsDeleteRule:
     Type: AWS::Events::Rule
     Properties:
@@ -356,7 +332,6 @@ Resources:
       Principal: "events.amazonaws.com"
       SourceArn: !GetAtt ProductsDeleteRule.Arn
 
-  # PRODUCTS/UPDATE WEBHOOK SHOPIFY
   ProductsUpdateRule:
     Type: AWS::Events::Rule
     Properties:
