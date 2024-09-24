@@ -2,6 +2,12 @@
 
 ## For testing functions, I'm only testing the main cases
 
+## Common Commands
+
+sam sync --stack-name Synqsell
+I can choose what to view when I sync
+sam logs -n ProductsUpdateFunction --stack-name Synqsell -t
+
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
 - hello-world - Code for the application's Lambda function written in TypeScript.

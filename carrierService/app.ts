@@ -106,7 +106,9 @@ export const lambdaHandler = async (event: APIGatewayProxyEvent): Promise<APIGat
         }
 
         const body: RequestBody = JSON.parse(event.body);
-        const shopifyImportedVariantIds = body.rate.items.map(({ variant_id }) => composeGid('Variant', variant_id));
+        const shopifyImportedVariantIds = body.rate.items.map(({ variant_id }) =>
+            composeGid('ProductVariant', variant_id),
+        );
         if (!(await hasCustomShippingPrice(shopifyImportedVariantIds, client))) {
             return CannotHandleResponse;
         }

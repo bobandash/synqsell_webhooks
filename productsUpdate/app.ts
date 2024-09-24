@@ -36,6 +36,7 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
             isRetailerProduct(shopifyProductId, client),
             isSupplierProduct(shopifyProductId, client),
         ]);
+
         if (!isSupplierProductResult && !isRetailerProductResult) {
             return {
                 statusCode: 200,
@@ -49,7 +50,7 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         // even though it consumes GraphQL resources, we are going to broadcast the price changes
         const editedVariants = payload.variants.map((variant) => {
             return {
-                shopifyVariantId: composeGid('Variant', variant.id),
+                shopifyVariantId: composeGid('ProductVariant', variant.id),
                 hasUpdatedInventory: variant.inventory_quantity !== variant.old_inventory_quantity,
                 newInventory: variant.inventory_quantity,
                 price: variant.price,
@@ -69,6 +70,7 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
             }),
         };
     } catch (error) {
+        console.error(error);
         return {
             statusCode: 500,
             body: JSON.stringify({

@@ -39,7 +39,10 @@ export type AbandonedCheckout = Navigable & Node & {
   id: Scalars['ID']['output'];
   /** A list of the line items in this checkout. */
   lineItems: AbandonedCheckoutLineItemConnection;
-  /** The number of products in the checkout. */
+  /**
+   * The number of products in the checkout.
+   * @deprecated Use [AbandonedCheckoutLineItem.quantity](https://shopify.dev/api/admin-graphql/unstable/objects/AbandonedCheckoutLineItem#field-quantity) instead.
+   */
   lineItemsQuantity: Scalars['Int']['output'];
   /** The sum of all items in the checkout, including discounts, shipping, taxes, and tips. */
   totalPriceSet: MoneyBag;
@@ -105,18 +108,18 @@ export type AbandonedCheckoutLineItem = Node & {
 /** An auto-generated type for paginating through multiple AbandonedCheckoutLineItems. */
 export type AbandonedCheckoutLineItemConnection = {
   __typename?: 'AbandonedCheckoutLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<AbandonedCheckoutLineItemEdge>;
-  /** A list of the nodes contained in AbandonedCheckoutLineItemEdge. */
+  /** A list of nodes that are contained in AbandonedCheckoutLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<AbandonedCheckoutLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one AbandonedCheckoutLineItem and a cursor during pagination. */
 export type AbandonedCheckoutLineItemEdge = {
   __typename?: 'AbandonedCheckoutLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of AbandonedCheckoutLineItemEdge. */
   node: AbandonedCheckoutLineItem;
@@ -538,11 +541,11 @@ export type AppCatalogAppsArgs = {
 /** An auto-generated type for paginating through multiple Apps. */
 export type AppConnection = {
   __typename?: 'AppConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<AppEdge>;
-  /** A list of the nodes contained in AppEdge. */
+  /** A list of nodes that are contained in AppEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<App>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -564,18 +567,18 @@ export type AppCredit = Node & {
 /** An auto-generated type for paginating through multiple AppCredits. */
 export type AppCreditConnection = {
   __typename?: 'AppCreditConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<AppCreditEdge>;
-  /** A list of the nodes contained in AppCreditEdge. */
+  /** A list of nodes that are contained in AppCreditEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<AppCredit>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one AppCredit and a cursor during pagination. */
 export type AppCreditEdge = {
   __typename?: 'AppCreditEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of AppCreditEdge. */
   node: AppCredit;
@@ -617,7 +620,7 @@ export type AppDiscountType = {
 /** An auto-generated type which holds one App and a cursor during pagination. */
 export type AppEdge = {
   __typename?: 'AppEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of AppEdge. */
   node: App;
@@ -788,18 +791,18 @@ export enum AppInstallationCategory {
 /** An auto-generated type for paginating through multiple AppInstallations. */
 export type AppInstallationConnection = {
   __typename?: 'AppInstallationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<AppInstallationEdge>;
-  /** A list of the nodes contained in AppInstallationEdge. */
+  /** A list of nodes that are contained in AppInstallationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<AppInstallation>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one AppInstallation and a cursor during pagination. */
 export type AppInstallationEdge = {
   __typename?: 'AppInstallationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of AppInstallationEdge. */
   node: AppInstallation;
@@ -904,11 +907,11 @@ export type AppPurchaseOneTime = AppPurchase & Node & {
 /** An auto-generated type for paginating through multiple AppPurchaseOneTimes. */
 export type AppPurchaseOneTimeConnection = {
   __typename?: 'AppPurchaseOneTimeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<AppPurchaseOneTimeEdge>;
-  /** A list of the nodes contained in AppPurchaseOneTimeEdge. */
+  /** A list of nodes that are contained in AppPurchaseOneTimeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<AppPurchaseOneTime>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -933,7 +936,7 @@ export type AppPurchaseOneTimeCreatePayload = {
 /** An auto-generated type which holds one AppPurchaseOneTime and a cursor during pagination. */
 export type AppPurchaseOneTimeEdge = {
   __typename?: 'AppPurchaseOneTimeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of AppPurchaseOneTimeEdge. */
   node: AppPurchaseOneTime;
@@ -1015,18 +1018,18 @@ export type AppRevenueAttributionRecord = Node & {
 /** An auto-generated type for paginating through multiple AppRevenueAttributionRecords. */
 export type AppRevenueAttributionRecordConnection = {
   __typename?: 'AppRevenueAttributionRecordConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<AppRevenueAttributionRecordEdge>;
-  /** A list of the nodes contained in AppRevenueAttributionRecordEdge. */
+  /** A list of nodes that are contained in AppRevenueAttributionRecordEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<AppRevenueAttributionRecord>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one AppRevenueAttributionRecord and a cursor during pagination. */
 export type AppRevenueAttributionRecordEdge = {
   __typename?: 'AppRevenueAttributionRecordEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of AppRevenueAttributionRecordEdge. */
   node: AppRevenueAttributionRecord;
@@ -1092,11 +1095,11 @@ export type AppSubscriptionCancelPayload = {
 /** An auto-generated type for paginating through multiple AppSubscriptions. */
 export type AppSubscriptionConnection = {
   __typename?: 'AppSubscriptionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<AppSubscriptionEdge>;
-  /** A list of the nodes contained in AppSubscriptionEdge. */
+  /** A list of nodes that are contained in AppSubscriptionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<AppSubscription>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -1166,7 +1169,7 @@ export type AppSubscriptionDiscountValueInput = {
 /** An auto-generated type which holds one AppSubscription and a cursor during pagination. */
 export type AppSubscriptionEdge = {
   __typename?: 'AppSubscriptionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of AppSubscriptionEdge. */
   node: AppSubscription;
@@ -1356,11 +1359,11 @@ export type AppUsageRecord = Node & {
 /** An auto-generated type for paginating through multiple AppUsageRecords. */
 export type AppUsageRecordConnection = {
   __typename?: 'AppUsageRecordConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<AppUsageRecordEdge>;
-  /** A list of the nodes contained in AppUsageRecordEdge. */
+  /** A list of nodes that are contained in AppUsageRecordEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<AppUsageRecord>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -1376,7 +1379,7 @@ export type AppUsageRecordCreatePayload = {
 /** An auto-generated type which holds one AppUsageRecord and a cursor during pagination. */
 export type AppUsageRecordEdge = {
   __typename?: 'AppUsageRecordEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of AppUsageRecordEdge. */
   node: AppUsageRecord;
@@ -1946,18 +1949,18 @@ export type CalculatedDiscountApplication = {
 /** An auto-generated type for paginating through multiple CalculatedDiscountApplications. */
 export type CalculatedDiscountApplicationConnection = {
   __typename?: 'CalculatedDiscountApplicationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CalculatedDiscountApplicationEdge>;
-  /** A list of the nodes contained in CalculatedDiscountApplicationEdge. */
+  /** A list of nodes that are contained in CalculatedDiscountApplicationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CalculatedDiscountApplication>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CalculatedDiscountApplication and a cursor during pagination. */
 export type CalculatedDiscountApplicationEdge = {
   __typename?: 'CalculatedDiscountApplicationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CalculatedDiscountApplicationEdge. */
   node: CalculatedDiscountApplication;
@@ -2249,18 +2252,18 @@ export type CalculatedLineItem = {
 /** An auto-generated type for paginating through multiple CalculatedLineItems. */
 export type CalculatedLineItemConnection = {
   __typename?: 'CalculatedLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CalculatedLineItemEdge>;
-  /** A list of the nodes contained in CalculatedLineItemEdge. */
+  /** A list of nodes that are contained in CalculatedLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CalculatedLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CalculatedLineItem and a cursor during pagination. */
 export type CalculatedLineItemEdge = {
   __typename?: 'CalculatedLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CalculatedLineItemEdge. */
   node: CalculatedLineItem;
@@ -2663,11 +2666,11 @@ export type CartTransformPrivateMetafieldsArgs = {
 /** An auto-generated type for paginating through multiple CartTransforms. */
 export type CartTransformConnection = {
   __typename?: 'CartTransformConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CartTransformEdge>;
-  /** A list of the nodes contained in CartTransformEdge. */
+  /** A list of nodes that are contained in CartTransformEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CartTransform>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -2734,7 +2737,7 @@ export enum CartTransformDeleteUserErrorCode {
 /** An auto-generated type which holds one CartTransform and a cursor during pagination. */
 export type CartTransformEdge = {
   __typename?: 'CartTransformEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CartTransformEdge. */
   node: CartTransform;
@@ -2776,18 +2779,18 @@ export type CashTrackingAdjustment = Node & {
 /** An auto-generated type for paginating through multiple CashTrackingAdjustments. */
 export type CashTrackingAdjustmentConnection = {
   __typename?: 'CashTrackingAdjustmentConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CashTrackingAdjustmentEdge>;
-  /** A list of the nodes contained in CashTrackingAdjustmentEdge. */
+  /** A list of nodes that are contained in CashTrackingAdjustmentEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CashTrackingAdjustment>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CashTrackingAdjustment and a cursor during pagination. */
 export type CashTrackingAdjustmentEdge = {
   __typename?: 'CashTrackingAdjustmentEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CashTrackingAdjustmentEdge. */
   node: CashTrackingAdjustment;
@@ -2868,18 +2871,18 @@ export type CashTrackingSessionCashTransactionsArgs = {
 /** An auto-generated type for paginating through multiple CashTrackingSessions. */
 export type CashTrackingSessionConnection = {
   __typename?: 'CashTrackingSessionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CashTrackingSessionEdge>;
-  /** A list of the nodes contained in CashTrackingSessionEdge. */
+  /** A list of nodes that are contained in CashTrackingSessionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CashTrackingSession>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CashTrackingSession and a cursor during pagination. */
 export type CashTrackingSessionEdge = {
   __typename?: 'CashTrackingSessionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CashTrackingSessionEdge. */
   node: CashTrackingSession;
@@ -2943,11 +2946,11 @@ export type Catalog = {
 /** An auto-generated type for paginating through multiple Catalogs. */
 export type CatalogConnection = {
   __typename?: 'CatalogConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CatalogEdge>;
-  /** A list of the nodes contained in CatalogEdge. */
+  /** A list of nodes that are contained in CatalogEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Catalog>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -3014,7 +3017,7 @@ export type CatalogDeletePayload = {
 /** An auto-generated type which holds one Catalog and a cursor during pagination. */
 export type CatalogEdge = {
   __typename?: 'CatalogEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CatalogEdge. */
   node: Catalog;
@@ -3301,11 +3304,11 @@ export type ChannelProductsCountArgs = {
 /** An auto-generated type for paginating through multiple Channels. */
 export type ChannelConnection = {
   __typename?: 'ChannelConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ChannelEdge>;
-  /** A list of the nodes contained in ChannelEdge. */
+  /** A list of nodes that are contained in ChannelEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Channel>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -3332,7 +3335,7 @@ export type ChannelDefinition = Node & {
 /** An auto-generated type which holds one Channel and a cursor during pagination. */
 export type ChannelEdge = {
   __typename?: 'ChannelEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ChannelEdge. */
   node: Channel;
@@ -4852,18 +4855,18 @@ export type CheckoutProfile = Node & {
 /** An auto-generated type for paginating through multiple CheckoutProfiles. */
 export type CheckoutProfileConnection = {
   __typename?: 'CheckoutProfileConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CheckoutProfileEdge>;
-  /** A list of the nodes contained in CheckoutProfileEdge. */
+  /** A list of nodes that are contained in CheckoutProfileEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CheckoutProfile>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CheckoutProfile and a cursor during pagination. */
 export type CheckoutProfileEdge = {
   __typename?: 'CheckoutProfileEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CheckoutProfileEdge. */
   node: CheckoutProfile;
@@ -4926,7 +4929,7 @@ export enum CodeDiscountSortKeys {
  */
 export type Collection = HasMetafieldDefinitions & HasMetafields & HasPublishedTranslations & Node & Publishable & {
   __typename?: 'Collection';
-  /** The number of publications a resource is published to without feedback errors. */
+  /** The number of publications that a resource is published to without feedback errors. */
   availablePublicationsCount?: Maybe<Count>;
   /** A single-line, text-only description of the collection, stripped of any HTML tags and formatting that were included in the description. */
   description: Scalars['String']['output'];
@@ -5344,11 +5347,11 @@ export enum CollectionAddProductsV2UserErrorCode {
 /** An auto-generated type for paginating through multiple Collections. */
 export type CollectionConnection = {
   __typename?: 'CollectionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CollectionEdge>;
-  /** A list of the nodes contained in CollectionEdge. */
+  /** A list of nodes that are contained in CollectionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Collection>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -5381,7 +5384,7 @@ export type CollectionDeletePayload = {
 /** An auto-generated type which holds one Collection and a cursor during pagination. */
 export type CollectionEdge = {
   __typename?: 'CollectionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CollectionEdge. */
   node: Collection;
@@ -5439,18 +5442,18 @@ export type CollectionPublication = {
 /** An auto-generated type for paginating through multiple CollectionPublications. */
 export type CollectionPublicationConnection = {
   __typename?: 'CollectionPublicationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CollectionPublicationEdge>;
-  /** A list of the nodes contained in CollectionPublicationEdge. */
+  /** A list of nodes that are contained in CollectionPublicationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CollectionPublication>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CollectionPublication and a cursor during pagination. */
 export type CollectionPublicationEdge = {
   __typename?: 'CollectionPublicationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CollectionPublicationEdge. */
   node: CollectionPublication;
@@ -5748,18 +5751,18 @@ export type CombinedListingChild = {
 /** An auto-generated type for paginating through multiple CombinedListingChildren. */
 export type CombinedListingChildConnection = {
   __typename?: 'CombinedListingChildConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CombinedListingChildEdge>;
-  /** A list of the nodes contained in CombinedListingChildEdge. */
+  /** A list of nodes that are contained in CombinedListingChildEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CombinedListingChild>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CombinedListingChild and a cursor during pagination. */
 export type CombinedListingChildEdge = {
   __typename?: 'CombinedListingChildEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CombinedListingChildEdge. */
   node: CombinedListingChild;
@@ -6245,11 +6248,11 @@ export type CompanyAssignMainContactPayload = {
 /** An auto-generated type for paginating through multiple Companies. */
 export type CompanyConnection = {
   __typename?: 'CompanyConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CompanyEdge>;
-  /** A list of the nodes contained in CompanyEdge. */
+  /** A list of nodes that are contained in CompanyEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Company>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -6338,11 +6341,11 @@ export type CompanyContactAssignRolesPayload = {
 /** An auto-generated type for paginating through multiple CompanyContacts. */
 export type CompanyContactConnection = {
   __typename?: 'CompanyContactConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CompanyContactEdge>;
-  /** A list of the nodes contained in CompanyContactEdge. */
+  /** A list of nodes that are contained in CompanyContactEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CompanyContact>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -6367,7 +6370,7 @@ export type CompanyContactDeletePayload = {
 /** An auto-generated type which holds one CompanyContact and a cursor during pagination. */
 export type CompanyContactEdge = {
   __typename?: 'CompanyContactEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CompanyContactEdge. */
   node: CompanyContact;
@@ -6460,18 +6463,18 @@ export type CompanyContactRoleAssignment = Node & {
 /** An auto-generated type for paginating through multiple CompanyContactRoleAssignments. */
 export type CompanyContactRoleAssignmentConnection = {
   __typename?: 'CompanyContactRoleAssignmentConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CompanyContactRoleAssignmentEdge>;
-  /** A list of the nodes contained in CompanyContactRoleAssignmentEdge. */
+  /** A list of nodes that are contained in CompanyContactRoleAssignmentEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CompanyContactRoleAssignment>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CompanyContactRoleAssignment and a cursor during pagination. */
 export type CompanyContactRoleAssignmentEdge = {
   __typename?: 'CompanyContactRoleAssignmentEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CompanyContactRoleAssignmentEdge. */
   node: CompanyContactRoleAssignment;
@@ -6497,18 +6500,18 @@ export enum CompanyContactRoleAssignmentSortKeys {
 /** An auto-generated type for paginating through multiple CompanyContactRoles. */
 export type CompanyContactRoleConnection = {
   __typename?: 'CompanyContactRoleConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CompanyContactRoleEdge>;
-  /** A list of the nodes contained in CompanyContactRoleEdge. */
+  /** A list of nodes that are contained in CompanyContactRoleEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CompanyContactRole>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CompanyContactRole and a cursor during pagination. */
 export type CompanyContactRoleEdge = {
   __typename?: 'CompanyContactRoleEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CompanyContactRoleEdge. */
   node: CompanyContactRole;
@@ -6612,7 +6615,7 @@ export type CompanyDeletePayload = {
 /** An auto-generated type which holds one Company and a cursor during pagination. */
 export type CompanyEdge = {
   __typename?: 'CompanyEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CompanyEdge. */
   node: Company;
@@ -6897,11 +6900,11 @@ export type CompanyLocationCatalogCompanyLocationsArgs = {
 /** An auto-generated type for paginating through multiple CompanyLocations. */
 export type CompanyLocationConnection = {
   __typename?: 'CompanyLocationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CompanyLocationEdge>;
-  /** A list of the nodes contained in CompanyLocationEdge. */
+  /** A list of nodes that are contained in CompanyLocationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CompanyLocation>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -6935,7 +6938,7 @@ export type CompanyLocationDeletePayload = {
 /** An auto-generated type which holds one CompanyLocation and a cursor during pagination. */
 export type CompanyLocationEdge = {
   __typename?: 'CompanyLocationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CompanyLocationEdge. */
   node: CompanyLocation;
@@ -7119,7 +7122,7 @@ export type Count = {
   __typename?: 'Count';
   /** The count of elements. */
   count: Scalars['Int']['output'];
-  /** The count's precision, or how exact the value is. */
+  /** The count's precision, or the exactness of the value. */
   precision: CountPrecision;
 };
 
@@ -7651,18 +7654,18 @@ export type CountryHarmonizedSystemCode = {
 /** An auto-generated type for paginating through multiple CountryHarmonizedSystemCodes. */
 export type CountryHarmonizedSystemCodeConnection = {
   __typename?: 'CountryHarmonizedSystemCodeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CountryHarmonizedSystemCodeEdge>;
-  /** A list of the nodes contained in CountryHarmonizedSystemCodeEdge. */
+  /** A list of nodes that are contained in CountryHarmonizedSystemCodeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CountryHarmonizedSystemCode>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CountryHarmonizedSystemCode and a cursor during pagination. */
 export type CountryHarmonizedSystemCodeEdge = {
   __typename?: 'CountryHarmonizedSystemCodeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CountryHarmonizedSystemCodeEdge. */
   node: CountryHarmonizedSystemCode;
@@ -8067,18 +8070,18 @@ export type CurrencySetting = {
 /** An auto-generated type for paginating through multiple CurrencySettings. */
 export type CurrencySettingConnection = {
   __typename?: 'CurrencySettingConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CurrencySettingEdge>;
-  /** A list of the nodes contained in CurrencySettingEdge. */
+  /** A list of nodes that are contained in CurrencySettingEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CurrencySetting>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CurrencySetting and a cursor during pagination. */
 export type CurrencySettingEdge = {
   __typename?: 'CurrencySettingEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CurrencySettingEdge. */
   node: CurrencySetting;
@@ -8475,11 +8478,11 @@ export type CustomerCancelDataErasureUserError = DisplayableError & {
 /** An auto-generated type for paginating through multiple Customers. */
 export type CustomerConnection = {
   __typename?: 'CustomerConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CustomerEdge>;
-  /** A list of the nodes contained in CustomerEdge. */
+  /** A list of nodes that are contained in CustomerEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Customer>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -8578,7 +8581,7 @@ export type CustomerDeletePayload = {
 /** An auto-generated type which holds one Customer and a cursor during pagination. */
 export type CustomerEdge = {
   __typename?: 'CustomerEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CustomerEdge. */
   node: Customer;
@@ -9106,18 +9109,18 @@ export type CustomerMoment = {
 /** An auto-generated type for paginating through multiple CustomerMoments. */
 export type CustomerMomentConnection = {
   __typename?: 'CustomerMomentConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CustomerMomentEdge>;
-  /** A list of the nodes contained in CustomerMomentEdge. */
+  /** A list of nodes that are contained in CustomerMomentEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CustomerMoment>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CustomerMoment and a cursor during pagination. */
 export type CustomerMomentEdge = {
   __typename?: 'CustomerMomentEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CustomerMomentEdge. */
   node: CustomerMoment;
@@ -9183,11 +9186,11 @@ export type CustomerPaymentMethodSubscriptionContractsArgs = {
 /** An auto-generated type for paginating through multiple CustomerPaymentMethods. */
 export type CustomerPaymentMethodConnection = {
   __typename?: 'CustomerPaymentMethodConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CustomerPaymentMethodEdge>;
-  /** A list of the nodes contained in CustomerPaymentMethodEdge. */
+  /** A list of nodes that are contained in CustomerPaymentMethodEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CustomerPaymentMethod>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -9246,7 +9249,7 @@ export type CustomerPaymentMethodCreditCardUpdatePayload = {
 /** An auto-generated type which holds one CustomerPaymentMethod and a cursor during pagination. */
 export type CustomerPaymentMethodEdge = {
   __typename?: 'CustomerPaymentMethodEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CustomerPaymentMethodEdge. */
   node: CustomerPaymentMethod;
@@ -9672,7 +9675,7 @@ export type CustomerSegmentMemberConnection = {
   __typename?: 'CustomerSegmentMemberConnection';
   /** A list of edges. */
   edges: Array<CustomerSegmentMemberEdge>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
   /** The statistics for a given segment. */
   statistics: SegmentStatistics;
@@ -9683,7 +9686,7 @@ export type CustomerSegmentMemberConnection = {
 /** An auto-generated type which holds one CustomerSegmentMember and a cursor during pagination. */
 export type CustomerSegmentMemberEdge = {
   __typename?: 'CustomerSegmentMemberEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CustomerSegmentMemberEdge. */
   node: CustomerSegmentMember;
@@ -9963,18 +9966,18 @@ export type CustomerVisitProductInfo = {
 /** An auto-generated type for paginating through multiple CustomerVisitProductInfos. */
 export type CustomerVisitProductInfoConnection = {
   __typename?: 'CustomerVisitProductInfoConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<CustomerVisitProductInfoEdge>;
-  /** A list of the nodes contained in CustomerVisitProductInfoEdge. */
+  /** A list of nodes that are contained in CustomerVisitProductInfoEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<CustomerVisitProductInfo>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one CustomerVisitProductInfo and a cursor during pagination. */
 export type CustomerVisitProductInfoEdge = {
   __typename?: 'CustomerVisitProductInfoEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of CustomerVisitProductInfoEdge. */
   node: CustomerVisitProductInfo;
@@ -10140,18 +10143,18 @@ export type DeletionEvent = {
 /** An auto-generated type for paginating through multiple DeletionEvents. */
 export type DeletionEventConnection = {
   __typename?: 'DeletionEventConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DeletionEventEdge>;
-  /** A list of the nodes contained in DeletionEventEdge. */
+  /** A list of nodes that are contained in DeletionEventEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DeletionEvent>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DeletionEvent and a cursor during pagination. */
 export type DeletionEventEdge = {
   __typename?: 'DeletionEventEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DeletionEventEdge. */
   node: DeletionEvent;
@@ -10561,11 +10564,11 @@ export type DeliveryCarrierServiceAndLocations = {
 /** An auto-generated type for paginating through multiple DeliveryCarrierServices. */
 export type DeliveryCarrierServiceConnection = {
   __typename?: 'DeliveryCarrierServiceConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DeliveryCarrierServiceEdge>;
-  /** A list of the nodes contained in DeliveryCarrierServiceEdge. */
+  /** A list of nodes that are contained in DeliveryCarrierServiceEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DeliveryCarrierService>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -10584,7 +10587,7 @@ export type DeliveryCarrierServiceCreateInput = {
 /** An auto-generated type which holds one DeliveryCarrierService and a cursor during pagination. */
 export type DeliveryCarrierServiceEdge = {
   __typename?: 'DeliveryCarrierServiceEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DeliveryCarrierServiceEdge. */
   node: DeliveryCarrierService;
@@ -10800,11 +10803,11 @@ export type DeliveryCustomizationActivationPayload = {
 /** An auto-generated type for paginating through multiple DeliveryCustomizations. */
 export type DeliveryCustomizationConnection = {
   __typename?: 'DeliveryCustomizationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DeliveryCustomizationEdge>;
-  /** A list of the nodes contained in DeliveryCustomizationEdge. */
+  /** A list of nodes that are contained in DeliveryCustomizationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DeliveryCustomization>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -10829,7 +10832,7 @@ export type DeliveryCustomizationDeletePayload = {
 /** An auto-generated type which holds one DeliveryCustomization and a cursor during pagination. */
 export type DeliveryCustomizationEdge = {
   __typename?: 'DeliveryCustomizationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DeliveryCustomizationEdge. */
   node: DeliveryCustomization;
@@ -10998,18 +11001,18 @@ export type DeliveryLocationGroupZoneMethodDefinitionsArgs = {
 /** An auto-generated type for paginating through multiple DeliveryLocationGroupZones. */
 export type DeliveryLocationGroupZoneConnection = {
   __typename?: 'DeliveryLocationGroupZoneConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DeliveryLocationGroupZoneEdge>;
-  /** A list of the nodes contained in DeliveryLocationGroupZoneEdge. */
+  /** A list of nodes that are contained in DeliveryLocationGroupZoneEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DeliveryLocationGroupZone>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DeliveryLocationGroupZone and a cursor during pagination. */
 export type DeliveryLocationGroupZoneEdge = {
   __typename?: 'DeliveryLocationGroupZoneEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DeliveryLocationGroupZoneEdge. */
   node: DeliveryLocationGroupZone;
@@ -11111,11 +11114,11 @@ export type DeliveryMethodDefinition = Node & {
 /** An auto-generated type for paginating through multiple DeliveryMethodDefinitions. */
 export type DeliveryMethodDefinitionConnection = {
   __typename?: 'DeliveryMethodDefinitionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DeliveryMethodDefinitionEdge>;
-  /** A list of the nodes contained in DeliveryMethodDefinitionEdge. */
+  /** A list of nodes that are contained in DeliveryMethodDefinitionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DeliveryMethodDefinition>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -11131,7 +11134,7 @@ export type DeliveryMethodDefinitionCounts = {
 /** An auto-generated type which holds one DeliveryMethodDefinition and a cursor during pagination. */
 export type DeliveryMethodDefinitionEdge = {
   __typename?: 'DeliveryMethodDefinitionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DeliveryMethodDefinitionEdge. */
   node: DeliveryMethodDefinition;
@@ -11330,11 +11333,11 @@ export type DeliveryProfileUnassignedLocationsPaginatedArgs = {
 /** An auto-generated type for paginating through multiple DeliveryProfiles. */
 export type DeliveryProfileConnection = {
   __typename?: 'DeliveryProfileConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DeliveryProfileEdge>;
-  /** A list of the nodes contained in DeliveryProfileEdge. */
+  /** A list of nodes that are contained in DeliveryProfileEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DeliveryProfile>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -11350,7 +11353,7 @@ export type DeliveryProfileCreatePayload = {
 /** An auto-generated type which holds one DeliveryProfile and a cursor during pagination. */
 export type DeliveryProfileEdge = {
   __typename?: 'DeliveryProfileEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DeliveryProfileEdge. */
   node: DeliveryProfile;
@@ -11419,18 +11422,18 @@ export type DeliveryProfileItemVariantsArgs = {
 /** An auto-generated type for paginating through multiple DeliveryProfileItems. */
 export type DeliveryProfileItemConnection = {
   __typename?: 'DeliveryProfileItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DeliveryProfileItemEdge>;
-  /** A list of the nodes contained in DeliveryProfileItemEdge. */
+  /** A list of nodes that are contained in DeliveryProfileItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DeliveryProfileItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DeliveryProfileItem and a cursor during pagination. */
 export type DeliveryProfileItemEdge = {
   __typename?: 'DeliveryProfileItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DeliveryProfileItemEdge. */
   node: DeliveryProfileItem;
@@ -11745,18 +11748,18 @@ export enum DiscountApplicationAllocationMethod {
 /** An auto-generated type for paginating through multiple DiscountApplications. */
 export type DiscountApplicationConnection = {
   __typename?: 'DiscountApplicationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DiscountApplicationEdge>;
-  /** A list of the nodes contained in DiscountApplicationEdge. */
+  /** A list of nodes that are contained in DiscountApplicationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DiscountApplication>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DiscountApplication and a cursor during pagination. */
 export type DiscountApplicationEdge = {
   __typename?: 'DiscountApplicationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DiscountApplicationEdge. */
   node: DiscountApplication;
@@ -12051,11 +12054,11 @@ export type DiscountAutomaticBxgyUpdatePayload = {
 /** An auto-generated type for paginating through multiple DiscountAutomatics. */
 export type DiscountAutomaticConnection = {
   __typename?: 'DiscountAutomaticConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DiscountAutomaticEdge>;
-  /** A list of the nodes contained in DiscountAutomaticEdge. */
+  /** A list of nodes that are contained in DiscountAutomaticEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DiscountAutomatic>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -12080,7 +12083,7 @@ export type DiscountAutomaticDeletePayload = {
 /** An auto-generated type which holds one DiscountAutomatic and a cursor during pagination. */
 export type DiscountAutomaticEdge = {
   __typename?: 'DiscountAutomaticEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DiscountAutomaticEdge. */
   node: DiscountAutomatic;
@@ -12271,18 +12274,18 @@ export type DiscountAutomaticNodePrivateMetafieldsArgs = {
 /** An auto-generated type for paginating through multiple DiscountAutomaticNodes. */
 export type DiscountAutomaticNodeConnection = {
   __typename?: 'DiscountAutomaticNodeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DiscountAutomaticNodeEdge>;
-  /** A list of the nodes contained in DiscountAutomaticNodeEdge. */
+  /** A list of nodes that are contained in DiscountAutomaticNodeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DiscountAutomaticNode>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DiscountAutomaticNode and a cursor during pagination. */
 export type DiscountAutomaticNodeEdge = {
   __typename?: 'DiscountAutomaticNodeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DiscountAutomaticNodeEdge. */
   node: DiscountAutomaticNode;
@@ -12910,18 +12913,18 @@ export type DiscountCodeNodePrivateMetafieldsArgs = {
 /** An auto-generated type for paginating through multiple DiscountCodeNodes. */
 export type DiscountCodeNodeConnection = {
   __typename?: 'DiscountCodeNodeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DiscountCodeNodeEdge>;
-  /** A list of the nodes contained in DiscountCodeNodeEdge. */
+  /** A list of nodes that are contained in DiscountCodeNodeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DiscountCodeNode>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DiscountCodeNode and a cursor during pagination. */
 export type DiscountCodeNodeEdge = {
   __typename?: 'DiscountCodeNodeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DiscountCodeNodeEdge. */
   node: DiscountCodeNode;
@@ -13354,18 +13357,18 @@ export type DiscountNodePrivateMetafieldsArgs = {
 /** An auto-generated type for paginating through multiple DiscountNodes. */
 export type DiscountNodeConnection = {
   __typename?: 'DiscountNodeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DiscountNodeEdge>;
-  /** A list of the nodes contained in DiscountNodeEdge. */
+  /** A list of nodes that are contained in DiscountNodeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DiscountNode>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DiscountNode and a cursor during pagination. */
 export type DiscountNodeEdge = {
   __typename?: 'DiscountNodeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DiscountNodeEdge. */
   node: DiscountNode;
@@ -13521,18 +13524,18 @@ export type DiscountRedeemCodeBulkCreationCode = {
 /** An auto-generated type for paginating through multiple DiscountRedeemCodeBulkCreationCodes. */
 export type DiscountRedeemCodeBulkCreationCodeConnection = {
   __typename?: 'DiscountRedeemCodeBulkCreationCodeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DiscountRedeemCodeBulkCreationCodeEdge>;
-  /** A list of the nodes contained in DiscountRedeemCodeBulkCreationCodeEdge. */
+  /** A list of nodes that are contained in DiscountRedeemCodeBulkCreationCodeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DiscountRedeemCodeBulkCreationCode>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DiscountRedeemCodeBulkCreationCode and a cursor during pagination. */
 export type DiscountRedeemCodeBulkCreationCodeEdge = {
   __typename?: 'DiscountRedeemCodeBulkCreationCodeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DiscountRedeemCodeBulkCreationCodeEdge. */
   node: DiscountRedeemCodeBulkCreationCode;
@@ -13541,18 +13544,18 @@ export type DiscountRedeemCodeBulkCreationCodeEdge = {
 /** An auto-generated type for paginating through multiple DiscountRedeemCodes. */
 export type DiscountRedeemCodeConnection = {
   __typename?: 'DiscountRedeemCodeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DiscountRedeemCodeEdge>;
-  /** A list of the nodes contained in DiscountRedeemCodeEdge. */
+  /** A list of nodes that are contained in DiscountRedeemCodeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DiscountRedeemCode>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DiscountRedeemCode and a cursor during pagination. */
 export type DiscountRedeemCodeEdge = {
   __typename?: 'DiscountRedeemCodeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DiscountRedeemCodeEdge. */
   node: DiscountRedeemCode;
@@ -14230,11 +14233,11 @@ export type DraftOrderCompletePayload = {
 /** An auto-generated type for paginating through multiple DraftOrders. */
 export type DraftOrderConnection = {
   __typename?: 'DraftOrderConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DraftOrderEdge>;
-  /** A list of the nodes contained in DraftOrderEdge. */
+  /** A list of nodes that are contained in DraftOrderEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DraftOrder>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -14307,7 +14310,7 @@ export type DraftOrderDuplicatePayload = {
 /** An auto-generated type which holds one DraftOrder and a cursor during pagination. */
 export type DraftOrderEdge = {
   __typename?: 'DraftOrderEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DraftOrderEdge. */
   node: DraftOrder;
@@ -14535,18 +14538,18 @@ export type DraftOrderLineItem = Node & {
 /** An auto-generated type for paginating through multiple DraftOrderLineItems. */
 export type DraftOrderLineItemConnection = {
   __typename?: 'DraftOrderLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<DraftOrderLineItemEdge>;
-  /** A list of the nodes contained in DraftOrderLineItemEdge. */
+  /** A list of nodes that are contained in DraftOrderLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<DraftOrderLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one DraftOrderLineItem and a cursor during pagination. */
 export type DraftOrderLineItemEdge = {
   __typename?: 'DraftOrderLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of DraftOrderLineItemEdge. */
   node: DraftOrderLineItem;
@@ -14885,18 +14888,18 @@ export type EventBridgeWebhookSubscriptionUpdatePayload = {
 /** An auto-generated type for paginating through multiple Events. */
 export type EventConnection = {
   __typename?: 'EventConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<EventEdge>;
-  /** A list of the nodes contained in EventEdge. */
+  /** A list of nodes that are contained in EventEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Event>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one Event and a cursor during pagination. */
 export type EventEdge = {
   __typename?: 'EventEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of EventEdge. */
   node: Event;
@@ -14946,18 +14949,18 @@ export type ExchangeLineItemAppliedDiscountValueInput = {
 /** An auto-generated type for paginating through multiple ExchangeLineItems. */
 export type ExchangeLineItemConnection = {
   __typename?: 'ExchangeLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ExchangeLineItemEdge>;
-  /** A list of the nodes contained in ExchangeLineItemEdge. */
+  /** A list of nodes that are contained in ExchangeLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ExchangeLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ExchangeLineItem and a cursor during pagination. */
 export type ExchangeLineItemEdge = {
   __typename?: 'ExchangeLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ExchangeLineItemEdge. */
   node: ExchangeLineItem;
@@ -15020,18 +15023,18 @@ export type ExchangeV2Additions = {
 /** An auto-generated type for paginating through multiple ExchangeV2s. */
 export type ExchangeV2Connection = {
   __typename?: 'ExchangeV2Connection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ExchangeV2Edge>;
-  /** A list of the nodes contained in ExchangeV2Edge. */
+  /** A list of nodes that are contained in ExchangeV2Edge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ExchangeV2>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ExchangeV2 and a cursor during pagination. */
 export type ExchangeV2Edge = {
   __typename?: 'ExchangeV2Edge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ExchangeV2Edge. */
   node: ExchangeV2;
@@ -15225,11 +15228,11 @@ export type FileAcknowledgeUpdateFailedPayload = {
 /** An auto-generated type for paginating through multiple Files. */
 export type FileConnection = {
   __typename?: 'FileConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<FileEdge>;
-  /** A list of the nodes contained in FileEdge. */
+  /** A list of nodes that are contained in FileEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<File>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -15298,7 +15301,7 @@ export type FileDeletePayload = {
 /** An auto-generated type which holds one File and a cursor during pagination. */
 export type FileEdge = {
   __typename?: 'FileEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of FileEdge. */
   node: File;
@@ -15696,11 +15699,11 @@ export type FulfillmentCancelPayload = {
 /** An auto-generated type for paginating through multiple Fulfillments. */
 export type FulfillmentConnection = {
   __typename?: 'FulfillmentConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<FulfillmentEdge>;
-  /** A list of the nodes contained in FulfillmentEdge. */
+  /** A list of nodes that are contained in FulfillmentEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Fulfillment>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -15882,7 +15885,7 @@ export enum FulfillmentDisplayStatus {
 /** An auto-generated type which holds one Fulfillment and a cursor during pagination. */
 export type FulfillmentEdge = {
   __typename?: 'FulfillmentEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of FulfillmentEdge. */
   node: Fulfillment;
@@ -15922,11 +15925,11 @@ export type FulfillmentEvent = Node & {
 /** An auto-generated type for paginating through multiple FulfillmentEvents. */
 export type FulfillmentEventConnection = {
   __typename?: 'FulfillmentEventConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<FulfillmentEventEdge>;
-  /** A list of the nodes contained in FulfillmentEventEdge. */
+  /** A list of nodes that are contained in FulfillmentEventEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<FulfillmentEvent>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -15942,7 +15945,7 @@ export type FulfillmentEventCreatePayload = {
 /** An auto-generated type which holds one FulfillmentEvent and a cursor during pagination. */
 export type FulfillmentEventEdge = {
   __typename?: 'FulfillmentEventEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of FulfillmentEventEdge. */
   node: FulfillmentEvent;
@@ -16070,18 +16073,18 @@ export type FulfillmentLineItem = Node & {
 /** An auto-generated type for paginating through multiple FulfillmentLineItems. */
 export type FulfillmentLineItemConnection = {
   __typename?: 'FulfillmentLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<FulfillmentLineItemEdge>;
-  /** A list of the nodes contained in FulfillmentLineItemEdge. */
+  /** A list of nodes that are contained in FulfillmentLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<FulfillmentLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one FulfillmentLineItem and a cursor during pagination. */
 export type FulfillmentLineItemEdge = {
   __typename?: 'FulfillmentLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of FulfillmentLineItemEdge. */
   node: FulfillmentLineItem;
@@ -17334,11 +17337,11 @@ export type FulfillmentOrderClosePayload = {
 /** An auto-generated type for paginating through multiple FulfillmentOrders. */
 export type FulfillmentOrderConnection = {
   __typename?: 'FulfillmentOrderConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<FulfillmentOrderEdge>;
-  /** A list of the nodes contained in FulfillmentOrderEdge. */
+  /** A list of nodes that are contained in FulfillmentOrderEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<FulfillmentOrder>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -17374,7 +17377,7 @@ export type FulfillmentOrderDestination = Node & {
 /** An auto-generated type which holds one FulfillmentOrder and a cursor during pagination. */
 export type FulfillmentOrderEdge = {
   __typename?: 'FulfillmentOrderEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of FulfillmentOrderEdge. */
   node: FulfillmentOrder;
@@ -17490,18 +17493,18 @@ export type FulfillmentOrderLineItem = Node & {
 /** An auto-generated type for paginating through multiple FulfillmentOrderLineItems. */
 export type FulfillmentOrderLineItemConnection = {
   __typename?: 'FulfillmentOrderLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<FulfillmentOrderLineItemEdge>;
-  /** A list of the nodes contained in FulfillmentOrderLineItemEdge. */
+  /** A list of nodes that are contained in FulfillmentOrderLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<FulfillmentOrderLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one FulfillmentOrderLineItem and a cursor during pagination. */
 export type FulfillmentOrderLineItemEdge = {
   __typename?: 'FulfillmentOrderLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of FulfillmentOrderLineItemEdge. */
   node: FulfillmentOrderLineItem;
@@ -17633,18 +17636,18 @@ export type FulfillmentOrderLocationForMoveUnavailableLineItemsArgs = {
 /** An auto-generated type for paginating through multiple FulfillmentOrderLocationForMoves. */
 export type FulfillmentOrderLocationForMoveConnection = {
   __typename?: 'FulfillmentOrderLocationForMoveConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<FulfillmentOrderLocationForMoveEdge>;
-  /** A list of the nodes contained in FulfillmentOrderLocationForMoveEdge. */
+  /** A list of nodes that are contained in FulfillmentOrderLocationForMoveEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<FulfillmentOrderLocationForMove>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one FulfillmentOrderLocationForMove and a cursor during pagination. */
 export type FulfillmentOrderLocationForMoveEdge = {
   __typename?: 'FulfillmentOrderLocationForMoveEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of FulfillmentOrderLocationForMoveEdge. */
   node: FulfillmentOrderLocationForMove;
@@ -17680,18 +17683,18 @@ export type FulfillmentOrderMerchantRequest = Node & {
 /** An auto-generated type for paginating through multiple FulfillmentOrderMerchantRequests. */
 export type FulfillmentOrderMerchantRequestConnection = {
   __typename?: 'FulfillmentOrderMerchantRequestConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<FulfillmentOrderMerchantRequestEdge>;
-  /** A list of the nodes contained in FulfillmentOrderMerchantRequestEdge. */
+  /** A list of nodes that are contained in FulfillmentOrderMerchantRequestEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<FulfillmentOrderMerchantRequest>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one FulfillmentOrderMerchantRequest and a cursor during pagination. */
 export type FulfillmentOrderMerchantRequestEdge = {
   __typename?: 'FulfillmentOrderMerchantRequestEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of FulfillmentOrderMerchantRequestEdge. */
   node: FulfillmentOrderMerchantRequest;
@@ -18686,11 +18689,11 @@ export type GiftCard = Node & {
 /** An auto-generated type for paginating through multiple GiftCards. */
 export type GiftCardConnection = {
   __typename?: 'GiftCardConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<GiftCardEdge>;
-  /** A list of the nodes contained in GiftCardEdge. */
+  /** A list of nodes that are contained in GiftCardEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<GiftCard>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -18740,7 +18743,7 @@ export type GiftCardDisablePayload = {
 /** An auto-generated type which holds one GiftCard and a cursor during pagination. */
 export type GiftCardEdge = {
   __typename?: 'GiftCardEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of GiftCardEdge. */
   node: GiftCard;
@@ -19127,11 +19130,11 @@ export type ImageUrlArgs = {
 /** An auto-generated type for paginating through multiple Images. */
 export type ImageConnection = {
   __typename?: 'ImageConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ImageEdge>;
-  /** A list of the nodes contained in ImageEdge. */
+  /** A list of nodes that are contained in ImageEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Image>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -19148,7 +19151,7 @@ export enum ImageContentType {
 /** An auto-generated type which holds one Image and a cursor during pagination. */
 export type ImageEdge = {
   __typename?: 'ImageEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ImageEdge. */
   node: Image;
@@ -19533,18 +19536,18 @@ export type InventoryItemInventoryLevelsArgs = {
 /** An auto-generated type for paginating through multiple InventoryItems. */
 export type InventoryItemConnection = {
   __typename?: 'InventoryItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<InventoryItemEdge>;
-  /** A list of the nodes contained in InventoryItemEdge. */
+  /** A list of nodes that are contained in InventoryItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<InventoryItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one InventoryItem and a cursor during pagination. */
 export type InventoryItemEdge = {
   __typename?: 'InventoryItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of InventoryItemEdge. */
   node: InventoryItem;
@@ -19648,18 +19651,18 @@ export type InventoryLevelScheduledChangesArgs = {
 /** An auto-generated type for paginating through multiple InventoryLevels. */
 export type InventoryLevelConnection = {
   __typename?: 'InventoryLevelConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<InventoryLevelEdge>;
-  /** A list of the nodes contained in InventoryLevelEdge. */
+  /** A list of nodes that are contained in InventoryLevelEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<InventoryLevel>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one InventoryLevel and a cursor during pagination. */
 export type InventoryLevelEdge = {
   __typename?: 'InventoryLevelEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of InventoryLevelEdge. */
   node: InventoryLevel;
@@ -19866,18 +19869,18 @@ export type InventoryScheduledChange = {
 /** An auto-generated type for paginating through multiple InventoryScheduledChanges. */
 export type InventoryScheduledChangeConnection = {
   __typename?: 'InventoryScheduledChangeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<InventoryScheduledChangeEdge>;
-  /** A list of the nodes contained in InventoryScheduledChangeEdge. */
+  /** A list of nodes that are contained in InventoryScheduledChangeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<InventoryScheduledChange>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one InventoryScheduledChange and a cursor during pagination. */
 export type InventoryScheduledChangeEdge = {
   __typename?: 'InventoryScheduledChangeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of InventoryScheduledChangeEdge. */
   node: InventoryScheduledChange;
@@ -20631,18 +20634,18 @@ export type LineItemTaxLinesArgs = {
 /** An auto-generated type for paginating through multiple LineItems. */
 export type LineItemConnection = {
   __typename?: 'LineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<LineItemEdge>;
-  /** A list of the nodes contained in LineItemEdge. */
+  /** A list of nodes that are contained in LineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<LineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one LineItem and a cursor during pagination. */
 export type LineItemEdge = {
   __typename?: 'LineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of LineItemEdge. */
   node: LineItem;
@@ -20790,18 +20793,18 @@ export type LineItemMutableTaxLinesArgs = {
 /** An auto-generated type for paginating through multiple LineItemMutables. */
 export type LineItemMutableConnection = {
   __typename?: 'LineItemMutableConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<LineItemMutableEdge>;
-  /** A list of the nodes contained in LineItemMutableEdge. */
+  /** A list of nodes that are contained in LineItemMutableEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<LineItemMutable>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one LineItemMutable and a cursor during pagination. */
 export type LineItemMutableEdge = {
   __typename?: 'LineItemMutableEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of LineItemMutableEdge. */
   node: LineItemMutable;
@@ -20944,18 +20947,18 @@ export type LocalizationExtension = {
 /** An auto-generated type for paginating through multiple LocalizationExtensions. */
 export type LocalizationExtensionConnection = {
   __typename?: 'LocalizationExtensionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<LocalizationExtensionEdge>;
-  /** A list of the nodes contained in LocalizationExtensionEdge. */
+  /** A list of nodes that are contained in LocalizationExtensionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<LocalizationExtension>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one LocalizationExtension and a cursor during pagination. */
 export type LocalizationExtensionEdge = {
   __typename?: 'LocalizationExtensionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of LocalizationExtensionEdge. */
   node: LocalizationExtension;
@@ -21353,11 +21356,11 @@ export type LocationAddress = {
 /** An auto-generated type for paginating through multiple Locations. */
 export type LocationConnection = {
   __typename?: 'LocationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<LocationEdge>;
-  /** A list of the nodes contained in LocationEdge. */
+  /** A list of nodes that are contained in LocationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Location>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -21456,7 +21459,7 @@ export enum LocationDeleteUserErrorCode {
 /** An auto-generated type which holds one Location and a cursor during pagination. */
 export type LocationEdge = {
   __typename?: 'LocationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of LocationEdge. */
   node: Location;
@@ -21695,18 +21698,18 @@ export type MailingAddressFormattedArgs = {
 /** An auto-generated type for paginating through multiple MailingAddresses. */
 export type MailingAddressConnection = {
   __typename?: 'MailingAddressConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MailingAddressEdge>;
-  /** A list of the nodes contained in MailingAddressEdge. */
+  /** A list of nodes that are contained in MailingAddressEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MailingAddress>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one MailingAddress and a cursor during pagination. */
 export type MailingAddressEdge = {
   __typename?: 'MailingAddressEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MailingAddressEdge. */
   node: MailingAddress;
@@ -22030,18 +22033,18 @@ export type MarketCatalogMarketsArgs = {
 /** An auto-generated type for paginating through multiple MarketCatalogs. */
 export type MarketCatalogConnection = {
   __typename?: 'MarketCatalogConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MarketCatalogEdge>;
-  /** A list of the nodes contained in MarketCatalogEdge. */
+  /** A list of nodes that are contained in MarketCatalogEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MarketCatalog>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one MarketCatalog and a cursor during pagination. */
 export type MarketCatalogEdge = {
   __typename?: 'MarketCatalogEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MarketCatalogEdge. */
   node: MarketCatalog;
@@ -22050,11 +22053,11 @@ export type MarketCatalogEdge = {
 /** An auto-generated type for paginating through multiple Markets. */
 export type MarketConnection = {
   __typename?: 'MarketConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MarketEdge>;
-  /** A list of the nodes contained in MarketEdge. */
+  /** A list of nodes that are contained in MarketEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Market>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -22175,7 +22178,7 @@ export type MarketDeletePayload = {
 /** An auto-generated type which holds one Market and a cursor during pagination. */
 export type MarketEdge = {
   __typename?: 'MarketEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MarketEdge. */
   node: Market;
@@ -22212,18 +22215,18 @@ export type MarketLocalizableResourceMarketLocalizationsArgs = {
 /** An auto-generated type for paginating through multiple MarketLocalizableResources. */
 export type MarketLocalizableResourceConnection = {
   __typename?: 'MarketLocalizableResourceConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MarketLocalizableResourceEdge>;
-  /** A list of the nodes contained in MarketLocalizableResourceEdge. */
+  /** A list of nodes that are contained in MarketLocalizableResourceEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MarketLocalizableResource>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one MarketLocalizableResource and a cursor during pagination. */
 export type MarketLocalizableResourceEdge = {
   __typename?: 'MarketLocalizableResourceEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MarketLocalizableResourceEdge. */
   node: MarketLocalizableResource;
@@ -22293,11 +22296,11 @@ export type MarketRegion = {
 /** An auto-generated type for paginating through multiple MarketRegions. */
 export type MarketRegionConnection = {
   __typename?: 'MarketRegionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MarketRegionEdge>;
-  /** A list of the nodes contained in MarketRegionEdge. */
+  /** A list of nodes that are contained in MarketRegionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MarketRegion>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -22334,7 +22337,7 @@ export type MarketRegionDeletePayload = {
 /** An auto-generated type which holds one MarketRegion and a cursor during pagination. */
 export type MarketRegionEdge = {
   __typename?: 'MarketRegionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MarketRegionEdge. */
   node: MarketRegion;
@@ -22508,11 +22511,11 @@ export type MarketWebPresence = Node & {
 /** An auto-generated type for paginating through multiple MarketWebPresences. */
 export type MarketWebPresenceConnection = {
   __typename?: 'MarketWebPresenceConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MarketWebPresenceEdge>;
-  /** A list of the nodes contained in MarketWebPresenceEdge. */
+  /** A list of nodes that are contained in MarketWebPresenceEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MarketWebPresence>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -22555,7 +22558,7 @@ export type MarketWebPresenceDeletePayload = {
 /** An auto-generated type which holds one MarketWebPresence and a cursor during pagination. */
 export type MarketWebPresenceEdge = {
   __typename?: 'MarketWebPresenceEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MarketWebPresenceEdge. */
   node: MarketWebPresence;
@@ -22696,11 +22699,11 @@ export type MarketingActivityBudgetInput = {
 /** An auto-generated type for paginating through multiple MarketingActivities. */
 export type MarketingActivityConnection = {
   __typename?: 'MarketingActivityConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MarketingActivityEdge>;
-  /** A list of the nodes contained in MarketingActivityEdge. */
+  /** A list of nodes that are contained in MarketingActivityEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MarketingActivity>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -22805,7 +22808,7 @@ export type MarketingActivityDeleteExternalPayload = {
 /** An auto-generated type which holds one MarketingActivity and a cursor during pagination. */
 export type MarketingActivityEdge = {
   __typename?: 'MarketingActivityEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MarketingActivityEdge. */
   node: MarketingActivity;
@@ -23330,18 +23333,18 @@ export type MarketingEvent = LegacyInteroperability & Node & {
 /** An auto-generated type for paginating through multiple MarketingEvents. */
 export type MarketingEventConnection = {
   __typename?: 'MarketingEventConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MarketingEventEdge>;
-  /** A list of the nodes contained in MarketingEventEdge. */
+  /** A list of nodes that are contained in MarketingEventEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MarketingEvent>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one MarketingEvent and a cursor during pagination. */
 export type MarketingEventEdge = {
   __typename?: 'MarketingEventEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MarketingEventEdge. */
   node: MarketingEvent;
@@ -23411,11 +23414,11 @@ export type Media = {
 /** An auto-generated type for paginating through multiple Media. */
 export type MediaConnection = {
   __typename?: 'MediaConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MediaEdge>;
-  /** A list of the nodes contained in MediaEdge. */
+  /** A list of nodes that are contained in MediaEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Media>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -23434,7 +23437,7 @@ export enum MediaContentType {
 /** An auto-generated type which holds one Media and a cursor during pagination. */
 export type MediaEdge = {
   __typename?: 'MediaEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MediaEdge. */
   node: Media;
@@ -23772,11 +23775,11 @@ export type MenuTranslationsArgs = {
 /** An auto-generated type for paginating through multiple Menus. */
 export type MenuConnection = {
   __typename?: 'MenuConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MenuEdge>;
-  /** A list of the nodes contained in MenuEdge. */
+  /** A list of nodes that are contained in MenuEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Menu>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -23839,7 +23842,7 @@ export enum MenuDeleteUserErrorCode {
 /** An auto-generated type which holds one Menu and a cursor during pagination. */
 export type MenuEdge = {
   __typename?: 'MenuEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MenuEdge. */
   node: Menu;
@@ -24153,11 +24156,11 @@ export enum MetafieldAdminAccessInput {
 /** An auto-generated type for paginating through multiple Metafields. */
 export type MetafieldConnection = {
   __typename?: 'MetafieldConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MetafieldEdge>;
-  /** A list of the nodes contained in MetafieldEdge. */
+  /** A list of nodes that are contained in MetafieldEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Metafield>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -24260,11 +24263,11 @@ export type MetafieldDefinitionMetafieldsCountArgs = {
 /** An auto-generated type for paginating through multiple MetafieldDefinitions. */
 export type MetafieldDefinitionConnection = {
   __typename?: 'MetafieldDefinitionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MetafieldDefinitionEdge>;
-  /** A list of the nodes contained in MetafieldDefinitionEdge. */
+  /** A list of nodes that are contained in MetafieldDefinitionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MetafieldDefinition>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -24296,18 +24299,18 @@ export type MetafieldDefinitionConstraintValue = {
 /** An auto-generated type for paginating through multiple MetafieldDefinitionConstraintValues. */
 export type MetafieldDefinitionConstraintValueConnection = {
   __typename?: 'MetafieldDefinitionConstraintValueConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MetafieldDefinitionConstraintValueEdge>;
-  /** A list of the nodes contained in MetafieldDefinitionConstraintValueEdge. */
+  /** A list of nodes that are contained in MetafieldDefinitionConstraintValueEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MetafieldDefinitionConstraintValue>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one MetafieldDefinitionConstraintValue and a cursor during pagination. */
 export type MetafieldDefinitionConstraintValueEdge = {
   __typename?: 'MetafieldDefinitionConstraintValueEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MetafieldDefinitionConstraintValueEdge. */
   node: MetafieldDefinitionConstraintValue;
@@ -24435,7 +24438,7 @@ export enum MetafieldDefinitionDeleteUserErrorCode {
 /** An auto-generated type which holds one MetafieldDefinition and a cursor during pagination. */
 export type MetafieldDefinitionEdge = {
   __typename?: 'MetafieldDefinitionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MetafieldDefinitionEdge. */
   node: MetafieldDefinition;
@@ -24756,7 +24759,7 @@ export type MetafieldDeletePayload = {
 /** An auto-generated type which holds one Metafield and a cursor during pagination. */
 export type MetafieldEdge = {
   __typename?: 'MetafieldEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MetafieldEdge. */
   node: Metafield;
@@ -24896,18 +24899,18 @@ export type MetafieldReference = Collection | Company | Customer | GenericFile |
 /** An auto-generated type for paginating through multiple MetafieldReferences. */
 export type MetafieldReferenceConnection = {
   __typename?: 'MetafieldReferenceConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MetafieldReferenceEdge>;
-  /** A list of the nodes contained in MetafieldReferenceEdge. */
+  /** A list of nodes that are contained in MetafieldReferenceEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Maybe<MetafieldReference>>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one MetafieldReference and a cursor during pagination. */
 export type MetafieldReferenceEdge = {
   __typename?: 'MetafieldReferenceEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MetafieldReferenceEdge. */
   node?: Maybe<MetafieldReference>;
@@ -24938,18 +24941,18 @@ export type MetafieldRelation = {
 /** An auto-generated type for paginating through multiple MetafieldRelations. */
 export type MetafieldRelationConnection = {
   __typename?: 'MetafieldRelationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MetafieldRelationEdge>;
-  /** A list of the nodes contained in MetafieldRelationEdge. */
+  /** A list of nodes that are contained in MetafieldRelationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MetafieldRelation>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one MetafieldRelation and a cursor during pagination. */
 export type MetafieldRelationEdge = {
   __typename?: 'MetafieldRelationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MetafieldRelationEdge. */
   node: MetafieldRelation;
@@ -25006,11 +25009,11 @@ export type MetafieldStorefrontVisibility = LegacyInteroperability & Node & {
 /** An auto-generated type for paginating through multiple MetafieldStorefrontVisibilities. */
 export type MetafieldStorefrontVisibilityConnection = {
   __typename?: 'MetafieldStorefrontVisibilityConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MetafieldStorefrontVisibilityEdge>;
-  /** A list of the nodes contained in MetafieldStorefrontVisibilityEdge. */
+  /** A list of nodes that are contained in MetafieldStorefrontVisibilityEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MetafieldStorefrontVisibility>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -25035,7 +25038,7 @@ export type MetafieldStorefrontVisibilityDeletePayload = {
 /** An auto-generated type which holds one MetafieldStorefrontVisibility and a cursor during pagination. */
 export type MetafieldStorefrontVisibilityEdge = {
   __typename?: 'MetafieldStorefrontVisibilityEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MetafieldStorefrontVisibilityEdge. */
   node: MetafieldStorefrontVisibility;
@@ -25460,11 +25463,11 @@ export type MetaobjectCapabilityUpdateInput = {
 /** An auto-generated type for paginating through multiple Metaobjects. */
 export type MetaobjectConnection = {
   __typename?: 'MetaobjectConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MetaobjectEdge>;
-  /** A list of the nodes contained in MetaobjectEdge. */
+  /** A list of nodes that are contained in MetaobjectEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Metaobject>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -25533,11 +25536,11 @@ export type MetaobjectDefinitionMetaobjectsArgs = {
 /** An auto-generated type for paginating through multiple MetaobjectDefinitions. */
 export type MetaobjectDefinitionConnection = {
   __typename?: 'MetaobjectDefinitionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MetaobjectDefinitionEdge>;
-  /** A list of the nodes contained in MetaobjectDefinitionEdge. */
+  /** A list of nodes that are contained in MetaobjectDefinitionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MetaobjectDefinition>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -25584,7 +25587,7 @@ export type MetaobjectDefinitionDeletePayload = {
 /** An auto-generated type which holds one MetaobjectDefinition and a cursor during pagination. */
 export type MetaobjectDefinitionEdge = {
   __typename?: 'MetaobjectDefinitionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MetaobjectDefinitionEdge. */
   node: MetaobjectDefinition;
@@ -25633,7 +25636,7 @@ export type MetaobjectDeletePayload = {
 /** An auto-generated type which holds one Metaobject and a cursor during pagination. */
 export type MetaobjectEdge = {
   __typename?: 'MetaobjectEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MetaobjectEdge. */
   node: Metaobject;
@@ -25939,11 +25942,11 @@ export type MobilePlatformApplication = AndroidApplication | AppleApplication;
 /** An auto-generated type for paginating through multiple MobilePlatformApplications. */
 export type MobilePlatformApplicationConnection = {
   __typename?: 'MobilePlatformApplicationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<MobilePlatformApplicationEdge>;
-  /** A list of the nodes contained in MobilePlatformApplicationEdge. */
+  /** A list of nodes that are contained in MobilePlatformApplicationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<MobilePlatformApplication>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -26000,7 +26003,7 @@ export type MobilePlatformApplicationDeletePayload = {
 /** An auto-generated type which holds one MobilePlatformApplication and a cursor during pagination. */
 export type MobilePlatformApplicationEdge = {
   __typename?: 'MobilePlatformApplicationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of MobilePlatformApplicationEdge. */
   node: MobilePlatformApplication;
@@ -26247,7 +26250,6 @@ export type Mutation = {
    *
    * To learn more about updating checkout branding settings, refer to the checkout branding
    * [tutorial](https://shopify.dev/docs/apps/checkout/styling).
-   * @deprecated To be replaced with checkoutAndAccountsConfigurationUpdate.
    */
   checkoutBrandingUpsert?: Maybe<CheckoutBrandingUpsertPayload>;
   /** Adds products to a collection. */
@@ -32320,11 +32322,11 @@ export type OrderClosePayload = {
 /** An auto-generated type for paginating through multiple Orders. */
 export type OrderConnection = {
   __typename?: 'OrderConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<OrderEdge>;
-  /** A list of the nodes contained in OrderEdge. */
+  /** A list of nodes that are contained in OrderEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Order>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -32440,7 +32442,7 @@ export type OrderDisputeSummary = Node & {
 /** An auto-generated type which holds one Order and a cursor during pagination. */
 export type OrderEdge = {
   __typename?: 'OrderEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of OrderEdge. */
   node: Order;
@@ -33084,11 +33086,11 @@ export type OrderStagedChangeAddVariant = {
 /** An auto-generated type for paginating through multiple OrderStagedChanges. */
 export type OrderStagedChangeConnection = {
   __typename?: 'OrderStagedChangeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<OrderStagedChangeEdge>;
-  /** A list of the nodes contained in OrderStagedChangeEdge. */
+  /** A list of nodes that are contained in OrderStagedChangeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<OrderStagedChange>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -33106,7 +33108,7 @@ export type OrderStagedChangeDecrementItem = {
 /** An auto-generated type which holds one OrderStagedChange and a cursor during pagination. */
 export type OrderStagedChangeEdge = {
   __typename?: 'OrderStagedChangeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of OrderStagedChangeEdge. */
   node: OrderStagedChange;
@@ -33234,18 +33236,18 @@ export type OrderTransaction = Node & {
 /** An auto-generated type for paginating through multiple OrderTransactions. */
 export type OrderTransactionConnection = {
   __typename?: 'OrderTransactionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<OrderTransactionEdge>;
-  /** A list of the nodes contained in OrderTransactionEdge. */
+  /** A list of nodes that are contained in OrderTransactionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<OrderTransaction>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one OrderTransaction and a cursor during pagination. */
 export type OrderTransactionEdge = {
   __typename?: 'OrderTransactionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of OrderTransactionEdge. */
   node: OrderTransaction;
@@ -33494,11 +33496,11 @@ export type PaymentCustomizationActivationPayload = {
 /** An auto-generated type for paginating through multiple PaymentCustomizations. */
 export type PaymentCustomizationConnection = {
   __typename?: 'PaymentCustomizationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<PaymentCustomizationEdge>;
-  /** A list of the nodes contained in PaymentCustomizationEdge. */
+  /** A list of nodes that are contained in PaymentCustomizationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<PaymentCustomization>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -33523,7 +33525,7 @@ export type PaymentCustomizationDeletePayload = {
 /** An auto-generated type which holds one PaymentCustomization and a cursor during pagination. */
 export type PaymentCustomizationEdge = {
   __typename?: 'PaymentCustomizationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of PaymentCustomizationEdge. */
   node: PaymentCustomization;
@@ -33677,18 +33679,18 @@ export type PaymentSchedule = Node & {
 /** An auto-generated type for paginating through multiple PaymentSchedules. */
 export type PaymentScheduleConnection = {
   __typename?: 'PaymentScheduleConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<PaymentScheduleEdge>;
-  /** A list of the nodes contained in PaymentScheduleEdge. */
+  /** A list of nodes that are contained in PaymentScheduleEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<PaymentSchedule>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one PaymentSchedule and a cursor during pagination. */
 export type PaymentScheduleEdge = {
   __typename?: 'PaymentScheduleEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of PaymentScheduleEdge. */
   node: PaymentSchedule;
@@ -34078,11 +34080,11 @@ export enum PriceListCompareAtMode {
 /** An auto-generated type for paginating through multiple PriceLists. */
 export type PriceListConnection = {
   __typename?: 'PriceListConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<PriceListEdge>;
-  /** A list of the nodes contained in PriceListEdge. */
+  /** A list of nodes that are contained in PriceListEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<PriceList>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -34119,7 +34121,7 @@ export type PriceListDeletePayload = {
 /** An auto-generated type which holds one PriceList and a cursor during pagination. */
 export type PriceListEdge = {
   __typename?: 'PriceListEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of PriceListEdge. */
   node: PriceList;
@@ -34265,18 +34267,18 @@ export type PriceListPriceQuantityPriceBreaksArgs = {
 /** An auto-generated type for paginating through multiple PriceListPrices. */
 export type PriceListPriceConnection = {
   __typename?: 'PriceListPriceConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<PriceListPriceEdge>;
-  /** A list of the nodes contained in PriceListPriceEdge. */
+  /** A list of nodes that are contained in PriceListPriceEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<PriceListPrice>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one PriceListPrice and a cursor during pagination. */
 export type PriceListPriceEdge = {
   __typename?: 'PriceListPriceEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of PriceListPriceEdge. */
   node: PriceListPrice;
@@ -34597,11 +34599,11 @@ export enum PriceRuleAllocationMethod {
 /** An auto-generated type for paginating through multiple PriceRules. */
 export type PriceRuleConnection = {
   __typename?: 'PriceRuleConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<PriceRuleEdge>;
-  /** A list of the nodes contained in PriceRuleEdge. */
+  /** A list of nodes that are contained in PriceRuleEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<PriceRule>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -34703,11 +34705,11 @@ export type PriceRuleDiscountCode = Node & {
 /** An auto-generated type for paginating through multiple PriceRuleDiscountCodes. */
 export type PriceRuleDiscountCodeConnection = {
   __typename?: 'PriceRuleDiscountCodeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<PriceRuleDiscountCodeEdge>;
-  /** A list of the nodes contained in PriceRuleDiscountCodeEdge. */
+  /** A list of nodes that are contained in PriceRuleDiscountCodeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<PriceRuleDiscountCode>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -34730,7 +34732,7 @@ export type PriceRuleDiscountCodeCreatePayload = {
 /** An auto-generated type which holds one PriceRuleDiscountCode and a cursor during pagination. */
 export type PriceRuleDiscountCodeEdge = {
   __typename?: 'PriceRuleDiscountCodeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of PriceRuleDiscountCodeEdge. */
   node: PriceRuleDiscountCode;
@@ -34761,7 +34763,7 @@ export type PriceRuleDiscountCodeUpdatePayload = {
 /** An auto-generated type which holds one PriceRule and a cursor during pagination. */
 export type PriceRuleEdge = {
   __typename?: 'PriceRuleEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of PriceRuleEdge. */
   node: PriceRule;
@@ -35372,11 +35374,11 @@ export type PrivateMetafield = Node & {
 /** An auto-generated type for paginating through multiple PrivateMetafields. */
 export type PrivateMetafieldConnection = {
   __typename?: 'PrivateMetafieldConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<PrivateMetafieldEdge>;
-  /** A list of the nodes contained in PrivateMetafieldEdge. */
+  /** A list of nodes that are contained in PrivateMetafieldEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<PrivateMetafield>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -35402,7 +35404,7 @@ export type PrivateMetafieldDeletePayload = {
 /** An auto-generated type which holds one PrivateMetafield and a cursor during pagination. */
 export type PrivateMetafieldEdge = {
   __typename?: 'PrivateMetafieldEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of PrivateMetafieldEdge. */
   node: PrivateMetafield;
@@ -35450,7 +35452,7 @@ export enum PrivateMetafieldValueType {
 /** The Product resource lets you manage products in a merchant’s store. You can use [ProductVariants](https://shopify.dev/api/admin-graphql/latest/objects/productvariant) to create or update different versions of the same product. You can also add or update product [Media](https://shopify.dev/api/admin-graphql/latest/interfaces/media). Products can be organized by grouping them into a [Collection](https://shopify.dev/api/admin-graphql/latest/objects/collection). */
 export type Product = HasMetafieldDefinitions & HasMetafields & HasPublishedTranslations & LegacyInteroperability & Navigable & Node & OnlineStorePreviewable & Publishable & {
   __typename?: 'Product';
-  /** The number of publications a resource is published to without feedback errors. */
+  /** The number of publications that a resource is published to without feedback errors. */
   availablePublicationsCount?: Maybe<Count>;
   /**
    * The description of the product, complete with HTML formatting.
@@ -35981,18 +35983,18 @@ export type ProductBundleComponentComponentVariantsArgs = {
 /** An auto-generated type for paginating through multiple ProductBundleComponents. */
 export type ProductBundleComponentConnection = {
   __typename?: 'ProductBundleComponentConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ProductBundleComponentEdge>;
-  /** A list of the nodes contained in ProductBundleComponentEdge. */
+  /** A list of nodes that are contained in ProductBundleComponentEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ProductBundleComponent>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ProductBundleComponent and a cursor during pagination. */
 export type ProductBundleComponentEdge = {
   __typename?: 'ProductBundleComponentEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ProductBundleComponentEdge. */
   node: ProductBundleComponent;
@@ -36267,11 +36269,11 @@ export type ProductCompareAtPriceRange = {
 /** An auto-generated type for paginating through multiple Products. */
 export type ProductConnection = {
   __typename?: 'ProductConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ProductEdge>;
-  /** A list of the nodes contained in ProductEdge. */
+  /** A list of nodes that are contained in ProductEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Product>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -36473,7 +36475,7 @@ export enum ProductDuplicateUserErrorCode {
 /** An auto-generated type which holds one Product and a cursor during pagination. */
 export type ProductEdge = {
   __typename?: 'ProductEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ProductEdge. */
   node: Product;
@@ -36495,11 +36497,11 @@ export type ProductFeed = Node & {
 /** An auto-generated type for paginating through multiple ProductFeeds. */
 export type ProductFeedConnection = {
   __typename?: 'ProductFeedConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ProductFeedEdge>;
-  /** A list of the nodes contained in ProductFeedEdge. */
+  /** A list of nodes that are contained in ProductFeedEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ProductFeed>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -36560,7 +36562,7 @@ export enum ProductFeedDeleteUserErrorCode {
 /** An auto-generated type which holds one ProductFeed and a cursor during pagination. */
 export type ProductFeedEdge = {
   __typename?: 'ProductFeedEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ProductFeedEdge. */
   node: ProductFeed;
@@ -37107,18 +37109,18 @@ export type ProductPublication = {
 /** An auto-generated type for paginating through multiple ProductPublications. */
 export type ProductPublicationConnection = {
   __typename?: 'ProductPublicationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ProductPublicationEdge>;
-  /** A list of the nodes contained in ProductPublicationEdge. */
+  /** A list of nodes that are contained in ProductPublicationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ProductPublication>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ProductPublication and a cursor during pagination. */
 export type ProductPublicationEdge = {
   __typename?: 'ProductPublicationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ProductPublicationEdge. */
   node: ProductPublication;
@@ -37413,7 +37415,7 @@ export enum ProductSortKeys {
   /**
    * Sort by relevance to the search terms when the `query` parameter is specified on the connection.
    * Don't use this sort key when no search query is specified.
-   * Pagination isn't supported when using this sort key.
+   * [Pagination](https://shopify.dev/api/usage/pagination-graphql) isn't supported when using this sort key.
    */
   Relevance = 'RELEVANCE',
   /** Sort by the `title` value. */
@@ -37747,18 +37749,18 @@ export type ProductVariantComponent = Node & {
 /** An auto-generated type for paginating through multiple ProductVariantComponents. */
 export type ProductVariantComponentConnection = {
   __typename?: 'ProductVariantComponentConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ProductVariantComponentEdge>;
-  /** A list of the nodes contained in ProductVariantComponentEdge. */
+  /** A list of nodes that are contained in ProductVariantComponentEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ProductVariantComponent>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ProductVariantComponent and a cursor during pagination. */
 export type ProductVariantComponentEdge = {
   __typename?: 'ProductVariantComponentEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ProductVariantComponentEdge. */
   node: ProductVariantComponent;
@@ -37767,11 +37769,11 @@ export type ProductVariantComponentEdge = {
 /** An auto-generated type for paginating through multiple ProductVariants. */
 export type ProductVariantConnection = {
   __typename?: 'ProductVariantConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ProductVariantEdge>;
-  /** A list of the nodes contained in ProductVariantEdge. */
+  /** A list of nodes that are contained in ProductVariantEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ProductVariant>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -37849,7 +37851,7 @@ export type ProductVariantDetachMediaPayload = {
 /** An auto-generated type which holds one ProductVariant and a cursor during pagination. */
 export type ProductVariantEdge = {
   __typename?: 'ProductVariantEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ProductVariantEdge. */
   node: ProductVariant;
@@ -37949,18 +37951,18 @@ export type ProductVariantPricePair = {
 /** An auto-generated type for paginating through multiple ProductVariantPricePairs. */
 export type ProductVariantPricePairConnection = {
   __typename?: 'ProductVariantPricePairConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ProductVariantPricePairEdge>;
-  /** A list of the nodes contained in ProductVariantPricePairEdge. */
+  /** A list of nodes that are contained in ProductVariantPricePairEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ProductVariantPricePair>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ProductVariantPricePair and a cursor during pagination. */
 export type ProductVariantPricePairEdge = {
   __typename?: 'ProductVariantPricePairEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ProductVariantPricePairEdge. */
   node: ProductVariantPricePair;
@@ -38547,11 +38549,11 @@ export type PublicationProductsArgs = {
 /** An auto-generated type for paginating through multiple Publications. */
 export type PublicationConnection = {
   __typename?: 'PublicationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<PublicationEdge>;
-  /** A list of the nodes contained in PublicationEdge. */
+  /** A list of nodes that are contained in PublicationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Publication>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -38594,7 +38596,7 @@ export type PublicationDeletePayload = {
 /** An auto-generated type which holds one Publication and a cursor during pagination. */
 export type PublicationEdge = {
   __typename?: 'PublicationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of PublicationEdge. */
   node: Publication;
@@ -38699,7 +38701,7 @@ export enum PublicationUserErrorCode {
  * A publishable resource can be either a Product or Collection.
  */
 export type Publishable = {
-  /** The number of publications a resource is published to without feedback errors. */
+  /** The number of publications that a resource is published to without feedback errors. */
   availablePublicationsCount?: Maybe<Count>;
   /**
    * The number of publications a resource is published on.
@@ -38923,18 +38925,18 @@ export type QuantityPriceBreak = Node & {
 /** An auto-generated type for paginating through multiple QuantityPriceBreaks. */
 export type QuantityPriceBreakConnection = {
   __typename?: 'QuantityPriceBreakConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<QuantityPriceBreakEdge>;
-  /** A list of the nodes contained in QuantityPriceBreakEdge. */
+  /** A list of nodes that are contained in QuantityPriceBreakEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<QuantityPriceBreak>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one QuantityPriceBreak and a cursor during pagination. */
 export type QuantityPriceBreakEdge = {
   __typename?: 'QuantityPriceBreakEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of QuantityPriceBreakEdge. */
   node: QuantityPriceBreak;
@@ -39105,18 +39107,18 @@ export type QuantityRule = {
 /** An auto-generated type for paginating through multiple QuantityRules. */
 export type QuantityRuleConnection = {
   __typename?: 'QuantityRuleConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<QuantityRuleEdge>;
-  /** A list of the nodes contained in QuantityRuleEdge. */
+  /** A list of nodes that are contained in QuantityRuleEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<QuantityRule>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one QuantityRule and a cursor during pagination. */
 export type QuantityRuleEdge = {
   __typename?: 'QuantityRuleEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of QuantityRuleEdge. */
   node: QuantityRule;
@@ -39313,18 +39315,11 @@ export type QueryRoot = {
    * To learn more about updating checkout branding settings, refer to the
    * [checkoutBrandingUpsert](https://shopify.dev/api/admin-graphql/unstable/mutations/checkoutBrandingUpsert)
    * mutation and the checkout branding [tutorial](https://shopify.dev/docs/apps/checkout/styling).
-   * @deprecated To be replaced with checkoutAndAccountsConfiguration.
    */
   checkoutBranding?: Maybe<CheckoutBranding>;
-  /**
-   * A checkout profile on a shop.
-   * @deprecated To be replaced with checkoutAndAccountsConfiguration.
-   */
+  /** A checkout profile on a shop. */
   checkoutProfile?: Maybe<CheckoutProfile>;
-  /**
-   * List of checkout profiles on a shop.
-   * @deprecated To be replaced with checkoutAndAccountsConfigurations.
-   */
+  /** List of checkout profiles on a shop. */
   checkoutProfiles: CheckoutProfileConnection;
   /** Returns a code discount resource by ID. */
   codeDiscountNode?: Maybe<DiscountCodeNode>;
@@ -39517,7 +39512,7 @@ export type QueryRoot = {
   menu?: Maybe<Menu>;
   /** The shop's menus. */
   menus: MenuConnection;
-  /** Returns a metafield definition by ID. */
+  /** Returns a metafield definition by identifier. */
   metafieldDefinition?: Maybe<MetafieldDefinition>;
   /**
    * Each metafield definition has a type, which defines the type of information that it can store.
@@ -39662,7 +39657,7 @@ export type QueryRoot = {
   productVariant?: Maybe<ProductVariant>;
   /** List of the product variants. */
   productVariants: ProductVariantConnection;
-  /** List of products. */
+  /** Returns a list of products. */
   products: ProductConnection;
   /** Count of products. Limited to a maximum of 10000. */
   productsCount?: Maybe<Count>;
@@ -41513,11 +41508,11 @@ export type RefundAgreementSalesArgs = {
 /** An auto-generated type for paginating through multiple Refunds. */
 export type RefundConnection = {
   __typename?: 'RefundConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<RefundEdge>;
-  /** A list of the nodes contained in RefundEdge. */
+  /** A list of nodes that are contained in RefundEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Refund>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -41560,7 +41555,7 @@ export enum RefundDutyRefundType {
 /** An auto-generated type which holds one Refund and a cursor during pagination. */
 export type RefundEdge = {
   __typename?: 'RefundEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of RefundEdge. */
   node: Refund;
@@ -41627,18 +41622,18 @@ export type RefundLineItem = {
 /** An auto-generated type for paginating through multiple RefundLineItems. */
 export type RefundLineItemConnection = {
   __typename?: 'RefundLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<RefundLineItemEdge>;
-  /** A list of the nodes contained in RefundLineItemEdge. */
+  /** A list of nodes that are contained in RefundLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<RefundLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one RefundLineItem and a cursor during pagination. */
 export type RefundLineItemEdge = {
   __typename?: 'RefundLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of RefundLineItemEdge. */
   node: RefundLineItem;
@@ -41691,18 +41686,18 @@ export type RefundShippingLine = Node & {
 /** An auto-generated type for paginating through multiple RefundShippingLines. */
 export type RefundShippingLineConnection = {
   __typename?: 'RefundShippingLineConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<RefundShippingLineEdge>;
-  /** A list of the nodes contained in RefundShippingLineEdge. */
+  /** A list of nodes that are contained in RefundShippingLineEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<RefundShippingLine>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one RefundShippingLine and a cursor during pagination. */
 export type RefundShippingLineEdge = {
   __typename?: 'RefundShippingLineEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of RefundShippingLineEdge. */
   node: RefundShippingLine;
@@ -41894,18 +41889,18 @@ export type ResourcePublication = {
 /** An auto-generated type for paginating through multiple ResourcePublications. */
 export type ResourcePublicationConnection = {
   __typename?: 'ResourcePublicationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ResourcePublicationEdge>;
-  /** A list of the nodes contained in ResourcePublicationEdge. */
+  /** A list of nodes that are contained in ResourcePublicationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ResourcePublication>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ResourcePublication and a cursor during pagination. */
 export type ResourcePublicationEdge = {
   __typename?: 'ResourcePublicationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ResourcePublicationEdge. */
   node: ResourcePublication;
@@ -41935,18 +41930,18 @@ export type ResourcePublicationV2 = {
 /** An auto-generated type for paginating through multiple ResourcePublicationV2s. */
 export type ResourcePublicationV2Connection = {
   __typename?: 'ResourcePublicationV2Connection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ResourcePublicationV2Edge>;
-  /** A list of the nodes contained in ResourcePublicationV2Edge. */
+  /** A list of nodes that are contained in ResourcePublicationV2Edge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ResourcePublicationV2>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ResourcePublicationV2 and a cursor during pagination. */
 export type ResourcePublicationV2Edge = {
   __typename?: 'ResourcePublicationV2Edge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ResourcePublicationV2Edge. */
   node: ResourcePublicationV2;
@@ -42115,11 +42110,11 @@ export type ReturnClosePayload = {
 /** An auto-generated type for paginating through multiple Returns. */
 export type ReturnConnection = {
   __typename?: 'ReturnConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ReturnEdge>;
-  /** A list of the nodes contained in ReturnEdge. */
+  /** A list of nodes that are contained in ReturnEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Return>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -42174,7 +42169,7 @@ export type ReturnDeclineRequestPayload = {
 /** An auto-generated type which holds one Return and a cursor during pagination. */
 export type ReturnEdge = {
   __typename?: 'ReturnEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ReturnEdge. */
   node: Return;
@@ -42333,18 +42328,18 @@ export type ReturnLineItemType = {
 /** An auto-generated type for paginating through multiple ReturnLineItemTypes. */
 export type ReturnLineItemTypeConnection = {
   __typename?: 'ReturnLineItemTypeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ReturnLineItemTypeEdge>;
-  /** A list of the nodes contained in ReturnLineItemTypeEdge. */
+  /** A list of nodes that are contained in ReturnLineItemTypeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ReturnLineItemType>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ReturnLineItemType and a cursor during pagination. */
 export type ReturnLineItemTypeEdge = {
   __typename?: 'ReturnLineItemTypeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ReturnLineItemTypeEdge. */
   node: ReturnLineItemType;
@@ -42534,18 +42529,18 @@ export type ReturnableFulfillmentReturnableFulfillmentLineItemsArgs = {
 /** An auto-generated type for paginating through multiple ReturnableFulfillments. */
 export type ReturnableFulfillmentConnection = {
   __typename?: 'ReturnableFulfillmentConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ReturnableFulfillmentEdge>;
-  /** A list of the nodes contained in ReturnableFulfillmentEdge. */
+  /** A list of nodes that are contained in ReturnableFulfillmentEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ReturnableFulfillment>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ReturnableFulfillment and a cursor during pagination. */
 export type ReturnableFulfillmentEdge = {
   __typename?: 'ReturnableFulfillmentEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ReturnableFulfillmentEdge. */
   node: ReturnableFulfillment;
@@ -42563,18 +42558,18 @@ export type ReturnableFulfillmentLineItem = {
 /** An auto-generated type for paginating through multiple ReturnableFulfillmentLineItems. */
 export type ReturnableFulfillmentLineItemConnection = {
   __typename?: 'ReturnableFulfillmentLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ReturnableFulfillmentLineItemEdge>;
-  /** A list of the nodes contained in ReturnableFulfillmentLineItemEdge. */
+  /** A list of nodes that are contained in ReturnableFulfillmentLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ReturnableFulfillmentLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ReturnableFulfillmentLineItem and a cursor during pagination. */
 export type ReturnableFulfillmentLineItemEdge = {
   __typename?: 'ReturnableFulfillmentLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ReturnableFulfillmentLineItemEdge. */
   node: ReturnableFulfillmentLineItem;
@@ -42616,11 +42611,11 @@ export type ReverseDeliveryReverseDeliveryLineItemsArgs = {
 /** An auto-generated type for paginating through multiple ReverseDeliveries. */
 export type ReverseDeliveryConnection = {
   __typename?: 'ReverseDeliveryConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ReverseDeliveryEdge>;
-  /** A list of the nodes contained in ReverseDeliveryEdge. */
+  /** A list of nodes that are contained in ReverseDeliveryEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ReverseDelivery>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -42663,7 +42658,7 @@ export type ReverseDeliveryDisposePayload = {
 /** An auto-generated type which holds one ReverseDelivery and a cursor during pagination. */
 export type ReverseDeliveryEdge = {
   __typename?: 'ReverseDeliveryEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ReverseDeliveryEdge. */
   node: ReverseDelivery;
@@ -42702,18 +42697,18 @@ export type ReverseDeliveryLineItem = Node & {
 /** An auto-generated type for paginating through multiple ReverseDeliveryLineItems. */
 export type ReverseDeliveryLineItemConnection = {
   __typename?: 'ReverseDeliveryLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ReverseDeliveryLineItemEdge>;
-  /** A list of the nodes contained in ReverseDeliveryLineItemEdge. */
+  /** A list of nodes that are contained in ReverseDeliveryLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ReverseDeliveryLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ReverseDeliveryLineItem and a cursor during pagination. */
 export type ReverseDeliveryLineItemEdge = {
   __typename?: 'ReverseDeliveryLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ReverseDeliveryLineItemEdge. */
   node: ReverseDeliveryLineItem;
@@ -42816,11 +42811,11 @@ export type ReverseFulfillmentOrderReverseDeliveriesArgs = {
 /** An auto-generated type for paginating through multiple ReverseFulfillmentOrders. */
 export type ReverseFulfillmentOrderConnection = {
   __typename?: 'ReverseFulfillmentOrderConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ReverseFulfillmentOrderEdge>;
-  /** A list of the nodes contained in ReverseFulfillmentOrderEdge. */
+  /** A list of nodes that are contained in ReverseFulfillmentOrderEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ReverseFulfillmentOrder>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -42876,7 +42871,7 @@ export enum ReverseFulfillmentOrderDispositionType {
 /** An auto-generated type which holds one ReverseFulfillmentOrder and a cursor during pagination. */
 export type ReverseFulfillmentOrderEdge = {
   __typename?: 'ReverseFulfillmentOrderEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ReverseFulfillmentOrderEdge. */
   node: ReverseFulfillmentOrder;
@@ -42901,18 +42896,18 @@ export type ReverseFulfillmentOrderLineItem = Node & {
 /** An auto-generated type for paginating through multiple ReverseFulfillmentOrderLineItems. */
 export type ReverseFulfillmentOrderLineItemConnection = {
   __typename?: 'ReverseFulfillmentOrderLineItemConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ReverseFulfillmentOrderLineItemEdge>;
-  /** A list of the nodes contained in ReverseFulfillmentOrderLineItemEdge. */
+  /** A list of nodes that are contained in ReverseFulfillmentOrderLineItemEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ReverseFulfillmentOrderLineItem>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ReverseFulfillmentOrderLineItem and a cursor during pagination. */
 export type ReverseFulfillmentOrderLineItemEdge = {
   __typename?: 'ReverseFulfillmentOrderLineItemEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ReverseFulfillmentOrderLineItemEdge. */
   node: ReverseFulfillmentOrderLineItem;
@@ -43060,18 +43055,18 @@ export type SaleAdditionalFee = Node & {
 /** An auto-generated type for paginating through multiple Sales. */
 export type SaleConnection = {
   __typename?: 'SaleConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SaleEdge>;
-  /** A list of the nodes contained in SaleEdge. */
+  /** A list of nodes that are contained in SaleEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Sale>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one Sale and a cursor during pagination. */
 export type SaleEdge = {
   __typename?: 'SaleEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SaleEdge. */
   node: Sale;
@@ -43139,18 +43134,18 @@ export type SalesAgreementSalesArgs = {
 /** An auto-generated type for paginating through multiple SalesAgreements. */
 export type SalesAgreementConnection = {
   __typename?: 'SalesAgreementConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SalesAgreementEdge>;
-  /** A list of the nodes contained in SalesAgreementEdge. */
+  /** A list of nodes that are contained in SalesAgreementEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SalesAgreement>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one SalesAgreement and a cursor during pagination. */
 export type SalesAgreementEdge = {
   __typename?: 'SalesAgreementEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SalesAgreementEdge. */
   node: SalesAgreement;
@@ -43178,11 +43173,11 @@ export type SavedSearch = LegacyInteroperability & Node & {
 /** An auto-generated type for paginating through multiple SavedSearches. */
 export type SavedSearchConnection = {
   __typename?: 'SavedSearchConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SavedSearchEdge>;
-  /** A list of the nodes contained in SavedSearchEdge. */
+  /** A list of nodes that are contained in SavedSearchEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SavedSearch>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -43225,7 +43220,7 @@ export type SavedSearchDeletePayload = {
 /** An auto-generated type which holds one SavedSearch and a cursor during pagination. */
 export type SavedSearchEdge = {
   __typename?: 'SavedSearchEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SavedSearchEdge. */
   node: SavedSearch;
@@ -43329,11 +43324,11 @@ export type ScriptTag = LegacyInteroperability & Node & {
 /** An auto-generated type for paginating through multiple ScriptTags. */
 export type ScriptTagConnection = {
   __typename?: 'ScriptTagConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ScriptTagEdge>;
-  /** A list of the nodes contained in ScriptTagEdge. */
+  /** A list of nodes that are contained in ScriptTagEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ScriptTag>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -43368,7 +43363,7 @@ export enum ScriptTagDisplayScope {
 /** An auto-generated type which holds one ScriptTag and a cursor during pagination. */
 export type ScriptTagEdge = {
   __typename?: 'ScriptTagEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ScriptTagEdge. */
   node: ScriptTag;
@@ -43436,12 +43431,12 @@ export type SearchResult = {
 /** The connection type for SearchResult. */
 export type SearchResultConnection = {
   __typename?: 'SearchResultConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SearchResultEdge>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
   /**
-   * Information to aid in pagination.
+   * An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page.
    * @deprecated The provided information is not accurate.
    */
   resultsAfterCount: Scalars['Int']['output'];
@@ -43450,7 +43445,7 @@ export type SearchResultConnection = {
 /** An auto-generated type which holds one SearchResult and a cursor during pagination. */
 export type SearchResultEdge = {
   __typename?: 'SearchResultEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SearchResultEdge. */
   node: SearchResult;
@@ -43529,11 +43524,11 @@ export type SegmentBooleanFilter = SegmentFilter & {
 /** An auto-generated type for paginating through multiple Segments. */
 export type SegmentConnection = {
   __typename?: 'SegmentConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SegmentEdge>;
-  /** A list of the nodes contained in SegmentEdge. */
+  /** A list of nodes that are contained in SegmentEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Segment>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -43569,7 +43564,7 @@ export type SegmentDeletePayload = {
 /** An auto-generated type which holds one Segment and a cursor during pagination. */
 export type SegmentEdge = {
   __typename?: 'SegmentEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SegmentEdge. */
   node: Segment;
@@ -43631,18 +43626,18 @@ export type SegmentFilter = {
 /** An auto-generated type for paginating through multiple SegmentFilters. */
 export type SegmentFilterConnection = {
   __typename?: 'SegmentFilterConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SegmentFilterEdge>;
-  /** A list of the nodes contained in SegmentFilterEdge. */
+  /** A list of nodes that are contained in SegmentFilterEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SegmentFilter>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one SegmentFilter and a cursor during pagination. */
 export type SegmentFilterEdge = {
   __typename?: 'SegmentFilterEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SegmentFilterEdge. */
   node: SegmentFilter;
@@ -43703,18 +43698,18 @@ export type SegmentMigration = {
 /** An auto-generated type for paginating through multiple SegmentMigrations. */
 export type SegmentMigrationConnection = {
   __typename?: 'SegmentMigrationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SegmentMigrationEdge>;
-  /** A list of the nodes contained in SegmentMigrationEdge. */
+  /** A list of nodes that are contained in SegmentMigrationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SegmentMigration>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one SegmentMigration and a cursor during pagination. */
 export type SegmentMigrationEdge = {
   __typename?: 'SegmentMigrationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SegmentMigrationEdge. */
   node: SegmentMigration;
@@ -43784,18 +43779,18 @@ export type SegmentValue = {
 /** An auto-generated type for paginating through multiple SegmentValues. */
 export type SegmentValueConnection = {
   __typename?: 'SegmentValueConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SegmentValueEdge>;
-  /** A list of the nodes contained in SegmentValueEdge. */
+  /** A list of nodes that are contained in SegmentValueEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SegmentValue>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one SegmentValue and a cursor during pagination. */
 export type SegmentValueEdge = {
   __typename?: 'SegmentValueEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SegmentValueEdge. */
   node: SegmentValue;
@@ -44153,11 +44148,11 @@ export type SellingPlanCheckoutChargeValueInput = {
 /** An auto-generated type for paginating through multiple SellingPlans. */
 export type SellingPlanConnection = {
   __typename?: 'SellingPlanConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SellingPlanEdge>;
-  /** A list of the nodes contained in SellingPlanEdge. */
+  /** A list of nodes that are contained in SellingPlanEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SellingPlan>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -44180,7 +44175,7 @@ export type SellingPlanDeliveryPolicyInput = {
 /** An auto-generated type which holds one SellingPlan and a cursor during pagination. */
 export type SellingPlanEdge = {
   __typename?: 'SellingPlanEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SellingPlanEdge. */
   node: SellingPlan;
@@ -44469,11 +44464,11 @@ export type SellingPlanGroupAddProductsPayload = {
 /** An auto-generated type for paginating through multiple SellingPlanGroups. */
 export type SellingPlanGroupConnection = {
   __typename?: 'SellingPlanGroupConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SellingPlanGroupEdge>;
-  /** A list of the nodes contained in SellingPlanGroupEdge. */
+  /** A list of nodes that are contained in SellingPlanGroupEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SellingPlanGroup>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -44498,7 +44493,7 @@ export type SellingPlanGroupDeletePayload = {
 /** An auto-generated type which holds one SellingPlanGroup and a cursor during pagination. */
 export type SellingPlanGroupEdge = {
   __typename?: 'SellingPlanGroupEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SellingPlanGroupEdge. */
   node: SellingPlanGroup;
@@ -45068,18 +45063,18 @@ export type ShippingLine = {
 /** An auto-generated type for paginating through multiple ShippingLines. */
 export type ShippingLineConnection = {
   __typename?: 'ShippingLineConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ShippingLineEdge>;
-  /** A list of the nodes contained in ShippingLineEdge. */
+  /** A list of nodes that are contained in ShippingLineEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ShippingLine>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ShippingLine and a cursor during pagination. */
 export type ShippingLineEdge = {
   __typename?: 'ShippingLineEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ShippingLineEdge. */
   node: ShippingLine;
@@ -46346,18 +46341,18 @@ export type ShopifyFunction = {
 /** An auto-generated type for paginating through multiple ShopifyFunctions. */
 export type ShopifyFunctionConnection = {
   __typename?: 'ShopifyFunctionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ShopifyFunctionEdge>;
-  /** A list of the nodes contained in ShopifyFunctionEdge. */
+  /** A list of nodes that are contained in ShopifyFunctionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ShopifyFunction>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ShopifyFunction and a cursor during pagination. */
 export type ShopifyFunctionEdge = {
   __typename?: 'ShopifyFunctionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ShopifyFunctionEdge. */
   node: ShopifyFunction;
@@ -46566,18 +46561,18 @@ export type ShopifyPaymentsBalanceTransactionAssociatedPayout = {
 /** An auto-generated type for paginating through multiple ShopifyPaymentsBalanceTransactions. */
 export type ShopifyPaymentsBalanceTransactionConnection = {
   __typename?: 'ShopifyPaymentsBalanceTransactionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ShopifyPaymentsBalanceTransactionEdge>;
-  /** A list of the nodes contained in ShopifyPaymentsBalanceTransactionEdge. */
+  /** A list of nodes that are contained in ShopifyPaymentsBalanceTransactionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ShopifyPaymentsBalanceTransaction>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ShopifyPaymentsBalanceTransaction and a cursor during pagination. */
 export type ShopifyPaymentsBalanceTransactionEdge = {
   __typename?: 'ShopifyPaymentsBalanceTransactionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ShopifyPaymentsBalanceTransactionEdge. */
   node: ShopifyPaymentsBalanceTransaction;
@@ -46646,18 +46641,18 @@ export type ShopifyPaymentsBankAccountPayoutsArgs = {
 /** An auto-generated type for paginating through multiple ShopifyPaymentsBankAccounts. */
 export type ShopifyPaymentsBankAccountConnection = {
   __typename?: 'ShopifyPaymentsBankAccountConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ShopifyPaymentsBankAccountEdge>;
-  /** A list of the nodes contained in ShopifyPaymentsBankAccountEdge. */
+  /** A list of nodes that are contained in ShopifyPaymentsBankAccountEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ShopifyPaymentsBankAccount>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ShopifyPaymentsBankAccount and a cursor during pagination. */
 export type ShopifyPaymentsBankAccountEdge = {
   __typename?: 'ShopifyPaymentsBankAccountEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ShopifyPaymentsBankAccountEdge. */
   node: ShopifyPaymentsBankAccount;
@@ -46722,18 +46717,18 @@ export type ShopifyPaymentsDispute = LegacyInteroperability & Node & {
 /** An auto-generated type for paginating through multiple ShopifyPaymentsDisputes. */
 export type ShopifyPaymentsDisputeConnection = {
   __typename?: 'ShopifyPaymentsDisputeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ShopifyPaymentsDisputeEdge>;
-  /** A list of the nodes contained in ShopifyPaymentsDisputeEdge. */
+  /** A list of nodes that are contained in ShopifyPaymentsDisputeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ShopifyPaymentsDispute>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ShopifyPaymentsDispute and a cursor during pagination. */
 export type ShopifyPaymentsDisputeEdge = {
   __typename?: 'ShopifyPaymentsDisputeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ShopifyPaymentsDisputeEdge. */
   node: ShopifyPaymentsDispute;
@@ -46996,18 +46991,18 @@ export type ShopifyPaymentsPayout = LegacyInteroperability & Node & {
 /** An auto-generated type for paginating through multiple ShopifyPaymentsPayouts. */
 export type ShopifyPaymentsPayoutConnection = {
   __typename?: 'ShopifyPaymentsPayoutConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ShopifyPaymentsPayoutEdge>;
-  /** A list of the nodes contained in ShopifyPaymentsPayoutEdge. */
+  /** A list of nodes that are contained in ShopifyPaymentsPayoutEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<ShopifyPaymentsPayout>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one ShopifyPaymentsPayout and a cursor during pagination. */
 export type ShopifyPaymentsPayoutEdge = {
   __typename?: 'ShopifyPaymentsPayoutEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ShopifyPaymentsPayoutEdge. */
   node: ShopifyPaymentsPayout;
@@ -47460,11 +47455,11 @@ export type StaffMemberAvatarArgs = {
 /** An auto-generated type for paginating through multiple StaffMembers. */
 export type StaffMemberConnection = {
   __typename?: 'StaffMemberConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<StaffMemberEdge>;
-  /** A list of the nodes contained in StaffMemberEdge. */
+  /** A list of nodes that are contained in StaffMemberEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<StaffMember>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -47481,7 +47476,7 @@ export enum StaffMemberDefaultImage {
 /** An auto-generated type which holds one StaffMember and a cursor during pagination. */
 export type StaffMemberEdge = {
   __typename?: 'StaffMemberEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of StaffMemberEdge. */
   node: StaffMember;
@@ -47877,18 +47872,18 @@ export type StandardMetafieldDefinitionTemplate = Node & {
 /** An auto-generated type for paginating through multiple StandardMetafieldDefinitionTemplates. */
 export type StandardMetafieldDefinitionTemplateConnection = {
   __typename?: 'StandardMetafieldDefinitionTemplateConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<StandardMetafieldDefinitionTemplateEdge>;
-  /** A list of the nodes contained in StandardMetafieldDefinitionTemplateEdge. */
+  /** A list of nodes that are contained in StandardMetafieldDefinitionTemplateEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<StandardMetafieldDefinitionTemplate>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one StandardMetafieldDefinitionTemplate and a cursor during pagination. */
 export type StandardMetafieldDefinitionTemplateEdge = {
   __typename?: 'StandardMetafieldDefinitionTemplateEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of StandardMetafieldDefinitionTemplateEdge. */
   node: StandardMetafieldDefinitionTemplate;
@@ -47954,11 +47949,11 @@ export type StoreCreditAccountTransactionsArgs = {
 /** An auto-generated type for paginating through multiple StoreCreditAccounts. */
 export type StoreCreditAccountConnection = {
   __typename?: 'StoreCreditAccountConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<StoreCreditAccountEdge>;
-  /** A list of the nodes contained in StoreCreditAccountEdge. */
+  /** A list of nodes that are contained in StoreCreditAccountEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<StoreCreditAccount>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -48111,7 +48106,7 @@ export enum StoreCreditAccountDebitUserErrorCode {
 /** An auto-generated type which holds one StoreCreditAccount and a cursor during pagination. */
 export type StoreCreditAccountEdge = {
   __typename?: 'StoreCreditAccountEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of StoreCreditAccountEdge. */
   node: StoreCreditAccount;
@@ -48152,18 +48147,18 @@ export type StoreCreditAccountTransaction = {
 /** An auto-generated type for paginating through multiple StoreCreditAccountTransactions. */
 export type StoreCreditAccountTransactionConnection = {
   __typename?: 'StoreCreditAccountTransactionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<StoreCreditAccountTransactionEdge>;
-  /** A list of the nodes contained in StoreCreditAccountTransactionEdge. */
+  /** A list of nodes that are contained in StoreCreditAccountTransactionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<StoreCreditAccountTransaction>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one StoreCreditAccountTransaction and a cursor during pagination. */
 export type StoreCreditAccountTransactionEdge = {
   __typename?: 'StoreCreditAccountTransactionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of StoreCreditAccountTransactionEdge. */
   node: StoreCreditAccountTransaction;
@@ -48197,11 +48192,11 @@ export type StorefrontAccessToken = Node & {
 /** An auto-generated type for paginating through multiple StorefrontAccessTokens. */
 export type StorefrontAccessTokenConnection = {
   __typename?: 'StorefrontAccessTokenConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<StorefrontAccessTokenEdge>;
-  /** A list of the nodes contained in StorefrontAccessTokenEdge. */
+  /** A list of nodes that are contained in StorefrontAccessTokenEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<StorefrontAccessToken>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -48234,7 +48229,7 @@ export type StorefrontAccessTokenDeletePayload = {
 /** An auto-generated type which holds one StorefrontAccessToken and a cursor during pagination. */
 export type StorefrontAccessTokenEdge = {
   __typename?: 'StorefrontAccessTokenEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of StorefrontAccessTokenEdge. */
   node: StorefrontAccessToken;
@@ -48251,14 +48246,14 @@ export type StringConnection = {
   __typename?: 'StringConnection';
   /** A list of edges. */
   edges: Array<StringEdge>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one String and a cursor during pagination. */
 export type StringEdge = {
   __typename?: 'StringEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of StringEdge. */
   node: Scalars['String']['output'];
@@ -48331,11 +48326,11 @@ export type SubscriptionBillingAttempt = Node & {
 /** An auto-generated type for paginating through multiple SubscriptionBillingAttempts. */
 export type SubscriptionBillingAttemptConnection = {
   __typename?: 'SubscriptionBillingAttemptConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SubscriptionBillingAttemptEdge>;
-  /** A list of the nodes contained in SubscriptionBillingAttemptEdge. */
+  /** A list of nodes that are contained in SubscriptionBillingAttemptEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SubscriptionBillingAttempt>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -48351,7 +48346,7 @@ export type SubscriptionBillingAttemptCreatePayload = {
 /** An auto-generated type which holds one SubscriptionBillingAttempt and a cursor during pagination. */
 export type SubscriptionBillingAttemptEdge = {
   __typename?: 'SubscriptionBillingAttemptEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SubscriptionBillingAttemptEdge. */
   node: SubscriptionBillingAttempt;
@@ -48560,11 +48555,11 @@ export type SubscriptionBillingCycleChargePayload = {
 /** An auto-generated type for paginating through multiple SubscriptionBillingCycles. */
 export type SubscriptionBillingCycleConnection = {
   __typename?: 'SubscriptionBillingCycleConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SubscriptionBillingCycleEdge>;
-  /** A list of the nodes contained in SubscriptionBillingCycleEdge. */
+  /** A list of nodes that are contained in SubscriptionBillingCycleEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SubscriptionBillingCycle>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -48598,7 +48593,7 @@ export type SubscriptionBillingCycleContractEditPayload = {
 /** An auto-generated type which holds one SubscriptionBillingCycle and a cursor during pagination. */
 export type SubscriptionBillingCycleEdge = {
   __typename?: 'SubscriptionBillingCycleEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SubscriptionBillingCycleEdge. */
   node: SubscriptionBillingCycle;
@@ -49139,11 +49134,11 @@ export type SubscriptionContractCancelPayload = {
 /** An auto-generated type for paginating through multiple SubscriptionContracts. */
 export type SubscriptionContractConnection = {
   __typename?: 'SubscriptionContractConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SubscriptionContractEdge>;
-  /** A list of the nodes contained in SubscriptionContractEdge. */
+  /** A list of nodes that are contained in SubscriptionContractEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SubscriptionContract>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -49171,7 +49166,7 @@ export type SubscriptionContractCreatePayload = {
 /** An auto-generated type which holds one SubscriptionContract and a cursor during pagination. */
 export type SubscriptionContractEdge = {
   __typename?: 'SubscriptionContractEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SubscriptionContractEdge. */
   node: SubscriptionContract;
@@ -49551,18 +49546,18 @@ export type SubscriptionDiscountAllocation = {
 /** An auto-generated type for paginating through multiple SubscriptionDiscounts. */
 export type SubscriptionDiscountConnection = {
   __typename?: 'SubscriptionDiscountConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SubscriptionDiscountEdge>;
-  /** A list of the nodes contained in SubscriptionDiscountEdge. */
+  /** A list of nodes that are contained in SubscriptionDiscountEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SubscriptionDiscount>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one SubscriptionDiscount and a cursor during pagination. */
 export type SubscriptionDiscountEdge = {
   __typename?: 'SubscriptionDiscountEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SubscriptionDiscountEdge. */
   node: SubscriptionDiscount;
@@ -50095,18 +50090,18 @@ export type SubscriptionLine = {
 /** An auto-generated type for paginating through multiple SubscriptionLines. */
 export type SubscriptionLineConnection = {
   __typename?: 'SubscriptionLineConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SubscriptionLineEdge>;
-  /** A list of the nodes contained in SubscriptionLineEdge. */
+  /** A list of nodes that are contained in SubscriptionLineEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SubscriptionLine>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one SubscriptionLine and a cursor during pagination. */
 export type SubscriptionLineEdge = {
   __typename?: 'SubscriptionLineEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SubscriptionLineEdge. */
   node: SubscriptionLine;
@@ -50234,18 +50229,18 @@ export type SubscriptionManualDiscount = {
 /** An auto-generated type for paginating through multiple SubscriptionManualDiscounts. */
 export type SubscriptionManualDiscountConnection = {
   __typename?: 'SubscriptionManualDiscountConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<SubscriptionManualDiscountEdge>;
-  /** A list of the nodes contained in SubscriptionManualDiscountEdge. */
+  /** A list of nodes that are contained in SubscriptionManualDiscountEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<SubscriptionManualDiscount>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one SubscriptionManualDiscount and a cursor during pagination. */
 export type SubscriptionManualDiscountEdge = {
   __typename?: 'SubscriptionManualDiscountEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of SubscriptionManualDiscountEdge. */
   node: SubscriptionManualDiscount;
@@ -50806,18 +50801,18 @@ export type TaxonomyCategoryAttribute = TaxonomyAttribute | TaxonomyChoiceListAt
 /** An auto-generated type for paginating through multiple TaxonomyCategoryAttributes. */
 export type TaxonomyCategoryAttributeConnection = {
   __typename?: 'TaxonomyCategoryAttributeConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<TaxonomyCategoryAttributeEdge>;
-  /** A list of the nodes contained in TaxonomyCategoryAttributeEdge. */
+  /** A list of nodes that are contained in TaxonomyCategoryAttributeEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<TaxonomyCategoryAttribute>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one TaxonomyCategoryAttribute and a cursor during pagination. */
 export type TaxonomyCategoryAttributeEdge = {
   __typename?: 'TaxonomyCategoryAttributeEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of TaxonomyCategoryAttributeEdge. */
   node: TaxonomyCategoryAttribute;
@@ -50826,18 +50821,18 @@ export type TaxonomyCategoryAttributeEdge = {
 /** An auto-generated type for paginating through multiple TaxonomyCategories. */
 export type TaxonomyCategoryConnection = {
   __typename?: 'TaxonomyCategoryConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<TaxonomyCategoryEdge>;
-  /** A list of the nodes contained in TaxonomyCategoryEdge. */
+  /** A list of nodes that are contained in TaxonomyCategoryEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<TaxonomyCategory>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one TaxonomyCategory and a cursor during pagination. */
 export type TaxonomyCategoryEdge = {
   __typename?: 'TaxonomyCategoryEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of TaxonomyCategoryEdge. */
   node: TaxonomyCategory;
@@ -50886,18 +50881,18 @@ export type TaxonomyValue = Node & {
 /** An auto-generated type for paginating through multiple TaxonomyValues. */
 export type TaxonomyValueConnection = {
   __typename?: 'TaxonomyValueConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<TaxonomyValueEdge>;
-  /** A list of the nodes contained in TaxonomyValueEdge. */
+  /** A list of nodes that are contained in TaxonomyValueEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<TaxonomyValue>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one TaxonomyValue and a cursor during pagination. */
 export type TaxonomyValueEdge = {
   __typename?: 'TaxonomyValueEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of TaxonomyValueEdge. */
   node: TaxonomyValue;
@@ -50931,11 +50926,11 @@ export type TenderTransaction = Node & {
 /** An auto-generated type for paginating through multiple TenderTransactions. */
 export type TenderTransactionConnection = {
   __typename?: 'TenderTransactionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<TenderTransactionEdge>;
-  /** A list of the nodes contained in TenderTransactionEdge. */
+  /** A list of nodes that are contained in TenderTransactionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<TenderTransaction>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -50954,7 +50949,7 @@ export type TenderTransactionDetails = TenderTransactionCreditCardDetails;
 /** An auto-generated type which holds one TenderTransaction and a cursor during pagination. */
 export type TenderTransactionEdge = {
   __typename?: 'TenderTransactionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of TenderTransactionEdge. */
   node: TenderTransaction;
@@ -51083,18 +51078,18 @@ export type TranslatableResourceTranslationsArgs = {
 /** An auto-generated type for paginating through multiple TranslatableResources. */
 export type TranslatableResourceConnection = {
   __typename?: 'TranslatableResourceConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<TranslatableResourceEdge>;
-  /** A list of the nodes contained in TranslatableResourceEdge. */
+  /** A list of nodes that are contained in TranslatableResourceEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<TranslatableResource>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
 /** An auto-generated type which holds one TranslatableResource and a cursor during pagination. */
 export type TranslatableResourceEdge = {
   __typename?: 'TranslatableResourceEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of TranslatableResourceEdge. */
   node: TranslatableResource;
@@ -51460,11 +51455,11 @@ export enum UrlRedirectBulkDeleteBySearchUserErrorCode {
 /** An auto-generated type for paginating through multiple UrlRedirects. */
 export type UrlRedirectConnection = {
   __typename?: 'UrlRedirectConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<UrlRedirectEdge>;
-  /** A list of the nodes contained in UrlRedirectEdge. */
+  /** A list of nodes that are contained in UrlRedirectEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<UrlRedirect>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -51489,7 +51484,7 @@ export type UrlRedirectDeletePayload = {
 /** An auto-generated type which holds one UrlRedirect and a cursor during pagination. */
 export type UrlRedirectEdge = {
   __typename?: 'UrlRedirectEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of UrlRedirectEdge. */
   node: UrlRedirect;
@@ -51730,11 +51725,11 @@ export type ValidationPrivateMetafieldsArgs = {
 /** An auto-generated type for paginating through multiple Validations. */
 export type ValidationConnection = {
   __typename?: 'ValidationConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<ValidationEdge>;
-  /** A list of the nodes contained in ValidationEdge. */
+  /** A list of nodes that are contained in ValidationEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<Validation>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -51773,7 +51768,7 @@ export type ValidationDeletePayload = {
 /** An auto-generated type which holds one Validation and a cursor during pagination. */
 export type ValidationEdge = {
   __typename?: 'ValidationEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of ValidationEdge. */
   node: Validation;
@@ -52102,11 +52097,11 @@ export type WebhookSubscription = LegacyInteroperability & Node & {
 /** An auto-generated type for paginating through multiple WebhookSubscriptions. */
 export type WebhookSubscriptionConnection = {
   __typename?: 'WebhookSubscriptionConnection';
-  /** A list of edges. */
+  /** The connection between the node and its parent. Each edge contains a minimum of the edge's cursor and the node. */
   edges: Array<WebhookSubscriptionEdge>;
-  /** A list of the nodes contained in WebhookSubscriptionEdge. */
+  /** A list of nodes that are contained in WebhookSubscriptionEdge. You can fetch data about an individual node, or you can follow the edges to fetch data about a collection of related nodes. At each node, you specify the fields that you want to retrieve. */
   nodes: Array<WebhookSubscription>;
-  /** Information to aid in pagination. */
+  /** An object that’s used to retrieve [cursor information](https://shopify.dev/api/usage/pagination-graphql) about the current page. */
   pageInfo: PageInfo;
 };
 
@@ -52131,7 +52126,7 @@ export type WebhookSubscriptionDeletePayload = {
 /** An auto-generated type which holds one WebhookSubscription and a cursor during pagination. */
 export type WebhookSubscriptionEdge = {
   __typename?: 'WebhookSubscriptionEdge';
-  /** A cursor for use in pagination. */
+  /** The position of each node in an array, used in [pagination](https://shopify.dev/api/usage/pagination-graphql). */
   cursor: Scalars['String']['output'];
   /** The item at the end of WebhookSubscriptionEdge. */
   node: WebhookSubscription;

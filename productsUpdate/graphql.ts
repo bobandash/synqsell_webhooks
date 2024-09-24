@@ -33,3 +33,24 @@ export const PRODUCT_VARIANT_INFO = `#graphql
     }
   }
 `;
+
+export const ADJUST_INVENTORY_MUTATION = `#graphql 
+mutation inventorySetQuantities($input: InventorySetQuantitiesInput!) {
+  inventorySetQuantities(input: $input) {
+    inventoryAdjustmentGroup {
+      reason
+      referenceDocumentUri
+      changes {
+        name
+        delta
+        quantityAfterChange
+      }
+    }
+    userErrors {
+      code
+      field
+      message
+    }
+  }
+}
+`;

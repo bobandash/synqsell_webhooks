@@ -131,7 +131,7 @@ export const getSupplierProductUpdateEvent = (retailPrice: string, newInventory:
                 tags: 'example, mens, t-shirt',
                 variants: [
                     {
-                        admin_graphql_api_id: composeGid('Variant', DEFAULT_ITEMS.SHOPIFY_VARIANT_ID),
+                        admin_graphql_api_id: composeGid('ProductVariant', DEFAULT_ITEMS.SHOPIFY_VARIANT_ID),
                         barcode: null,
                         compare_at_price: '24.99',
                         created_at: '2021-12-29T19:00:00-05:00',
@@ -159,7 +159,7 @@ export const getSupplierProductUpdateEvent = (retailPrice: string, newInventory:
                 media: [],
                 variant_gids: [
                     {
-                        admin_graphql_api_id: composeGid('Variant', DEFAULT_ITEMS.SHOPIFY_VARIANT_ID),
+                        admin_graphql_api_id: composeGid('ProductVariant', DEFAULT_ITEMS.SHOPIFY_VARIANT_ID),
                         updated_at: '2021-12-31T00:00:00.000Z',
                     },
                 ],
@@ -202,7 +202,7 @@ export const getRetailerProductUpdateEvent = (price: string, newInventory: numbe
                 tags: 'example, mens, t-shirt',
                 variants: [
                     {
-                        admin_graphql_api_id: composeGid('Variant', DEFAULT_ITEMS.IMPORTED_SHOPIFY_VARIANT_ID),
+                        admin_graphql_api_id: composeGid('ProductVariant', DEFAULT_ITEMS.IMPORTED_SHOPIFY_VARIANT_ID),
                         barcode: null,
                         compare_at_price: '24.99',
                         created_at: '2021-12-29T19:00:00-05:00',
