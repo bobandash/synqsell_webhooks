@@ -9,6 +9,7 @@
     "scripts": {
         "lint": "eslint '*.ts' --quiet --fix",
         "compile": "tsc",
+        "jest": "jest",
         "test": "npm run compile && npm run jest",
         "test:watch": "jest --watch",
         "graphql-codegen": "graphql-codegen"

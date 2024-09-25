@@ -27104,37 +27104,8 @@ export type Mutation = {
   /**
    * Creates a product.
    *
-   * For versions `2024-01` and older:
-   *
-   * If you need to create a product with many
-   * [variants](https://shopify.dev/api/admin-graphql/latest/input-objects/ProductVariantInput)
-   * that are active at several
-   * [locations](https://shopify.dev/api/admin-graphql/latest/input-objects/InventoryLevelInput),
-   * especially with a lot of
-   * [collections](https://shopify.dev/api/admin-graphql/latest/mutations/productCreate#field-productinput-collectionstojoin)
-   * and
-   * [tags](https://shopify.dev/api/admin-graphql/latest/mutations/productCreate#field-productinput-tags),
-   * then you should first create the product with just the variants.
-   *
-   * After the product is created, you can activate the variants at locations
-   * and add the other related objects to the product. This reduces the size of each mutation and increases the likelihood that it will
-   * complete before the operation times out.
-   *
-   * The following example shows how you might break up product creation and object association into multiple steps:
-   *
-   * 1. Create the product with variants. Don't specify any tags or collections on the product, and don't specify
-   * [inventory quantities](https://shopify.dev/api/admin-graphql/latest/input-objects/ProductVariantInput#field-productvariantinput-inventoryquantities)
-   * for each variant.
-   *
-   * 2. After the product is created, add tags to the product using the
-   * [tagsAdd](https://shopify.dev/api/admin-graphql/latest/mutations/tagsAdd) mutation, and add collections using the
-   * [collectionsAddProducts](https://shopify.dev/api/admin-graphql/latest/mutations/collectionAddProducts) mutation.
-   *
-   * 3. Use the [inventoryBulkToggleActivation](https://shopify.dev/api/admin-graphql/latest/mutations/inventoryBulkToggleActivation) mutation
-   * on each [inventory item](https://shopify.dev/api/admin-graphql/latest/objects/InventoryItem) to activate it at the appropriate locations.
-   *
-   * 4. After activating the variants at the locations, adjust inventory quantities for the inventory items using the
-   * [inventoryAdjustQuantities](https://shopify.dev/api/admin-graphql/latest/mutations/inventoryAdjustQuantities) mutation.
+   * Learn more about the [product model](https://shopify.dev/docs/apps/build/graphql/migrate/new-product-model)
+   * and [adding product data](https://shopify.dev/docs/apps/build/graphql/migrate/new-product-model/add-data).
    */
   productCreate?: Maybe<ProductCreatePayload>;
   /** Creates media for a product. */

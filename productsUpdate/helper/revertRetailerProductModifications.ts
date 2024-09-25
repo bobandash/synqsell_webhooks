@@ -97,33 +97,28 @@ function hasImportantRetailerProductChanges(
     supplierToRetailerVariantId: Map<string, string>,
     retailerEditedVariantsMap: Map<string, Omit<EditedVariant, 'shopifyVariantId'>>,
 ) {
-    try {
-        // compares the retailer and supplier variants to check if there's any discrepancies between price or inventory
-        let hasImportantChange = false;
-        supplierShopifyVariantData.forEach(({ productVariant: supplierProductVariant }) => {
-            const supplierShopifyVariantId = supplierProductVariant?.id ?? '';
-            const supplierPrice = supplierProductVariant?.price;
-            const supplierInventory = supplierProductVariant?.inventoryQuantity;
-            const retailerShopifyVariantId = supplierToRetailerVariantId.get(supplierShopifyVariantId);
-            if (!retailerShopifyVariantId) {
-                throw new Error(
-                    `Retailer variant id does not exist for supplier variant id ${supplierShopifyVariantId}.`,
-                );
-            }
-            const retailerPrice = retailerEditedVariantsMap.get(retailerShopifyVariantId)?.price ?? 0;
-            const retailerInventory = retailerEditedVariantsMap.get(retailerShopifyVariantId)?.newInventory ?? 0;
-            if (
-                Number(retailerPrice) !== Number(supplierPrice) ||
-                Number(supplierInventory) !== Number(retailerInventory)
-            ) {
-                hasImportantChange = true;
-            }
-        });
+    // compares the retailer and supplier variants to check if there's any discrepancies between price or inventory
+    let hasImportantChange = false;
 
-        return hasImportantChange;
-    } catch (error) {
-        throw error;
-    }
+    supplierShopifyVariantData.forEach(({ productVariant: supplierProductVariant }) => {
+        const supplierShopifyVariantId = supplierProductVariant?.id ?? '';
+        const supplierPrice = supplierProductVariant?.price;
+        const supplierInventory = supplierProductVariant?.inventoryQuantity;
+        const retailerShopifyVariantId = supplierToRetailerVariantId.get(supplierShopifyVariantId);
+        if (!retailerShopifyVariantId) {
+            throw new Error(`Retailer variant id does not exist for supplier variant id ${supplierShopifyVariantId}.`);
+        }
+        const retailerPrice = retailerEditedVariantsMap.get(retailerShopifyVariantId)?.price ?? 0;
+        const retailerInventory = retailerEditedVariantsMap.get(retailerShopifyVariantId)?.newInventory ?? 0;
+        if (
+            Number(retailerPrice) !== Number(supplierPrice) ||
+            Number(supplierInventory) !== Number(retailerInventory)
+        ) {
+            hasImportantChange = true;
+        }
+    });
+
+    return hasImportantChange;
 }
 
 async function updateRetailerPrice(
