@@ -1,14 +1,34 @@
 import { PoolClient } from 'pg';
 import { CustomerShippingDetails, FulfillmentOrdersBySupplier, Session } from '../types';
 import createMapIdToRestObj from '../util/createMapToRestObj';
-import { mutateAndValidateGraphQLData } from '../util';
-import { DRAFT_ORDER_COMPLETE_MUTATION, DRAFT_ORDER_CREATE_MUTATION } from '../graphql';
-import { DraftOrderCompleteMutation, DraftOrderCreateMutation } from '../types/admin.generated';
+import { fetchAndValidateGraphQLData, mutateAndValidateGraphQLData } from '../util';
+import {
+    DRAFT_ORDER_COMPLETE_MUTATION,
+    DRAFT_ORDER_CREATE_MUTATION,
+    GET_INITIAL_ORDER_DETAILS_DATABASE,
+    GET_SUBSEQUENT_ORDER_DETAILS_DATABASE,
+} from '../graphql';
+import {
+    DraftOrderCompleteMutation,
+    DraftOrderCreateMutation,
+    InitialOrderDetailsQuery,
+    SubsequentOrderDetailsQuery,
+} from '../types/admin.generated';
 import { ORDER_PAYMENT_STATUS } from '../constants';
+import { CurrencyCode } from '../types/admin.types';
 
 type VariantAndImportedVariant = {
     retailerShopifyVariantId: string;
     supplierShopifyVariantId: string;
+};
+
+type OrderDetailForDatabase = {
+    currency: CurrencyCode | null;
+    shippingCost: number;
+    lineItems: {
+        shopifyVariantId: string | null;
+        quantity: number;
+    }[];
 };
 
 async function getSession(sessionId: string, client: PoolClient) {
@@ -52,6 +72,7 @@ async function createDraftOrder(
     const retailerToSupplierVariantIdMap = await getRetailerToSupplierVariantIdMap(retailerVariantIds, client);
 
     //!!! TODO: add shippingLine to draftOrdersInput
+    //!!! TODO: add presentmentCurrencyCode
     const draftOrdersInput = {
         email,
         lineItems: orderLineItems.map((lineItem) => ({
@@ -101,7 +122,58 @@ async function completeDraftOrder(draftOrderId: string, supplierSession: Session
     return shopifyOrderId;
 }
 
-async function getOrderDetails(shopifyOrderId: string, supplierSession: Session) {}
+async function getOrderDetails(shopifyOrderId: string, session: Session) {
+    let hasMore = true;
+    let endCursor = null;
+
+    const initialOrderDetails = await fetchAndValidateGraphQLData<InitialOrderDetailsQuery>(
+        session.shop,
+        session.accessToken,
+        GET_INITIAL_ORDER_DETAILS_DATABASE,
+        {
+            id: shopifyOrderId,
+        },
+    );
+
+    const orderDetails = initialOrderDetails.order;
+    const orderDetailsForDatabase: OrderDetailForDatabase = {
+        currency: orderDetails?.presentmentCurrencyCode ?? null,
+        shippingCost: orderDetails?.shippingLine?.originalPriceSet.presentmentMoney.amount ?? 0,
+        lineItems:
+            orderDetails?.lineItems.edges.map(({ node }) => ({
+                shopifyVariantId: node.variant?.id ?? null, // this will not be null, just graphql semantics
+                quantity: node.quantity,
+            })) ?? [],
+    };
+
+    hasMore = initialOrderDetails.order?.lineItems.pageInfo.hasNextPage ?? false;
+    endCursor = initialOrderDetails.order?.lineItems.pageInfo.endCursor ?? null;
+    while (hasMore && endCursor) {
+        const subsequentOrderLineItemDetails: SubsequentOrderDetailsQuery =
+            await fetchAndValidateGraphQLData<SubsequentOrderDetailsQuery>(
+                session.shop,
+                session.accessToken,
+                GET_SUBSEQUENT_ORDER_DETAILS_DATABASE,
+                {
+                    id: shopifyOrderId,
+                    after: endCursor,
+                },
+            );
+
+        const prevLineItems = orderDetailsForDatabase?.lineItems;
+        const newLineItems =
+            subsequentOrderLineItemDetails.order?.lineItems.edges.map(({ node }) => ({
+                shopifyVariantId: node.variant?.id ?? null, // this will not be null, just graphql semantics
+                quantity: node.quantity,
+            })) ?? [];
+        const lineItems = [...prevLineItems, ...newLineItems];
+        orderDetailsForDatabase.lineItems = lineItems;
+        hasMore = subsequentOrderLineItemDetails.order?.lineItems.pageInfo.hasNextPage ?? false;
+        endCursor = subsequentOrderLineItemDetails.order?.lineItems.pageInfo.endCursor ?? null;
+    }
+
+    return orderDetailsForDatabase;
+}
 
 async function addOrderToDatabase(
     fulfillmentOrder: FulfillmentOrdersBySupplier,
@@ -170,7 +242,8 @@ async function createSupplierOrder(
 ) {
     const supplierSession = await getSession(fulfillmentOrder.supplierId, client);
     const draftOrderId = await createDraftOrder(fulfillmentOrder, customerShippingDetails, supplierSession, client);
-    const orderId = await completeDraftOrder(draftOrderId, supplierSession);
+    const supplierShopifyOrderId = await completeDraftOrder(draftOrderId, supplierSession);
+    const supplierOrderDetails = await getOrderDetails(supplierShopifyOrderId, supplierSession);
 }
 
 // creates the equivalent order for the supplier

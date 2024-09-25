@@ -113,3 +113,55 @@ export const DRAFT_ORDER_COMPLETE_MUTATION = `#graphql
     }
   }
 `;
+
+export const GET_INITIAL_ORDER_DETAILS_DATABASE = `#graphql
+  query initialOrderDetails($id: ID!){
+    order(id: $id) {
+      lineItems(first:10){
+      pageInfo{
+        hasNextPage
+        endCursor
+      }
+      edges {
+        node{
+          id
+          variant {
+            id
+          }
+          quantity
+        }
+      }
+    }
+    presentmentCurrencyCode
+    shippingLine {
+      originalPriceSet{
+        presentmentMoney {
+          amount
+          currencyCode
+        }
+      }
+    }}
+  }
+`;
+
+export const GET_SUBSEQUENT_ORDER_DETAILS_DATABASE = `#graphql 
+  query subsequentOrderDetails($id: ID!, $after: String!){
+    order(id: $id){
+      lineItems(after: $after, first: 10){
+        pageInfo{
+          hasNextPage
+          endCursor
+        }
+        edges {
+          node{
+            id
+            variant {
+              id
+            }
+            quantity
+          }
+        }
+      }
+    }
+  }
+`;
