@@ -1,16 +1,11 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { PoolClient } from 'pg';
 import { initializePool } from './db';
-import { ShopifyEvent } from './types';
+import { Session, ShopifyEvent } from './types';
 import { fetchAndValidateGraphQLData } from './util';
-import { GET_FULFILLMENT_ORDER_LOCATION } from './graphql';
-import { FulfillmentOrderLocationQuery } from './types/admin.generated';
-import { splitFulfillmentOrderBySupplier } from './helper';
-
-type FulfillmentOrderDetails = {
-    fulfillmentOrderId: string;
-    orderLineDetails: OrderLineDetail[];
-};
+import { GET_FULFILLMENT_ORDER_CUSTOMER_DETAILS, GET_FULFILLMENT_ORDER_LOCATION } from './graphql';
+import { FulfillmentOrderCustomerDetailsQuery, FulfillmentOrderLocationQuery } from './types/admin.generated';
+import { createSupplierOrders, splitFulfillmentOrderBySupplier } from './helper';
 
 async function getSession(shop: string, client: PoolClient) {
     const sessionQuery = `SELECT * FROM "Session" WHERE shop = $1 LIMIT 1`;
@@ -22,21 +17,10 @@ async function getSession(shop: string, client: PoolClient) {
     return session;
 }
 
-async function createSupplierOrders(newFulfillmentOrders: Map<string, FulfillmentOrderDetails>) {
-    // TODO: now, figure out how you want to handle payments
-    return;
-}
-
-async function isSynqsellFulfillmentLocation(
-    shop: string,
-    accessToken: string,
-    sessionId: string,
-    fulfillmentOrderId: string,
-    client: PoolClient,
-) {
+async function isSynqsellFulfillmentLocation(retailerSession: Session, fulfillmentOrderId: string, client: PoolClient) {
     const locationQuery = await fetchAndValidateGraphQLData<FulfillmentOrderLocationQuery>(
-        shop,
-        accessToken,
+        retailerSession.shop,
+        retailerSession.accessToken,
         GET_FULFILLMENT_ORDER_LOCATION,
         {
             id: fulfillmentOrderId,
@@ -54,12 +38,28 @@ async function isSynqsellFulfillmentLocation(
     `;
     const fulfillmentService = await client.query(fulfillmentServiceQuery, [
         fulfillmentOrderShopifyLocationId,
-        sessionId,
+        retailerSession.id,
     ]);
     if (fulfillmentService && fulfillmentService.rows.length > 0) {
         return true;
     }
     return false;
+}
+
+async function getCustomerShippingDetails(fulfillmentOrderId: string, retailerSession: Session) {
+    const fulfillmentOrderQuery = await fetchAndValidateGraphQLData<FulfillmentOrderCustomerDetailsQuery>(
+        retailerSession.shop,
+        retailerSession.accessToken,
+        GET_FULFILLMENT_ORDER_CUSTOMER_DETAILS,
+        {
+            id: fulfillmentOrderId,
+        },
+    );
+    const customerShippingDetails = fulfillmentOrderQuery.fulfillmentOrder?.destination;
+    if (!customerShippingDetails) {
+        throw new Error('There was no data inside the customer shipping details');
+    }
+    return customerShippingDetails;
 }
 
 // Fulfillment orders are routed by location
@@ -71,16 +71,9 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         client = await pool.connect();
         const shop = event.detail['X-Shopify-Shop-Domain'];
         const shopifyFulfillmentOrderId = event.detail.payload.fulfillment_order.id;
-        const session = await getSession(shop, client);
+        const retailerSession = await getSession(shop, client);
 
-        const isSynqsellOrder = await isSynqsellFulfillmentLocation(
-            shop,
-            session.accessToken,
-            session.id,
-            shopifyFulfillmentOrderId,
-            client,
-        );
-
+        const isSynqsellOrder = await isSynqsellFulfillmentLocation(retailerSession, shopifyFulfillmentOrderId, client);
         if (!isSynqsellOrder) {
             return {
                 statusCode: 200,
@@ -89,14 +82,14 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
                 }),
             };
         }
-
         const fulfillmentOrdersBySupplier = await splitFulfillmentOrderBySupplier(
             shopifyFulfillmentOrderId,
             shop,
-            session.accessToken,
+            retailerSession.accessToken,
             client,
         );
-        // await createSupplierOrders(newFulfillmentOrders);
+        const customerShippingDetails = await getCustomerShippingDetails(shopifyFulfillmentOrderId, retailerSession);
+        await createSupplierOrders(fulfillmentOrdersBySupplier, retailerSession, customerShippingDetails, client);
 
         return {
             statusCode: 200,

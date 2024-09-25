@@ -100,45 +100,47 @@ async function splitFulfillmentOrderOnShopify(
     // splitting fulfillment order inside the loop rather than using Promise.all
     // because shopify's API only returns id of fulfillment order and no ability to refetch line items
     // it's simpler to get the data in the correct format in the map itself
-    const newFulfillmentOrders = supplierIds.map(async (supplierId, index) => {
-        const orderLine = orderLinesBySupplier.get(supplierId);
-        if (!orderLine) {
-            throw new Error('Order line does not exist for supplier ' + supplierId); // this should never run, just for typescript
-        }
-        let fulfillmentOrderId = '';
-        if (index === 0) {
-            fulfillmentOrderId = originalFulfillmentOrderId;
-        } else {
-            const input = {
-                fulfillmentOrderId: originalFulfillmentOrderId,
-                fulfillmentOrderLineItems: orderLine.map((detail) => ({
+    const newFulfillmentOrders = await Promise.all(
+        supplierIds.map(async (supplierId, index) => {
+            const orderLine = orderLinesBySupplier.get(supplierId);
+            if (!orderLine) {
+                throw new Error('Order line does not exist for supplier ' + supplierId); // this should never run, just for typescript
+            }
+            let fulfillmentOrderId = '';
+            if (index === 0) {
+                fulfillmentOrderId = originalFulfillmentOrderId;
+            } else {
+                const input = {
+                    fulfillmentOrderId: originalFulfillmentOrderId,
+                    fulfillmentOrderLineItems: orderLine.map((detail) => ({
+                        id: detail.fulfillmentOrderLineItemId,
+                        quantity: detail.fulfillmentOrderLineItemQuantity,
+                    })),
+                };
+                const newFulfillmentOrder = await mutateAndValidateGraphQLData<FulfillmentOrderSplitMutation>(
+                    shop,
+                    accessToken,
+                    FULFILLMENT_ORDER_SPLIT_MUTATION,
+                    {
+                        fulfillmentOrderSplits: input,
+                    },
+                    'Failed to split fulfillment order.',
+                );
+                fulfillmentOrderId =
+                    newFulfillmentOrder.fulfillmentOrderSplit?.fulfillmentOrderSplits?.[0]?.remainingFulfillmentOrder
+                        ?.id ?? '';
+            }
+            return {
+                fulfillmentOrderId,
+                supplierId,
+                orderLineItems: orderLine.map((detail) => ({
                     id: detail.fulfillmentOrderLineItemId,
                     quantity: detail.fulfillmentOrderLineItemQuantity,
+                    shopifyVariantId: detail.shopifyVariantId,
                 })),
             };
-            const newFulfillmentOrder = await mutateAndValidateGraphQLData<FulfillmentOrderSplitMutation>(
-                shop,
-                accessToken,
-                FULFILLMENT_ORDER_SPLIT_MUTATION,
-                {
-                    fulfillmentOrderSplits: input,
-                },
-                'Failed to split fulfillment order.',
-            );
-            fulfillmentOrderId =
-                newFulfillmentOrder.fulfillmentOrderSplit?.fulfillmentOrderSplits?.[0]?.remainingFulfillmentOrder?.id ??
-                '';
-        }
-        return {
-            fulfillmentOrderId: fulfillmentOrderId,
-            supplierId: supplierId,
-            orderLineItems: orderLine.map((detail) => ({
-                id: detail.fulfillmentOrderLineItemId,
-                quantity: detail.fulfillmentOrderLineItemQuantity,
-                shopifyVariantid: detail.shopifyVariantId,
-            })),
-        };
-    });
+        }),
+    );
 
     return newFulfillmentOrders;
 }

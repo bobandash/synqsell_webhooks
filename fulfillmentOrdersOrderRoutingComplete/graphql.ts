@@ -69,3 +69,47 @@ export const FULFILLMENT_ORDER_SPLIT_MUTATION = `#graphql
     }
   }
 `;
+
+export const GET_FULFILLMENT_ORDER_CUSTOMER_DETAILS = `#graphql 
+  query fulfillmentOrderCustomerDetails($id: ID!){
+    fulfillmentOrder(id:$id){
+      destination{
+        address1
+        address2
+        city
+        company
+        countryCode
+        email
+        firstName
+        lastName
+        phone
+        province
+        zip
+      }
+    }
+  }
+`;
+
+export const DRAFT_ORDER_CREATE_MUTATION = `#graphql 
+  mutation draftOrderCreate($input: DraftOrderInput!) {
+    draftOrderCreate(input: $input) {
+      draftOrder {
+        id
+      }
+    }
+  }
+
+`;
+
+export const DRAFT_ORDER_COMPLETE_MUTATION = `#graphql 
+  mutation draftOrderComplete($id: ID!) {
+    draftOrderComplete(id: $id) {
+      draftOrder {
+        id
+        order {
+          id
+        }
+      }
+    }
+  }
+`;

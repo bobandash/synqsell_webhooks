@@ -1,3 +1,5 @@
+import { FulfillmentOrderDestination } from './types/admin.types';
+
 export type ShopifyEvent = {
     version: string;
     id: string;
@@ -22,3 +24,46 @@ export type ShopifyEvent = {
         };
     };
 };
+
+export type FulfillmentOrdersBySupplier = {
+    fulfillmentOrderId: string;
+    supplierId: string;
+    orderLineItems: {
+        id: string;
+        quantity: number;
+        shopifyVariantId: string;
+    }[];
+};
+
+export type Session = {
+    id: string;
+    shop: string;
+    state: string;
+    isOnline: boolean;
+    scope?: string;
+    expires?: Date;
+    accessToken: string;
+    userId?: bigint;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
+    accountOwner: boolean;
+    locale?: string;
+    collaborator?: boolean;
+    emailVerified?: boolean;
+};
+
+export type CustomerShippingDetails = Pick<
+    FulfillmentOrderDestination,
+    | 'address1'
+    | 'address2'
+    | 'city'
+    | 'company'
+    | 'countryCode'
+    | 'email'
+    | 'firstName'
+    | 'lastName'
+    | 'phone'
+    | 'province'
+    | 'zip'
+>;

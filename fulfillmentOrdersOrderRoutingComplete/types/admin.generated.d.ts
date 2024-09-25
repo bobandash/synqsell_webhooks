@@ -38,14 +38,41 @@ export type FulfillmentOrderSplitMutationVariables = AdminTypes.Exact<{
 
 export type FulfillmentOrderSplitMutation = { fulfillmentOrderSplit?: AdminTypes.Maybe<{ fulfillmentOrderSplits?: AdminTypes.Maybe<Array<{ remainingFulfillmentOrder: Pick<AdminTypes.FulfillmentOrder, 'id'> }>>, userErrors: Array<Pick<AdminTypes.FulfillmentOrderSplitUserError, 'field' | 'message'>> }> };
 
+export type FulfillmentOrderCustomerDetailsQueryVariables = AdminTypes.Exact<{
+  id: AdminTypes.Scalars['ID']['input'];
+}>;
+
+
+export type FulfillmentOrderCustomerDetailsQuery = { fulfillmentOrder?: AdminTypes.Maybe<{ destination?: AdminTypes.Maybe<Pick<AdminTypes.FulfillmentOrderDestination, 'address1' | 'address2' | 'city' | 'company' | 'countryCode' | 'email' | 'firstName' | 'lastName' | 'phone' | 'province' | 'zip'>> }> };
+
+export type DraftOrderCreateMutationVariables = AdminTypes.Exact<{
+  input: AdminTypes.DraftOrderInput;
+}>;
+
+
+export type DraftOrderCreateMutation = { draftOrderCreate?: AdminTypes.Maybe<{ draftOrder?: AdminTypes.Maybe<Pick<AdminTypes.DraftOrder, 'id'>> }> };
+
+export type DraftOrderCompleteMutationVariables = AdminTypes.Exact<{
+  id: AdminTypes.Scalars['ID']['input'];
+}>;
+
+
+export type DraftOrderCompleteMutation = { draftOrderComplete?: AdminTypes.Maybe<{ draftOrder?: AdminTypes.Maybe<(
+      Pick<AdminTypes.DraftOrder, 'id'>
+      & { order?: AdminTypes.Maybe<Pick<AdminTypes.Order, 'id'>> }
+    )> }> };
+
 interface GeneratedQueryTypes {
   "#graphql \n    query fulfillmentOrderLocation($id: ID!) {\n        fulfillmentOrder(id: $id) {\n            assignedLocation {\n                location {\n                    id\n                }\n            }\n        }\n    }\n": {return: FulfillmentOrderLocationQuery, variables: FulfillmentOrderLocationQueryVariables},
   "#graphql\n    query initialFulfillmentOrderDetails($id: ID!) {\n        fulfillmentOrder(id: $id) {\n            lineItems(first: 10) {\n                edges {\n                  node {\n                    id\n                    variant {\n                        id\n                    }\n                    totalQuantity\n                  }\n                }\n                pageInfo {\n                  hasNextPage\n                  endCursor\n                }\n            },\n        }\n    }\n": {return: InitialFulfillmentOrderDetailsQuery, variables: InitialFulfillmentOrderDetailsQueryVariables},
   "#graphql\n    query subsequentFulfillmentOrderDetails($id: ID!, $after: String!) {\n        fulfillmentOrder(id: $id) {\n            lineItems(after: $after, first: 10) {\n                edges {\n                  node {\n                    id\n                    variant {\n                        id\n                    }\n                    totalQuantity\n                  }\n                }\n                pageInfo {\n                  hasNextPage\n                  endCursor\n                }\n            },\n        }\n    }\n": {return: SubsequentFulfillmentOrderDetailsQuery, variables: SubsequentFulfillmentOrderDetailsQueryVariables},
+  "#graphql \n  query fulfillmentOrderCustomerDetails($id: ID!){\n    fulfillmentOrder(id:$id){\n      destination{\n        address1\n        address2\n        city\n        company\n        countryCode\n        email\n        firstName\n        lastName\n        phone\n        province\n        zip\n      }\n    }\n  }\n": {return: FulfillmentOrderCustomerDetailsQuery, variables: FulfillmentOrderCustomerDetailsQueryVariables},
 }
 
 interface GeneratedMutationTypes {
   "#graphql\n  mutation fulfillmentOrderSplit($fulfillmentOrderSplits: [FulfillmentOrderSplitInput!]!) {\n    fulfillmentOrderSplit(fulfillmentOrderSplits: $fulfillmentOrderSplits) {\n      fulfillmentOrderSplits {\n        remainingFulfillmentOrder {\n          id\n        }\n      }\n      userErrors {\n        field\n        message\n      }\n    }\n  }\n": {return: FulfillmentOrderSplitMutation, variables: FulfillmentOrderSplitMutationVariables},
+  "#graphql \n  mutation draftOrderCreate($input: DraftOrderInput!) {\n    draftOrderCreate(input: $input) {\n      draftOrder {\n        id\n      }\n    }\n  }\n\n": {return: DraftOrderCreateMutation, variables: DraftOrderCreateMutationVariables},
+  "#graphql \n  mutation draftOrderComplete($id: ID!) {\n    draftOrderComplete(id: $id) {\n      draftOrder {\n        id\n        order {\n          id\n        }\n      }\n    }\n  }\n": {return: DraftOrderCompleteMutation, variables: DraftOrderCompleteMutationVariables},
 }
 declare module '@shopify/admin-api-client' {
   type InputMaybe<T> = AdminTypes.InputMaybe<T>;
