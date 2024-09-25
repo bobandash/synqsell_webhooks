@@ -1,7 +1,7 @@
 import { PoolClient } from 'pg';
 import { EditedVariant } from '../types';
 import { createMapToRestObj, fetchAndValidateGraphQLData, mutateAndValidateGraphQLData } from '../util';
-import { ADJUST_INVENTORY_MUTATION, PRODUCT_VARIANT_BULK_UPDATE, PRODUCT_VARIANT_INFO } from '../graphql';
+import { ADJUST_INVENTORY_MUTATION, PRODUCT_VARIANT_BULK_UPDATE_PRICE, PRODUCT_VARIANT_INFO } from '../graphql';
 import { ProductVariantInfoQuery } from '../types/admin.generated';
 
 type VariantAndImportedVariant = {
@@ -148,16 +148,16 @@ async function updateRetailerPrice(
     await mutateAndValidateGraphQLData(
         retailerSession.shop,
         retailerSession.accessToken,
-        PRODUCT_VARIANT_BULK_UPDATE,
+        PRODUCT_VARIANT_BULK_UPDATE_PRICE,
         {
             productId: importedShopifyProductId,
             variants: retailerVariantEditInput,
         },
-        'Failed to update product variant information for retailer.',
+        'Failed to update price for retailer product.',
     );
 }
 
-async function updateInventory(
+async function updateRetailerInventory(
     supplierShopifyVariantData: ProductVariantInfoQuery[],
     retailerSession: Session,
     client: PoolClient,
@@ -229,7 +229,7 @@ async function revertRetailerProductModificationOnShopify(
                 retailerSession,
                 importedShopifyProductId,
             ),
-            updateInventory(supplierShopifyVariantData, retailerSession, client),
+            updateRetailerInventory(supplierShopifyVariantData, retailerSession, client),
         ]);
 
         // const retailerFulfillmentService = await getFulfillmentService(retailerSession.id, client);

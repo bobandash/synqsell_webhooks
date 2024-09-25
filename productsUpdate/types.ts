@@ -5,6 +5,17 @@ export type EditedVariant = {
     price: string;
 };
 
+export type PriceListDetails = {
+    id: string;
+    createdAt: Date;
+    pricingStrategy: string;
+    supplierId: string;
+    isGeneral: boolean;
+    name: string;
+    requiresApprovalToImport?: boolean;
+    margin?: number;
+};
+
 export type ShopifyEvent = {
     version: string;
     id: string;

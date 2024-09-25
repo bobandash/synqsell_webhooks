@@ -98,10 +98,6 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         const isRetailerProductResult = await isRetailerProduct(shopifyDeletedProductId, client);
         const isSupplierProductResult = await isSupplierProduct(shopifyDeletedProductId, client);
 
-        console.log(event);
-        console.log(`isSupplierProduct: ${isSupplierProductResult}`);
-        console.log(`isRetailerProduct: ${isRetailerProduct}`);
-
         if (!isSupplierProductResult && !isRetailerProductResult) {
             return {
                 statusCode: 200,
