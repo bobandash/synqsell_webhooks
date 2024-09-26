@@ -419,3 +419,48 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "events.amazonaws.com"
       SourceArn: !GetAtt FulfillmentOrderRoutingCompleteRule.Arn
+
+  FulfillmentEventsCreateRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: fulfillment_events_create_rule
+      EventPattern:
+        detail-type:
+          - "shopifyWebhook"
+        detail:
+          metadata:
+            X-Shopify-Topic:
+              - prefix: "fulfillment_events/create"
+      EventBusName: !Ref EventBusArn
+      Targets:
+        - Arn: !GetAtt FulfillmentEventsCreateFunction.Arn
+          Id: "FulfillmentEventsCreateFunctionTarget"
+
+  # fulfillment_events/create webhook
+  FulfillmentEventsCreateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: synqsell_fulfillment_events_create
+      CodeUri: fulfillmentEventsCreate/
+      Handler: app.lambdaHandler
+      MemorySize: 1028
+      Timeout: 30
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+          - app.ts
+
+  FulfillmentEventsCreatePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref FulfillmentEventsCreateFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt FulfillmentEventsCreateRule.Arn

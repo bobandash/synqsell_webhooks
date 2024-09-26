@@ -4,9 +4,15 @@
 
 ## Common Commands
 
-sam sync --stack-name Synqsell
 I can choose what to view when I sync
+
+## TODO: Write documentation about thi slater
+
+https://gist.github.com/kshailen/0d4f78596b0ab12659be908163ed1fc2
+ssh -i "bastion_key.pem" -NL 8886:postgress.cpypigm0kth7.us-east-1.rds.amazonaws.com:5432 ec2-user@132.5.10.11 -v
+
 sam logs -n ProductsUpdateFunction --stack-name Synqsell -t
+sam sync --stack-name Synqsell --resource-id ProductsUpdate
 
 This project contains source code and supporting files for a serverless application that you can deploy with the SAM CLI. It includes the following files and folders.
 
