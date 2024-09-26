@@ -15,6 +15,11 @@ export const GET_FULFILLMENT_DETAILS = `#graphql
           endCursor
         }
       }
+      trackingInfo {
+        company
+        number
+        url
+      }
     }
   }
 `;
@@ -31,16 +36,22 @@ export const GET_SUBSEQUENT_FULFILLMENT_DETAILS = `#graphql
             quantity
           }
         }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
       }
     }
   }
 `;
 
+// Shopify's docs say this is deprecated, but it's the only one that works with codgen...
 export const CREATE_FULFILLMENT_FULFILLMENT_ORDER_MUTATION = `#graphql
-  mutation fulfillmentCreate($fulfillment: FulfillmentInput!) {
-    fulfillmentCreate(fulfillment: $fulfillment) {
+  mutation fulfillmentCreateV2($fulfillment: FulfillmentV2Input!) {
+    fulfillmentCreateV2(fulfillment: $fulfillment) {
       fulfillment {
         id
+        status
       }
       userErrors {
         field

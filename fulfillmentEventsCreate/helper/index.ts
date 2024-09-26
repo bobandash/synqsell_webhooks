@@ -1,1 +1,1 @@
-export { default as updateRetailerFulfillment } from './updateRetailerFulfillment';
+export { default as createRetailerFulfillment } from './createRetailerFulfillment';

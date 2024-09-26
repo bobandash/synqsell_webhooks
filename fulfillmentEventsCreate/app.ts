@@ -1,11 +1,11 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { PoolClient } from 'pg';
 import { initializePool } from './db';
-import { ShopifyEvent } from './types';
+import { Session, ShopifyEvent } from './types';
 import { composeGid } from '@shopify/admin-graphql-api-utilities';
-import { updateRetailerFulfillment } from './helper';
+import { createRetailerFulfillment } from './helper';
 
-async function getSession(shop: string, client: PoolClient) {
+async function getSupplierSession(shop: string, client: PoolClient) {
     try {
         const sessionQuery = `SELECT * FROM "Session" WHERE shop = $1 LIMIT 1`;
         const sessionData = await client.query(sessionQuery, [shop]);
@@ -13,20 +13,19 @@ async function getSession(shop: string, client: PoolClient) {
             throw new Error('Shop data is invalid.');
         }
         const session = sessionData.rows[0];
-        return session;
+        return session as Session;
     } catch {
         throw new Error(`Failed to retrieve session from shop ${shop}.`);
     }
 }
 
-async function isSynqsellOrder(shopifyOrderId: string, shop: string, client: PoolClient) {
-    const session = await getSession(shop, client);
+async function isSynqsellOrder(shopifyOrderId: string, supplierSession: Session, client: PoolClient) {
     const orderQuery = `
         SELECT "id" FROM "Order"
         WHERE "supplierId" = $1 AND "shopifySupplierOrderId" = $2
         LIMIT 1
     `;
-    const orderData = await client.query(orderQuery, [session.id, shopifyOrderId]);
+    const orderData = await client.query(orderQuery, [supplierSession.id, shopifyOrderId]);
     return orderData.rows.length > 0;
 }
 
@@ -40,8 +39,9 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         const { order_id: orderId, fulfillment_id: fulfillmentId } = payload;
         const shopifyOrderId = composeGid('Order', orderId);
         const shopifyFulfillmentId = composeGid('Fulfillment', fulfillmentId);
+        const supplierSession = await getSupplierSession(shop, client);
 
-        const isRelevantOrder = await isSynqsellOrder(shopifyOrderId, shop, client);
+        const isRelevantOrder = await isSynqsellOrder(shopifyOrderId, supplierSession, client);
         if (!isRelevantOrder) {
             return {
                 statusCode: 200,
@@ -50,7 +50,7 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
                 }),
             };
         }
-        await updateRetailerFulfillment(shopifyFulfillmentId, shopifyOrderId, client);
+        await createRetailerFulfillment(shopifyFulfillmentId, shopifyOrderId, supplierSession, client);
 
         return {
             statusCode: 200,
