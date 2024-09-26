@@ -376,35 +376,46 @@ Resources:
       Principal: "events.amazonaws.com"
       SourceArn: !GetAtt ProductsUpdateRule.Arn
 
-  # FulfillmentOrdersOrderRoutingCompleteFunction:
-  #   Type: AWS::Serverless::Function
-  #   Properties:
-  #     FunctionName: synqsell_fulfillment_orders_order_routing_complete
-  #     CodeUri: fulfillmentOrdersOrderRoutingComplete/
-  #     Handler: app.lambdaHandler
-  #     MemorySize: 1028
-  #     Timeout: 30
-  #     Runtime: nodejs20.x
-  #     Architectures:
-  #       - x86_64
-  #     Events:
-  #       ShopifyProductDeleteTrigger:
-  #         Type: EventBridgeRule
-  #         Properties:
-  #           Pattern:
-  #             detail-type:
-  #               - "shopifyWebhook"
-  #             detail:
-  #               metadata:
-  #                 X-Shopify-Topic:
-  #                   - prefix: "fulfillment_orders/order_routing_complete"
-  #           EventBusName: !Ref EventBusArn
-  #           RuleName: order_routing_complete_webhook
-  #   Metadata:
-  #     BuildMethod: esbuild
-  #     BuildProperties:
-  #       Minify: true
-  #       Target: es2020
-  #       Sourcemap: true
-  #       EntryPoints:
-  #         - app.ts
+  FulfillmentOrderRoutingCompleteRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: order_routing_complete_rule
+      EventPattern:
+        detail-type:
+          - "shopifyWebhook"
+        detail:
+          metadata:
+            X-Shopify-Topic:
+              - prefix: "fulfillment_orders/order_routing_complete"
+      EventBusName: !Ref EventBusArn
+      Targets:
+        - Arn: !GetAtt FulfillmentOrderRoutingCompleteFunction.Arn
+          Id: "FulfillmentOrderRoutingCompleteFunctionTarget"
+
+  FulfillmentOrderRoutingCompleteFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: synqsell_order_routing_complete
+      CodeUri: fulfillmentOrdersOrderRoutingComplete/
+      Handler: app.lambdaHandler
+      MemorySize: 1028
+      Timeout: 30
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+          - app.ts
+
+  FulfillmentOrderRoutingPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref FulfillmentOrderRoutingCompleteFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt FulfillmentOrderRoutingCompleteRule.Arn
