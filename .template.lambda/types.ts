@@ -9,7 +9,7 @@ export type ShopifyEvent = {
     resources: string[];
     detail: {
         metadata: {
-            'Content-Type': 'application/json';
+            'Content-Type': string;
             'X-Shopify-Topic': string;
             'X-Shopify-Hmac-Sha256': string;
             'X-Shopify-Shop-Domain': string;
