@@ -7,9 +7,10 @@ import { GET_FULFILLMENT_ORDER_CUSTOMER_DETAILS, GET_FULFILLMENT_ORDER_LOCATION 
 import { FulfillmentOrderCustomerDetailsQuery, FulfillmentOrderLocationQuery } from './types/admin.generated';
 import { createSupplierOrders, splitFulfillmentOrderBySupplier } from './helper';
 
+// sam local invoke FulfillmentOrderRoutingCompleteFunction --event ./fulfillmentOrdersOrderRoutingComplete/app_event.json
+
 async function getSession(shop: string, client: PoolClient) {
     const sessionQuery = `SELECT * FROM "Session" WHERE shop = $1 LIMIT 1`;
-    console.log(shop);
     const sessionData = await client.query(sessionQuery, [shop]);
     if (sessionData.rows.length === 0) {
         throw new Error('Shop data is invalid.');
@@ -57,7 +58,7 @@ async function getCustomerShippingDetails(fulfillmentOrderId: string, retailerSe
         },
     );
     const customerShippingDetails = fulfillmentOrderQuery.fulfillmentOrder?.destination;
-    // TODO: If this MVP ends up validated, handle the case where shipping addresses can change
+    // TODO: If this MVP ends up validated, handle the case where shipping addresses can change, do not feature creep
     if (!customerShippingDetails) {
         throw new Error('There was no data inside the customer shipping details');
     }

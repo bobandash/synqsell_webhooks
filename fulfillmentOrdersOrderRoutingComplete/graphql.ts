@@ -98,7 +98,6 @@ export const DRAFT_ORDER_CREATE_MUTATION = `#graphql
       }
     }
   }
-
 `;
 
 export const DRAFT_ORDER_COMPLETE_MUTATION = `#graphql 

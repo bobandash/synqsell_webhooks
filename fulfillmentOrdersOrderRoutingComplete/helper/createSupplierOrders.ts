@@ -17,6 +17,7 @@ import { ORDER_PAYMENT_STATUS } from '../constants';
 import { CurrencyCode } from '../types/admin.types';
 import { getRetailerToSupplierVariantIdMap, getSession } from './util';
 import createMapIdToRestObj from '../util/createMapToRestObj';
+import { v4 as uuidv4 } from 'uuid';
 
 type OrderDetailForDatabase = {
     shopifyOrderId: string;
@@ -180,11 +181,12 @@ async function addOrderToDatabase(
     try {
         const orderQuery = `
             INSERT INTO 
-            "Order" ("currency", "shopifyRetailerFulfillmentOrderId", "shopifySupplierOrderId", "retailerId", "supplierId", "shippingCost", "paymentStatus")
-            VALUES($1, $2, $3, $4, $5, $6, $7)
+            "Order" ("id", "currency", "shopifyRetailerFulfillmentOrderId", "shopifySupplierOrderId", "retailerId", "supplierId", "shippingCost", "paymentStatus")
+            VALUES($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id
         `;
         const newOrder = await client.query(orderQuery, [
+            uuidv4(),
             'USD',
             shopifyRetailerFulfillmentOrderId,
             shopifySupplierOrderId,
@@ -196,7 +198,8 @@ async function addOrderToDatabase(
 
         const newDbOrderId: string = newOrder.rows[0].id;
         return newDbOrderId;
-    } catch {
+    } catch (error) {
+        console.error(error);
         throw new Error('Failed to add order to database.');
     }
 }
@@ -205,6 +208,7 @@ async function addOrderLineToDatabase(props: AddOrderLineToDatabase, client: Poo
     try {
         const orderLineItemQuery = `
             INSERT INTO "OrderLineItem" (
+                "id",
                 "retailerShopifyVariantId",
                 "supplierShopifyVariantId",
                 "retailPricePerUnit",
@@ -216,15 +220,16 @@ async function addOrderLineToDatabase(props: AddOrderLineToDatabase, client: Poo
                 "priceListId"
             )
             VALUES (
-                $1,  -- retailerShopifyVariantId
-                $2,  -- supplierShopifyVariantId
-                $3,  -- retailPricePerUnit
-                $4,  -- amountPayablePerUnit
-                $5,  -- shopifyRetailerOrderLineItemId
-                $6,  -- shopifySupplierOrderLineItemId
-                $7,  -- quantity
-                $8, -- orderId
-                $9  -- priceListId
+                $1,  -- id
+                $2,  -- retailerShopifyVariantId
+                $3,  -- supplierShopifyVariantId
+                $4,  -- retailPricePerUnit
+                $5,  -- amountPayablePerUnit
+                $6,  -- shopifyRetailerOrderLineItemId
+                $7,  -- shopifySupplierOrderLineItemId
+                $8,  -- quantity
+                $9, -- orderId
+                $10  -- priceListId
             )
         `;
         const {
@@ -240,6 +245,7 @@ async function addOrderLineToDatabase(props: AddOrderLineToDatabase, client: Poo
         } = props;
 
         await client.query(orderLineItemQuery, [
+            uuidv4(),
             retailerShopifyVariantId,
             supplierShopifyVariantId,
             retailPricePerUnit,
@@ -298,6 +304,7 @@ async function addEntireOrderToDatabase(
         supplierSession.id,
         client,
     );
+    console.error('new db order id ' + newDbOrderId);
     const retailerVariantIds = retailerOrderLineItems.map((lineItem) => lineItem.shopifyVariantId);
     const retailerToSupplierVariantIdsMap = await getRetailerToSupplierVariantIdMap(retailerVariantIds, client);
     const supplierOrderLineItemsMap = createMapIdToRestObj(supplierOrderLineItems, 'shopifyVariantId'); // key is supplier variant id
@@ -334,7 +341,12 @@ async function addEntireOrderToDatabase(
         );
     });
 
-    await Promise.all(createOrderLineItemPromises);
+    try {
+        await Promise.all(createOrderLineItemPromises);
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to create order line items.');
+    }
 }
 // ==============================================================================================================
 // END: ADD ORDERS TO DATABASE LOGIC

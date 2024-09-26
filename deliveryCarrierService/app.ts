@@ -1,7 +1,7 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { PoolClient } from 'pg';
 import { initializePool } from './db';
-import { ShopifyShippingDetails } from './types';
+import type { ShopifyShippingDetails } from './types';
 
 type CustomProxyEvent = Omit<APIGatewayProxyResult, 'body'> & { body: string };
 
@@ -11,8 +11,6 @@ export const lambdaHandler = async (event: CustomProxyEvent): Promise<APIGateway
     try {
         const pool = initializePool();
         client = await pool.connect();
-        console.log(event);
-
         return {
             statusCode: 200,
             body: JSON.stringify({
