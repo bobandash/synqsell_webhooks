@@ -1,4 +1,4 @@
-import { Pool, PoolClient } from 'pg';
+import { PoolClient } from 'pg';
 import { CustomerShippingDetails, FulfillmentOrdersBySupplier, Session } from '../types';
 import { fetchAndValidateGraphQLData, mutateAndValidateGraphQLData } from '../util';
 import {

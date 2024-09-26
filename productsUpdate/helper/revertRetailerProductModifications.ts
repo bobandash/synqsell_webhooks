@@ -233,6 +233,26 @@ async function revertRetailerProductModificationOnShopify(
     }
 }
 
+async function getSupplierVariantData(supplierShopifyVariantIds: string[], supplierSession: Session) {
+    try {
+        const supplierVariantData = await Promise.all(
+            supplierShopifyVariantIds.map((shopifyVariantId) => {
+                return fetchAndValidateGraphQLData<ProductVariantInfoQuery>(
+                    supplierSession.shop,
+                    supplierSession.accessToken,
+                    PRODUCT_VARIANT_INFO,
+                    {
+                        id: shopifyVariantId,
+                    },
+                );
+            }),
+        );
+        return supplierVariantData;
+    } catch {
+        throw new Error('Failed to get supplier variant data');
+    }
+}
+
 // if the retailer changes the inventory or retail price, it is should be reverted back to the supplier's data
 // !!! NOTE: in order not to trigger infinite products/update webhooks being called, we need to check if any data needs to change in the first place
 // Because there is another function calls to product/update TO retailer products
@@ -265,17 +285,9 @@ async function revertRetailerProductModifications(
     const retailerEditedVariantsMap = createMapToRestObj(editedVariants, 'shopifyVariantId');
     const supplierToRetailerVariantId = createMapSupplierToRetailerVariantId(baseAndImportedVariantData);
 
-    const supplierShopifyVariantData: ProductVariantInfoQuery[] = await Promise.all(
-        supplierShopifyVariantIds.map((shopifyVariantId) => {
-            return fetchAndValidateGraphQLData<ProductVariantInfoQuery>(
-                supplierSession.shop,
-                supplierSession.accessToken,
-                PRODUCT_VARIANT_INFO,
-                {
-                    id: shopifyVariantId,
-                },
-            );
-        }),
+    const supplierShopifyVariantData: ProductVariantInfoQuery[] = await getSupplierVariantData(
+        supplierShopifyVariantIds,
+        supplierSession,
     );
 
     // end all important data to perform operations

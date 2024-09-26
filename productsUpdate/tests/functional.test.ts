@@ -2,17 +2,14 @@ import { lambdaHandler } from '../app';
 import { pool, clearAllTables } from '../../integration-setup';
 import { initializePool } from '../db';
 import { Pool } from 'pg';
-import {
-    getRetailerProductUpdateEvent,
-    getSupplierProductUpdateEvent,
-    notSynqsellProductUpdateEvent,
-} from './constants';
+import { getRetailerProductUpdateEvent, notSynqsellProductUpdateEvent } from './constants';
 import { DEFAULT_ITEMS, priceListWithProductAndImportedProductMutation } from '../../commonDataMutation';
 import * as utils from '../util';
 import * as helperFunctions from '../helper';
-import { composeGid } from '@shopify/admin-graphql-api-utilities';
-
 // TODO: Not important right not, but verify that wholesale price list functions properly
+
+process.env['NODE_DEV'] = 'TEST';
+
 jest.mock('../db');
 jest.mock('../util', () => {
     const actualUtil = jest.requireActual('../util');
@@ -24,6 +21,7 @@ jest.mock('../util', () => {
 });
 const mockedInitializePool = initializePool as jest.Mock<Pool>;
 
+// TODO: after MVP, figure out what library to use to deal with mocking unexported private functions
 describe('Shopify products/update webhook', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -76,7 +74,6 @@ describe('Shopify products/update webhook', () => {
             expect(result.statusCode).toBe(200);
         });
 
-        // TODO: download rewire and add tests
         // test(`should update retailer product if retailer's product price does not match supplier's`, async () => {
         //     const payload = getRetailerProductUpdateEvent(DEFAULT_ITEMS.SHOPIFY_VARIANT_RETAIL_PRICE, 50);
         //     (utils.fetchAndValidateGraphQLData as jest.Mock).mockImplementationOnce(() =>
