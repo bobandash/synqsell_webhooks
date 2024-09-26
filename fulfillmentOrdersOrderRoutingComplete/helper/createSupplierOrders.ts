@@ -88,9 +88,11 @@ async function createDraftOrder(
     );
 
     const newDraftOrderId = newDraftOrder.draftOrderCreate?.draftOrder?.id;
+
     if (!newDraftOrderId) {
         throw new Error('No draft order was created.');
     }
+    console.log(`Draft order ${newDraftOrderId} was created`);
     return newDraftOrderId;
 }
 
@@ -109,6 +111,7 @@ async function completeDraftOrder(draftOrderId: string, supplierSession: Session
     if (!shopifyOrderId) {
         throw new Error('No new order was created from draft order.');
     }
+    console.log(`Supplier order ${shopifyOrderId} was created`);
     return shopifyOrderId;
 }
 
@@ -304,7 +307,6 @@ async function addEntireOrderToDatabase(
         supplierSession.id,
         client,
     );
-    console.error('new db order id ' + newDbOrderId);
     const retailerVariantIds = retailerOrderLineItems.map((lineItem) => lineItem.shopifyVariantId);
     const retailerToSupplierVariantIdsMap = await getRetailerToSupplierVariantIdMap(retailerVariantIds, client);
     const supplierOrderLineItemsMap = createMapIdToRestObj(supplierOrderLineItems, 'shopifyVariantId'); // key is supplier variant id
@@ -371,9 +373,10 @@ async function createSupplierOrders(
     customerShippingDetails: CustomerShippingDetails,
     client: PoolClient,
 ) {
-    const createNewOrdersPromises = fulfillmentOrdersBySupplier.map((order) =>
-        createSupplierOrder(order, retailerSession, customerShippingDetails, client),
-    );
+    const createNewOrdersPromises = fulfillmentOrdersBySupplier.map((order) => {
+        return createSupplierOrder(order, retailerSession, customerShippingDetails, client);
+    });
+
     await Promise.all(createNewOrdersPromises);
 }
 

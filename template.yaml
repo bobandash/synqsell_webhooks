@@ -420,6 +420,7 @@ Resources:
       Principal: "events.amazonaws.com"
       SourceArn: !GetAtt FulfillmentOrderRoutingCompleteRule.Arn
 
+  # fulfillment_events/create webhook
   FulfillmentEventsCreateRule:
     Type: AWS::Events::Rule
     Properties:
@@ -436,7 +437,6 @@ Resources:
         - Arn: !GetAtt FulfillmentEventsCreateFunction.Arn
           Id: "FulfillmentEventsCreateFunctionTarget"
 
-  # fulfillment_events/create webhook
   FulfillmentEventsCreateFunction:
     Type: AWS::Serverless::Function
     Properties:

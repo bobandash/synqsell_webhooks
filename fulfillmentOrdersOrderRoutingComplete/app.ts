@@ -7,8 +7,6 @@ import { GET_FULFILLMENT_ORDER_CUSTOMER_DETAILS, GET_FULFILLMENT_ORDER_LOCATION 
 import { FulfillmentOrderCustomerDetailsQuery, FulfillmentOrderLocationQuery } from './types/admin.generated';
 import { createSupplierOrders, splitFulfillmentOrderBySupplier } from './helper';
 
-// sam local invoke FulfillmentOrderRoutingCompleteFunction --event ./fulfillmentOrdersOrderRoutingComplete/app_event.json
-
 async function getSession(shop: string, client: PoolClient) {
     const sessionQuery = `SELECT * FROM "Session" WHERE shop = $1 LIMIT 1`;
     const sessionData = await client.query(sessionQuery, [shop]);

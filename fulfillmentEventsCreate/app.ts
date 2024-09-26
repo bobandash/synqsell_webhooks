@@ -32,6 +32,7 @@ async function isSynqsellOrder(shopifyOrderId: string, supplierSession: Session,
 export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProxyResult> => {
     let client: null | PoolClient = null;
     try {
+        console.log(event);
         const pool = initializePool();
         client = await pool.connect();
         const payload = event.detail.payload;
