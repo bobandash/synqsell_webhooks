@@ -29,9 +29,10 @@ export type FulfillmentOrdersBySupplier = {
     fulfillmentOrderId: string;
     supplierId: string;
     orderLineItems: {
-        id: string;
+        shopifyLineItemId: string;
         quantity: number;
         shopifyVariantId: string;
+        priceListId: string; // order lines can come from different price list ids
     }[];
 };
 

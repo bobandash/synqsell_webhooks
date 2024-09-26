@@ -1,6 +1,5 @@
-import { PoolClient } from 'pg';
+import { Pool, PoolClient } from 'pg';
 import { CustomerShippingDetails, FulfillmentOrdersBySupplier, Session } from '../types';
-import createMapIdToRestObj from '../util/createMapToRestObj';
 import { fetchAndValidateGraphQLData, mutateAndValidateGraphQLData } from '../util';
 import {
     DRAFT_ORDER_COMPLETE_MUTATION,
@@ -16,49 +15,40 @@ import {
 } from '../types/admin.generated';
 import { ORDER_PAYMENT_STATUS } from '../constants';
 import { CurrencyCode } from '../types/admin.types';
-
-type VariantAndImportedVariant = {
-    retailerShopifyVariantId: string;
-    supplierShopifyVariantId: string;
-};
+import { getRetailerToSupplierVariantIdMap, getSession } from './util';
+import createMapIdToRestObj from '../util/createMapToRestObj';
 
 type OrderDetailForDatabase = {
+    shopifyOrderId: string;
     currency: CurrencyCode | null;
     shippingCost: number;
     lineItems: {
+        shopifyLineItemId: string;
         shopifyVariantId: string | null;
         quantity: number;
     }[];
 };
 
-async function getSession(sessionId: string, client: PoolClient) {
-    try {
-        const sessionQuery = `SELECT * FROM "Session" WHERE "id" = $1`;
-        const res = await client.query(sessionQuery, [sessionId]);
-        const session: Session = res.rows[0];
-        return session;
-    } catch (error) {
-        throw new Error('Failed to get session ' + sessionId);
-    }
-}
+type AddOrderLineToDatabase = {
+    retailerShopifyVariantId: string;
+    supplierShopifyVariantId: string;
+    retailPricePerUnit: number;
+    amountPayablePerUnit: number;
+    shopifyRetailerOrderLineItemId: string;
+    shopifySupplierOrderLineItemId: string;
+    quantity: number;
+    orderId: string;
+    priceListId: string;
+};
 
-async function getRetailerToSupplierVariantIdMap(retailerVariantIds: string[], client: PoolClient) {
-    const supplierAndRetailerVariantIdsQuery = `
-      SELECT 
-          "ImportedVariant"."shopifyVariantId" as "retailerShopifyVariantId",
-          "Variant"."shopifyVariantId" as "supplierShopifyVariantId"
-      FROM "ImportedVariant"
-      INNER JOIN "Variant" ON "ImportedVariant"."prismaVariantId" = "Variant"."id"
-      WHERE "ImportedVariant"."shopifyVariantId" = ANY($1)  
-    `;
-    const baseAndImportedVariantData: VariantAndImportedVariant[] = (
-        await client.query(supplierAndRetailerVariantIdsQuery, [retailerVariantIds])
-    ).rows;
+type PriceDetail = {
+    retailPrice: string;
+    retailerPayment: string;
+};
 
-    const retailerToSupplierVariantIdMap = createMapIdToRestObj(baseAndImportedVariantData, 'retailerShopifyVariantId');
-    return retailerToSupplierVariantIdMap;
-}
-
+// ==============================================================================================================
+// START: ADD EQUIVALENT ORDER FROM FULFILLMENT ORDER ON SUPPLIER'S SHOPIFY STORE LOGIC
+// ==============================================================================================================
 // TODO: fill out https://docs.google.com/forms/d/e/1FAIpQLScmVTZRQNjOJ7RD738mL1lGeFjqKVe_FM2tO9xsm21QEo5Ozg/viewform to get sales channel priv
 async function createDraftOrder(
     fulfillmentOrder: FulfillmentOrdersBySupplier,
@@ -70,7 +60,6 @@ async function createDraftOrder(
     const { email, province: provinceCode, ...restOfCustomerShippingDetails } = customerShippingDetails;
     const retailerVariantIds = fulfillmentOrder.orderLineItems.map((lineItem) => lineItem.shopifyVariantId);
     const retailerToSupplierVariantIdMap = await getRetailerToSupplierVariantIdMap(retailerVariantIds, client);
-
     //!!! TODO: add shippingLine to draftOrdersInput
     //!!! TODO: add presentmentCurrencyCode
     const draftOrdersInput = {
@@ -122,6 +111,9 @@ async function completeDraftOrder(draftOrderId: string, supplierSession: Session
     return shopifyOrderId;
 }
 
+// ==============================================================================================================
+// START: ADD ORDERS TO DATABASE LOGIC
+// ==============================================================================================================
 async function getOrderDetails(shopifyOrderId: string, session: Session) {
     let hasMore = true;
     let endCursor = null;
@@ -137,10 +129,12 @@ async function getOrderDetails(shopifyOrderId: string, session: Session) {
 
     const orderDetails = initialOrderDetails.order;
     const orderDetailsForDatabase: OrderDetailForDatabase = {
+        shopifyOrderId: shopifyOrderId,
         currency: orderDetails?.presentmentCurrencyCode ?? null,
         shippingCost: orderDetails?.shippingLine?.originalPriceSet.presentmentMoney.amount ?? 0,
         lineItems:
             orderDetails?.lineItems.edges.map(({ node }) => ({
+                shopifyLineItemId: node.id,
                 shopifyVariantId: node.variant?.id ?? null, // this will not be null, just graphql semantics
                 quantity: node.quantity,
             })) ?? [],
@@ -163,6 +157,7 @@ async function getOrderDetails(shopifyOrderId: string, session: Session) {
         const prevLineItems = orderDetailsForDatabase?.lineItems;
         const newLineItems =
             subsequentOrderLineItemDetails.order?.lineItems.edges.map(({ node }) => ({
+                shopifyLineItemId: node.id,
                 shopifyVariantId: node.variant?.id ?? null, // this will not be null, just graphql semantics
                 quantity: node.quantity,
             })) ?? [];
@@ -176,63 +171,174 @@ async function getOrderDetails(shopifyOrderId: string, session: Session) {
 }
 
 async function addOrderToDatabase(
+    shopifyRetailerFulfillmentOrderId: string,
+    shopifySupplierOrderId: string,
+    retailerSessionId: string,
+    supplierSessionId: string,
+    client: PoolClient,
+) {
+    try {
+        const orderQuery = `
+            INSERT INTO 
+            "Order" ("currency", "shopifyRetailerFulfillmentOrderId", "shopifySupplierOrderId", "retailerId", "supplierId", "shippingCost", "paymentStatus")
+            VALUES($1, $2, $3, $4, $5, $6, $7)
+            RETURNING id
+        `;
+        const newOrder = await client.query(orderQuery, [
+            'USD',
+            shopifyRetailerFulfillmentOrderId,
+            shopifySupplierOrderId,
+            retailerSessionId,
+            supplierSessionId,
+            0,
+            ORDER_PAYMENT_STATUS.INCOMPLETE,
+        ]);
+
+        const newDbOrderId: string = newOrder.rows[0].id;
+        return newDbOrderId;
+    } catch {
+        throw new Error('Failed to add order to database.');
+    }
+}
+
+async function addOrderLineToDatabase(props: AddOrderLineToDatabase, client: PoolClient) {
+    try {
+        const orderLineItemQuery = `
+            INSERT INTO "OrderLineItem" (
+                "retailerShopifyVariantId",
+                "supplierShopifyVariantId",
+                "retailPricePerUnit",
+                "amountPayablePerUnit",
+                "shopifyRetailerOrderLineItemId",
+                "shopifySupplierOrderLineItemId",
+                "quantity",
+                "orderId",
+                "priceListId"
+            )
+            VALUES (
+                $1,  -- retailerShopifyVariantId
+                $2,  -- supplierShopifyVariantId
+                $3,  -- retailPricePerUnit
+                $4,  -- amountPayablePerUnit
+                $5,  -- shopifyRetailerOrderLineItemId
+                $6,  -- shopifySupplierOrderLineItemId
+                $7,  -- quantity
+                $8, -- orderId
+                $9  -- priceListId
+            )
+        `;
+        const {
+            retailerShopifyVariantId,
+            supplierShopifyVariantId,
+            retailPricePerUnit,
+            amountPayablePerUnit,
+            shopifyRetailerOrderLineItemId,
+            shopifySupplierOrderLineItemId,
+            quantity,
+            orderId,
+            priceListId,
+        } = props;
+
+        await client.query(orderLineItemQuery, [
+            retailerShopifyVariantId,
+            supplierShopifyVariantId,
+            retailPricePerUnit,
+            amountPayablePerUnit,
+            shopifyRetailerOrderLineItemId,
+            shopifySupplierOrderLineItemId,
+            quantity,
+            orderId,
+            priceListId,
+        ]);
+    } catch {
+        throw new Error('Failed to add order line to database.');
+    }
+}
+
+async function getRetailPriceAndProfit(supplierShopifyVariantId: string, priceListId: string, client: PoolClient) {
+    try {
+        const query = `
+            SELECT 
+                "Variant"."retailPrice",
+                "Variant"."retailerPayment"
+            FROM "Variant"
+            INNER JOIN "Product" ON "Product"."id" = "Variant"."productId"
+            WHERE
+                "Product"."priceListId" = $1 AND
+                "Variant"."shopifyVariantId" = $2
+            LIMIT 1
+        `;
+        const queryRes = await client.query(query, [priceListId, supplierShopifyVariantId]);
+        if (queryRes.rows.length === 0) {
+            throw new Error(
+                `Could not get retail price and profit from variant id ${supplierShopifyVariantId} and price list ${priceListId}.`,
+            );
+        }
+        return queryRes.rows[0] as PriceDetail;
+    } catch {
+        throw new Error(
+            `Failed to get retail price and profit from supplier variant id ${supplierShopifyVariantId} and price list id ${priceListId}`,
+        );
+    }
+}
+
+async function addEntireOrderToDatabase(
     fulfillmentOrder: FulfillmentOrdersBySupplier,
-    supplierOrderId: string,
+    supplierOrderDetails: OrderDetailForDatabase,
     retailerSession: Session,
     supplierSession: Session,
     client: PoolClient,
 ) {
-    try {
-        // TODO: Add currency and shipping cost
-        const orderQuery = `
-          INSERT INTO 
-          "Order" ("currency", "shopifyRetailerFulfillmentOrderId", "shopifySupplierOrderId", "retailerId", "supplierId", "shippingCost", "paymentStatus")
-          VALUES($1, $2, $3, $4, $5, $6, $7)
-          RETURNING id
-        `;
+    const retailerOrderLineItems = fulfillmentOrder.orderLineItems;
+    const supplierOrderLineItems = supplierOrderDetails.lineItems;
+    const newDbOrderId = await addOrderToDatabase(
+        fulfillmentOrder.fulfillmentOrderId,
+        supplierOrderDetails.shopifyOrderId,
+        retailerSession.id,
+        supplierSession.id,
+        client,
+    );
+    const retailerVariantIds = retailerOrderLineItems.map((lineItem) => lineItem.shopifyVariantId);
+    const retailerToSupplierVariantIdsMap = await getRetailerToSupplierVariantIdMap(retailerVariantIds, client);
+    const supplierOrderLineItemsMap = createMapIdToRestObj(supplierOrderLineItems, 'shopifyVariantId'); // key is supplier variant id
 
-        const orderLineItemQuery = `
-            INSERT INTO "OrderLineItem" (
-              "retailerShopifyVariantId",
-              "supplierShopifyVariantId",
-              "retailPricePerUnit",
-              "amountPayablePerUnit",
-              "shopifyRetailerOrderLineItemId",
-              "shopifySupplierOrderLineItemId",
-              "quantity",
-              "orderId",
-              "priceListId"
-            )
-            VALUES (
-              $1,  -- retailerShopifyVariantId
-              $2,  -- supplierShopifyVariantId
-              $3,  -- retailPricePerUnit
-              $4,  -- amountPayablePerUnit
-              $5,  -- shopifyRetailerOrderLineItemId
-              $6,  -- shopifySupplierOrderLineItemId
-              $7,  -- quantity
-              $8, -- orderId
-              $9  -- priceListId
-            )
-        `;
+    // gets list of promises with data to add to database
+    const createOrderLineItemPromises = retailerOrderLineItems.map(async (retailerLineItem) => {
+        const retailerShopifyVariantId = retailerLineItem.shopifyVariantId;
+        const supplierShopifyVariantId =
+            retailerToSupplierVariantIdsMap.get(retailerShopifyVariantId)?.supplierShopifyVariantId;
+        if (!supplierShopifyVariantId) {
+            throw new Error(
+                `Retailer shopify variant id ${retailerShopifyVariantId} does not match any supplier variant id.`,
+            );
+        }
+        const supplierOrderLineItemDetails = supplierOrderLineItemsMap.get(supplierShopifyVariantId);
+        if (!supplierOrderLineItemDetails) {
+            throw new Error(`Order line does not exist for supplier shopify variant ${supplierShopifyVariantId}`);
+        }
+        const prices = await getRetailPriceAndProfit(supplierShopifyVariantId, retailerLineItem.priceListId, client);
 
-        const newOrder = await client.query(orderQuery, [
-            'USD',
-            fulfillmentOrder.fulfillmentOrderId,
-            supplierOrderId,
-            retailerSession.id,
-            supplierSession.id,
-            0,
-            ORDER_PAYMENT_STATUS.INCOMPLETE,
-        ]);
-        const newDbOrderId: string = newOrder.rows[0].id;
-        const lineItems = fulfillmentOrder.orderLineItems;
-        const retailerShopifyVariantIds = lineItems.map(({ shopifyVariantId }) => shopifyVariantId);
-        // need to find the price list id somehow
-    } catch {
-        throw new Error('Failed to add newly created order and order line items to database.');
-    }
+        return addOrderLineToDatabase(
+            {
+                retailerShopifyVariantId: retailerShopifyVariantId,
+                supplierShopifyVariantId: supplierShopifyVariantId,
+                retailPricePerUnit: Number(prices.retailPrice), // TODO: change database for price and payment
+                amountPayablePerUnit: Number(prices.retailerPayment),
+                shopifyRetailerOrderLineItemId: retailerLineItem.shopifyLineItemId,
+                shopifySupplierOrderLineItemId: supplierOrderLineItemDetails.shopifyLineItemId,
+                quantity: retailerLineItem.quantity,
+                orderId: newDbOrderId,
+                priceListId: retailerLineItem.priceListId,
+            },
+            client,
+        );
+    });
+
+    await Promise.all(createOrderLineItemPromises);
 }
+// ==============================================================================================================
+// END: ADD ORDERS TO DATABASE LOGIC
+// ==============================================================================================================
 
 async function createSupplierOrder(
     fulfillmentOrder: FulfillmentOrdersBySupplier,
@@ -244,20 +350,20 @@ async function createSupplierOrder(
     const draftOrderId = await createDraftOrder(fulfillmentOrder, customerShippingDetails, supplierSession, client);
     const supplierShopifyOrderId = await completeDraftOrder(draftOrderId, supplierSession);
     const supplierOrderDetails = await getOrderDetails(supplierShopifyOrderId, supplierSession);
+    await addEntireOrderToDatabase(fulfillmentOrder, supplierOrderDetails, retailerSession, supplierSession, client);
 }
 
-// creates the equivalent order for the supplier
+// creates the
 async function createSupplierOrders(
     fulfillmentOrdersBySupplier: FulfillmentOrdersBySupplier[],
     retailerSession: Session,
     customerShippingDetails: CustomerShippingDetails,
     client: PoolClient,
 ) {
-    const newOrdersData = await Promise.all(
-        fulfillmentOrdersBySupplier.map((order) =>
-            createSupplierOrder(order, retailerSession, customerShippingDetails, client),
-        ),
+    const createNewOrdersPromises = fulfillmentOrdersBySupplier.map((order) =>
+        createSupplierOrder(order, retailerSession, customerShippingDetails, client),
     );
+    await Promise.all(createNewOrdersPromises);
 }
 
 export default createSupplierOrders;

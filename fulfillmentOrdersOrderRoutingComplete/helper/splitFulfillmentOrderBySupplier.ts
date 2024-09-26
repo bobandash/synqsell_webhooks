@@ -11,6 +11,7 @@ import {
     SubsequentFulfillmentOrderDetailsQuery,
 } from '../types/admin.generated';
 import createMapIdToRestObj from '../util/createMapToRestObj';
+import { FulfillmentOrdersBySupplier } from '../types';
 
 type OrderLineDetail = {
     fulfillmentOrderLineItemId: string;
@@ -18,12 +19,15 @@ type OrderLineDetail = {
     shopifyVariantId: string;
 };
 
-type ImportedShopifyVariantIdToSupplierId = {
+type OrderLineDetailWithPriceList = OrderLineDetail & { priceListId: string };
+
+type ImportedVariantIdDetails = {
     importedShopifyVariantId: string;
     supplierId: string;
+    priceListId: string;
 };
 
-type OrderLinesBySupplier = Map<string, OrderLineDetail[]>; // string is supplierId
+type OrderLinesBySupplier = Map<string, OrderLineDetailWithPriceList[]>; // string is supplierId
 
 async function getAllOrderLineDetails(fulfillmentOrderId: string, shop: string, accessToken: string) {
     const orderLineDetails: OrderLineDetail[] = [];
@@ -59,12 +63,16 @@ async function getAllOrderLineDetails(fulfillmentOrderId: string, shop: string, 
     return orderLineDetails;
 }
 
-async function getOrderLinesBySupplier(orderLineDetails: OrderLineDetail[], client: PoolClient) {
+async function getOrderLinesWithPriceListBySupplier(
+    orderLineDetails: OrderLineDetail[],
+    client: PoolClient,
+): Promise<Map<string, OrderLineDetailWithPriceList[]>> {
     const importedShopifyVariantIds = orderLineDetails.map(({ shopifyVariantId }) => shopifyVariantId);
     const importedShopifyVariantIdToSupplierIdQuery = `
         SELECT 
           "ImportedVariant"."shopifyVariantId" AS "importedShopifyVariantId",
-          "PriceList"."supplierId" AS "supplierId"
+          "PriceList"."supplierId" AS "supplierId",
+          "PriceList"."id" AS "priceListId"
         FROM "ImportedVariant"
         INNER JOIN "ImportedProduct" ON "ImportedProduct"."id" = "ImportedVariant"."importedProductId"
         INNER JOIN "Product" ON "Product"."id" = "ImportedProduct"."prismaProductId"
@@ -73,20 +81,23 @@ async function getOrderLinesBySupplier(orderLineDetails: OrderLineDetail[], clie
       `;
 
     const res = await client.query(importedShopifyVariantIdToSupplierIdQuery, [importedShopifyVariantIds]);
-    const data: ImportedShopifyVariantIdToSupplierId[] = res.rows;
-    const importedShopifyVariantIdToSupplierIdMap = createMapIdToRestObj(data, 'importedShopifyVariantId');
-    const supplierToOrderLineDetail = new Map<string, OrderLineDetail[]>();
+    const data: ImportedVariantIdDetails[] = res.rows;
+    const importedShopifyVariantIdDetailsMap = createMapIdToRestObj(data, 'importedShopifyVariantId');
+    const supplierToOrderLineDetailWithPriceList = new Map<string, OrderLineDetailWithPriceList[]>();
+
     orderLineDetails.forEach((orderLine) => {
         const importedShopifyVariantId = orderLine.shopifyVariantId;
-        const supplierId = importedShopifyVariantIdToSupplierIdMap.get(importedShopifyVariantId)?.supplierId;
-        if (!supplierId) {
-            throw new Error('No supplier exists for imported variant ' + importedShopifyVariantId);
+        const variantDetails = importedShopifyVariantIdDetailsMap.get(importedShopifyVariantId);
+        if (!variantDetails) {
+            throw new Error(`Variant id ${importedShopifyVariantId} has no price list or supplierId`);
         }
-        const orderLineDetails = supplierToOrderLineDetail.get(supplierId) ?? ([] as OrderLineDetail[]);
-        orderLineDetails.push(orderLine);
-        supplierToOrderLineDetail.set(supplierId, orderLineDetails);
+        const { priceListId, supplierId } = variantDetails;
+        const orderLineDetails =
+            supplierToOrderLineDetailWithPriceList.get(supplierId) ?? ([] as OrderLineDetailWithPriceList[]);
+        orderLineDetails.push({ ...orderLine, priceListId });
+        supplierToOrderLineDetailWithPriceList.set(supplierId, orderLineDetails);
     });
-    return supplierToOrderLineDetail;
+    return supplierToOrderLineDetailWithPriceList;
 }
 
 async function splitFulfillmentOrderOnShopify(
@@ -94,9 +105,8 @@ async function splitFulfillmentOrderOnShopify(
     shop: string,
     accessToken: string,
     originalFulfillmentOrderId: string,
-) {
+): Promise<FulfillmentOrdersBySupplier[]> {
     const supplierIds = Array.from(orderLinesBySupplier.keys());
-
     // splitting fulfillment order inside the loop rather than using Promise.all
     // because shopify's API only returns id of fulfillment order and no ability to refetch line items
     // it's simpler to get the data in the correct format in the map itself
@@ -134,9 +144,10 @@ async function splitFulfillmentOrderOnShopify(
                 fulfillmentOrderId,
                 supplierId,
                 orderLineItems: orderLine.map((detail) => ({
-                    id: detail.fulfillmentOrderLineItemId,
+                    shopifyLineItemId: detail.fulfillmentOrderLineItemId,
                     quantity: detail.fulfillmentOrderLineItemQuantity,
                     shopifyVariantId: detail.shopifyVariantId,
+                    priceListId: detail.priceListId,
                 })),
             };
         }),
@@ -152,7 +163,7 @@ async function splitFulfillmentOrderBySupplier(
     client: PoolClient,
 ) {
     const orderLineDetails = await getAllOrderLineDetails(originalFulfillmentOrderId, shop, accessToken);
-    const orderLinesBySupplier = await getOrderLinesBySupplier(orderLineDetails, client);
+    const orderLinesBySupplier = await getOrderLinesWithPriceListBySupplier(orderLineDetails, client);
     const newShopifyFulfillmentOrders = await splitFulfillmentOrderOnShopify(
         orderLinesBySupplier,
         shop,
