@@ -353,7 +353,6 @@ async function createSupplierOrder(
     await addEntireOrderToDatabase(fulfillmentOrder, supplierOrderDetails, retailerSession, supplierSession, client);
 }
 
-// creates the
 async function createSupplierOrders(
     fulfillmentOrdersBySupplier: FulfillmentOrdersBySupplier[],
     retailerSession: Session,

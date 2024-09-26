@@ -10,12 +10,15 @@ export type ShopifyEvent = {
     region: string;
     resources: [];
     detail: {
-        'X-Shopify-Topic': string;
-        'X-Shopify-Hmac-Sha256': string;
-        'X-Shopify-Shop-Domain': string;
-        'X-Shopify-Webhook-Id': string;
-        'X-Shopify-Triggered-At': string;
-        'X-Shopify-Event-Id': string;
+        metadata: {
+            'Content-Type': 'application/json';
+            'X-Shopify-Topic': string;
+            'X-Shopify-Hmac-Sha256': string;
+            'X-Shopify-Shop-Domain': string;
+            'X-Shopify-Webhook-Id': string;
+            'X-Shopify-Triggered-At': string;
+            'X-Shopify-Event-Id': string;
+        };
         payload: {
             fulfillment_order: {
                 id: string;

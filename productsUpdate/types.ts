@@ -26,12 +26,15 @@ export type ShopifyEvent = {
     region: string;
     resources: string[];
     detail: {
-        'X-Shopify-Topic': string;
-        'X-Shopify-Hmac-Sha256': string;
-        'X-Shopify-Shop-Domain': string;
-        'X-Shopify-Webhook-Id': string;
-        'X-Shopify-Triggered-At': string;
-        'X-Shopify-Event-Id': string;
+        metadata: {
+            'Content-Type': 'application/json';
+            'X-Shopify-Topic': string;
+            'X-Shopify-Hmac-Sha256': string;
+            'X-Shopify-Shop-Domain': string;
+            'X-Shopify-Webhook-Id': string;
+            'X-Shopify-Triggered-At': string;
+            'X-Shopify-Event-Id': string;
+        };
         payload: {
             admin_graphql_api_id: string;
             body_html: string | null;

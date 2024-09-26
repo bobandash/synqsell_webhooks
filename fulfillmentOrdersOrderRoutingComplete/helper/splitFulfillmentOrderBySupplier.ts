@@ -38,9 +38,7 @@ async function getAllOrderLineDetails(fulfillmentOrderId: string, shop: string, 
         const query = isInitialFetch
             ? GET_INITIAL_FULFILLMENT_ORDER_LINE_ITEMS
             : GET_SUBSEQUENT_FULFILLMENT_ORDER_LINE_ITEMS;
-        const variables = isInitialFetch
-            ? { variables: { id: fulfillmentOrderId } }
-            : { variables: { id: fulfillmentOrderId, after: endCursor } };
+        const variables = isInitialFetch ? { id: fulfillmentOrderId } : { id: fulfillmentOrderId, after: endCursor };
         const data = await fetchAndValidateGraphQLData<
             SubsequentFulfillmentOrderDetailsQuery | InitialFulfillmentOrderDetailsQuery
         >(shop, accessToken, query, variables);

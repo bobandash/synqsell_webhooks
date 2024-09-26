@@ -9,8 +9,9 @@ import { createSupplierOrders, splitFulfillmentOrderBySupplier } from './helper'
 
 async function getSession(shop: string, client: PoolClient) {
     const sessionQuery = `SELECT * FROM "Session" WHERE shop = $1 LIMIT 1`;
+    console.log(shop);
     const sessionData = await client.query(sessionQuery, [shop]);
-    if (sessionData.rowCount === 0) {
+    if (sessionData.rows.length === 0) {
         throw new Error('Shop data is invalid.');
     }
     const session = sessionData.rows[0];
@@ -56,6 +57,7 @@ async function getCustomerShippingDetails(fulfillmentOrderId: string, retailerSe
         },
     );
     const customerShippingDetails = fulfillmentOrderQuery.fulfillmentOrder?.destination;
+    // TODO: If this MVP ends up validated, handle the case where shipping addresses can change
     if (!customerShippingDetails) {
         throw new Error('There was no data inside the customer shipping details');
     }
@@ -69,10 +71,9 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
     try {
         const pool = initializePool();
         client = await pool.connect();
-        const shop = event.detail['X-Shopify-Shop-Domain'];
+        const shop = event.detail.metadata['X-Shopify-Shop-Domain'];
         const shopifyFulfillmentOrderId = event.detail.payload.fulfillment_order.id;
         const retailerSession = await getSession(shop, client);
-
         const isSynqsellOrder = await isSynqsellFulfillmentLocation(retailerSession, shopifyFulfillmentOrderId, client);
         if (!isSynqsellOrder) {
             return {
@@ -94,14 +95,15 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         return {
             statusCode: 200,
             body: JSON.stringify({
-                message: 'Successfully created fulfillment orders for supplier.',
+                message: 'Successfully created order for suppliers.',
             }),
         };
     } catch (err) {
+        console.error(err);
         return {
-            statusCode: 200,
+            statusCode: 500,
             body: JSON.stringify({
-                message: 'Successfully created fulfillment orders for supplier.',
+                message: 'Failed to create order for suppliers.',
             }),
         };
     } finally {
