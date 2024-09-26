@@ -12,6 +12,7 @@ import {
     GET_SUBSEQUENT_FULFILLMENT_DETAILS,
 } from '../graphql';
 import createMapIdToRestObj from '../util/createMapToRestObj';
+import { v4 as uuidv4 } from 'uuid';
 
 type FulfillmentDetailLineItem = {
     shopifyLineItemId: string;
@@ -157,11 +158,11 @@ async function getRetailerShopifyFulfillmentOrderId(supplierShopifyOrderId: stri
 async function addRetailerFulfillmentOnShopify(
     supplierShopifyFulfillmentId: string,
     supplierSession: Session,
+    retailerSession: Session,
     supplierShopifyOrderId: string,
-
     client: PoolClient,
 ) {
-    const [fulfillmentDetails, supplierAndRetailerOrderLineItems, retailerShopifyFulfillmentOrderId] =
+    const [supplierFulfillmentDetails, supplierAndRetailerOrderLineItems, retailerShopifyFulfillmentOrderId] =
         await Promise.all([
             getFulfillmentDetails(supplierShopifyFulfillmentId, supplierSession),
             getSupplierAndRetailerOrderLineItems(supplierShopifyOrderId, client),
@@ -172,7 +173,7 @@ async function addRetailerFulfillmentOnShopify(
         'shopifySupplierOrderLineItemId',
     ); // key = shopifySupplierOrderLineItemId, value = {shopifyRetailerOrderLineItemId: string}
 
-    const { trackingInfo, lineItems } = fulfillmentDetails;
+    const { trackingInfo, lineItems } = supplierFulfillmentDetails;
 
     const fulfillmentCreateInput = {
         lineItemsByFulfillmentOrder: {
@@ -207,8 +208,8 @@ async function addRetailerFulfillmentOnShopify(
     };
 
     const matchingRetailerFulfillment = await mutateAndValidateGraphQLData<FulfillmentCreateV2Mutation>(
-        supplierSession.shop,
-        supplierSession.accessToken,
+        retailerSession.shop,
+        retailerSession.accessToken,
         CREATE_FULFILLMENT_FULFILLMENT_ORDER_MUTATION,
         {
             fulfillment: fulfillmentCreateInput,
@@ -220,14 +221,33 @@ async function addRetailerFulfillmentOnShopify(
     return retailerFulfillmentId;
 }
 
+async function getDbOrderId(supplierShopifyOrderId: string, client: PoolClient) {
+    try {
+        const orderQuery = `
+            SELECT "id" FROM "Order"
+            WHERE "shopifySupplierOrderId" = $1
+            LIMIT = 1        
+        `;
+        const orderRes = await client.query(orderQuery, [supplierShopifyOrderId]);
+        if (orderRes.rows.length === 0) {
+            throw new Error('There is no order id for shopify supplier order id ' + supplierShopifyOrderId);
+        }
+
+        return orderRes.rows[0].id as string;
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to get database order id from supplier shopify order id ' + supplierShopifyOrderId);
+    }
+}
+
 async function addFulfillmentToDatabase(
     supplierShopifyFulfillmentId: string,
     retailerShopifyFulfillmentId: string,
-    supplierSessionId: string,
-    retailerSessionid: string,
+    dbOrderId: string,
+    client: PoolClient,
 ) {
     const fulfillmentInsertionQuery = `
-        INSERT INTO "OrderLineItem" (
+        INSERT INTO "Fulfillment" (
             "id",
             "supplierShopifyFulfillmentId",
             "retailerShopifyFulfillmentId",
@@ -235,11 +255,18 @@ async function addFulfillmentToDatabase(
         )
         VALUES (
             $1,  -- id
-            $2,  -- retailerShopifyVariantId
-            $3,  -- supplierShopifyVariantId
-            $4,  -- retailPricePerUnit
+            $2,  -- supplierShopifyFulfillmentId
+            $3,  -- retailerShopifyFulfillmentId
+            $4,  -- orderId
         )
     `;
+
+    await client.query(fulfillmentInsertionQuery, [
+        uuidv4(),
+        supplierShopifyFulfillmentId,
+        retailerShopifyFulfillmentId,
+        dbOrderId,
+    ]);
 }
 
 // ==============================================================================================================
@@ -252,19 +279,19 @@ async function createRetailerFulfillment(
     supplierSession: Session,
     client: PoolClient,
 ) {
-    const retailerSession = await getRetailerSessionFromSupplierOrder(supplierShopifyOrderId, client);
+    const [retailerSession, dbOrderId] = await Promise.all([
+        getRetailerSessionFromSupplierOrder(supplierShopifyOrderId, client),
+        getDbOrderId(supplierShopifyOrderId, client),
+    ]);
     const retailerShopifyFulfillmentId = await addRetailerFulfillmentOnShopify(
         supplierShopifyFulfillmentId,
         supplierSession,
+        retailerSession,
         supplierShopifyOrderId,
         client,
     );
-    await addFulfillmentToDatabase(
-        supplierShopifyFulfillmentId,
-        retailerShopifyFulfillmentId,
-        supplierSession.id,
-        retailerSession.id,
-    );
+
+    await addFulfillmentToDatabase(supplierShopifyFulfillmentId, retailerShopifyFulfillmentId, dbOrderId, client);
 }
 
 export default createRetailerFulfillment;
