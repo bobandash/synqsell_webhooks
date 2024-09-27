@@ -37,7 +37,9 @@ async function mutateAndValidateGraphQLData<T>(
         },
         body: JSON.stringify({ query: mutation, variables }),
     });
+    console.log(response);
     const { data } = await response.json();
+    console.log(data);
     if (!data) {
         throw new Error(defaultErrorMessage);
     }

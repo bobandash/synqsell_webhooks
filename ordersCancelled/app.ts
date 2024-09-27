@@ -1,8 +1,8 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { PoolClient } from 'pg';
 import { initializePool } from './db';
-import { Session, ShopifyEvent } from './types';
-import { cancelRetailerOrder } from './helper';
+import { LineItemDetail, Session, ShopifyEvent } from './types';
+import { refundRetailerOrder } from './helper';
 import { ORDER_PAYMENT_STATUS } from './constants';
 
 async function getSession(shop: string, client: PoolClient) {
@@ -14,6 +14,8 @@ async function getSession(shop: string, client: PoolClient) {
     const session = sessionData.rows[0];
     return session as Session;
 }
+
+// TODO: I have to store the retailer's order id and handle the retailer cancelling the order as well
 
 // checks whether or not we need to process the order and cancel the retailers' fulfillment order
 async function isProcessableOrder(shopifyOrderId: string, supplierId: string, client: PoolClient) {
@@ -43,7 +45,9 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
         const pool = initializePool();
         client = await pool.connect();
         const shop = event.detail.metadata['X-Shopify-Shop-Domain'];
-        const shopifyOrderId = event.detail.payload.admin_graphql_api_id;
+        const payload = event.detail.payload;
+        const shopifyOrderId = payload.admin_graphql_api_id;
+
         const supplierSession = await getSession(shop, client);
         const isRelevantOrder = await isProcessableOrder(shopifyOrderId, supplierSession.id, client);
 
@@ -56,7 +60,14 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
             };
         }
 
-        await cancelRetailerOrder(shopifyOrderId, client);
+        const lineItems: LineItemDetail[] = payload.line_items.map((lineItem) => {
+            return {
+                shopifyLineItemId: lineItem.admin_graphql_api_id,
+                quantity: lineItem.quantity,
+            };
+        });
+
+        await refundRetailerOrder(shopifyOrderId, lineItems, client);
 
         return {
             statusCode: 200,
@@ -65,6 +76,7 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
             }),
         };
     } catch (error) {
+        console.error(error);
         return {
             statusCode: 500,
             body: JSON.stringify({

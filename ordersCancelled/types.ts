@@ -305,3 +305,8 @@ export type Session = {
     collaborator?: boolean;
     emailVerified?: boolean;
 };
+
+export type LineItemDetail = {
+    shopifyLineItemId: string;
+    quantity: number;
+};

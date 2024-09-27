@@ -1,1 +1,1 @@
-export { default as cancelRetailerOrder } from './cancelRetailerOrder';
+export { default as refundRetailerOrder } from './refundRetailerOrder';
