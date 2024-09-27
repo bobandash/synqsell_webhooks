@@ -80,12 +80,10 @@ async function getSupplierSession(dbOrderId: string, client: PoolClient) {
 async function cancelSupplierOrderOnShopify(shopifySupplierOrderId: string, supplierSession: Session) {
     // because the order is technically a mock order that's just synced together, I don't need to deal with refund
     const input = {
-        notifyCustomer: false,
         orderId: shopifySupplierOrderId,
         reason: 'CUSTOMER',
         refund: false,
         restock: true,
-        staffNote: 'Retailer cancelled order on Syqnsell.',
     };
 
     await mutateAndValidateGraphQLData<OrderCancelMutation>(
@@ -114,10 +112,6 @@ async function updateOrderStatusToCancelledOnDb(dbOrderId: string, client: PoolC
 // ==============================================================================================================
 
 async function cancelSupplierOrder(shopifyRetailerFulfillmentOrderId: string, client: PoolClient) {
-    // steps:
-    // cancel the supplier order on shopify
-    // mark the payment status as cancelled
-
     const dbOrderId = await getOrderIdFromDatabase(shopifyRetailerFulfillmentOrderId, client);
     const shopifySupplierOrderId = await getSupplierShopifyOrderId(shopifyRetailerFulfillmentOrderId, client);
     const supplierSession = await getSupplierSession(dbOrderId, client);
