@@ -1,44 +1,46 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { PoolClient } from 'pg';
 import { initializePool } from './db';
-import { ORDER_PAYMENT_STATUS, Session, ShopifyEvent } from './types';
-import { composeGid } from '@shopify/admin-graphql-api-utilities';
-import { cancelRetailerFulfillment } from './helper';
+import { ROLES, RolesProps, ShopifyEvent } from './types';
+import { cancelRetailerFulfillment, resyncRetailerFulfillment } from './helper';
 
-// This function listens to the supplier order and handles the following cases:
-// when supplier cancels the tracking to upload a new one
-// when tracking status is updates to delivered and pays the retailer
-
-async function getSession(shop: string, client: PoolClient) {
-    const sessionQuery = `SELECT * FROM "Session" WHERE shop = $1 LIMIT 1`;
-    const sessionData = await client.query(sessionQuery, [shop]);
-    if (sessionData.rows.length === 0) {
-        throw new Error('Shop data is invalid.');
-    }
-    const session = sessionData.rows[0];
-    return session as Session;
-}
+// This function listens to when the fulfillment status ever updates
+// Few cases:
+// retailer can cancel the fulfillment, meaning we have to read the supplier's information and keep products in sync
+// supplier can cancel the fulfillment, then it would have to be broadcasted to the retailer and cancel the fulfillment there
+// I believe this webhook also handles when the order is marked as delivered (if that's the case, then the supplier needs to be paid)
 
 // checks whether or not we need to process the order and cancel the retailers' fulfillment order
-async function isProcessableOrder(shopifyOrderId: string, supplierId: string, client: PoolClient) {
+// NOTE: when it's a supplier order, fulfillments/update webhook is re-triggered for the retailer fulfillment
+// but it shouldn't trigger webhooks because the fulfillment order should be deleted from the database
+async function isProcessableFulfillment(shopifyFulfillmentId: string, role: RolesProps, client: PoolClient) {
     try {
-        const orderQuery = `
-            SELECT "paymentStatus" FROM "Order"
-            WHERE "supplierId" = $1 AND "shopifySupplierOrderId" = $2
-            LIMIT 1
-        `;
-        const orderData = await client.query(orderQuery, [supplierId, shopifyOrderId]);
-        if (orderData.rows.length === 0) {
-            return false;
+        let query = '';
+        if (role === ROLES.RETAILER) {
+            query = `SELECT "id" FROM "Fulfillment" WHERE "retailerShopifyFulfillmentId" = $1`;
+        } else if (role === ROLES.SUPPLIER) {
+            query = `SELECT "id" FROM "Fulfillment" WHERE "supplierShopifyFulfillmentId" = $1`;
         }
-        // NOTE: because this app subscribes to both the orders/cancelled and fulfillment_orders/cancelled webhooks
-        // Must check payment status to see whether the order was already cancelled to prevent infinite webhook triggering
-        const paymentStatus = orderData.rows[0].paymentStatus as string;
-        return paymentStatus !== ORDER_PAYMENT_STATUS.CANCELLED;
+        const res = await client.query(query, [shopifyFulfillmentId]);
+        return res.rows.length > 0;
     } catch (error) {
         console.error(error);
-        throw new Error(`Failed to check whether or not order ${shopifyOrderId} needs to be processed`);
+        throw new Error(`Failed to check whether or not order ${shopifyFulfillmentId} needs to be processed`);
     }
+}
+
+function getRelevantDetailsForResyncingRetailerFulfillment(payload: ShopifyEvent['detail']['payload']) {
+    const lineItems = payload.line_items.map((lineItem) => ({
+        id: lineItem.admin_graphql_api_id,
+        quantity: lineItem.quantity,
+    }));
+    const trackingInfo = {
+        company: payload.tracking_company,
+        numbers: payload.tracking_numbers,
+        urls: payload.tracking_urls,
+    };
+
+    return { lineItems, trackingInfo };
 }
 
 export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProxyResult> => {
@@ -46,35 +48,40 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
     try {
         const pool = initializePool();
         client = await pool.connect();
-        const shop = event.detail.metadata['X-Shopify-Shop-Domain'];
         const payload = event.detail.payload;
-        const rawOrderId = payload.order_id;
-        const supplierSession = await getSession(shop, client);
-        const shopifySupplierOrderId = composeGid('Order', rawOrderId);
-        const isRelevantOrder = await isProcessableOrder(shopifySupplierOrderId, supplierSession.id, client);
-
-        if (!isRelevantOrder) {
+        const shop = event.detail.metadata['X-Shopify-Shop-Domain'];
+        const fulfillmentUpdateStatus = payload.status;
+        const shopifyFulfillmentId = payload.admin_graphql_api_id;
+        // TODO: there's one more important edge case, where the retailer just updates the fulfillment without it being a fulfillment in our db
+        // I'll handle this edge case after deployment if it's an issue
+        const [isRetailerFulfillment, isSupplierFulfillment] = await Promise.all([
+            isProcessableFulfillment(shopifyFulfillmentId, ROLES.RETAILER, client),
+            isProcessableFulfillment(shopifyFulfillmentId, ROLES.SUPPLIER, client),
+        ]);
+        if (!isRetailerFulfillment && !isSupplierFulfillment) {
             return {
                 statusCode: 200,
                 body: JSON.stringify({
-                    message: 'This is not a Synqsell order that needs to be processed.',
+                    message: 'Fulfillment update is not related to Synqsell fulfillment.',
                 }),
             };
         }
-
-        const fulfillmentUpdateStatus = payload.status;
-        const supplierShopifyFulfillmentId = payload.admin_graphql_api_id;
+        const { lineItems, trackingInfo } = getRelevantDetailsForResyncingRetailerFulfillment(payload);
 
         switch (fulfillmentUpdateStatus) {
             case 'cancelled':
-                await cancelRetailerFulfillment(supplierShopifyFulfillmentId, client);
+                if (isRetailerFulfillment) {
+                    await cancelRetailerFulfillment(shopifyFulfillmentId, client);
+                } else if (isSupplierFulfillment) {
+                    await resyncRetailerFulfillment(shopifyFulfillmentId, shop, lineItems, trackingInfo, client);
+                }
                 break;
         }
 
         return {
             statusCode: 200,
             body: JSON.stringify({
-                message: 'Successfully did procedure.',
+                message: 'Successfully handled fulfillments update procedure.',
             }),
         };
     } catch (error) {

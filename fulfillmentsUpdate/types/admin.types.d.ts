@@ -35903,18 +35903,18 @@ export type Product = HasMetafieldDefinitions & HasMetafields & HasPublishedTran
    */
   resourcePublicationsV2: ResourcePublicationV2Connection;
   /**
-   * A count of [selling plan groups](https://shopify.dev/("/docs/apps/build/purchase-options/subscriptions/selling-plans/build-a-selling-plan))
+   * A count of [selling plan groups](https://shopify.dev/docs/apps/build/purchase-options/subscriptions/selling-plans/build-a-selling-plan)
    * that are associated with the product.
    * @deprecated Use `sellingPlanGroupsCount` instead.
    */
   sellingPlanGroupCount: Scalars['Int']['output'];
   /**
-   * A list of all [selling plan groups](https://shopify.dev/("/docs/apps/build/purchase-options/subscriptions/selling-plans/build-a-selling-plan))
+   * A list of all [selling plan groups](https://shopify.dev/docs/apps/build/purchase-options/subscriptions/selling-plans/build-a-selling-plan)
    * that are associated with the product either directly, or through the product's variants.
    */
   sellingPlanGroups: SellingPlanGroupConnection;
   /**
-   * A count of [selling plan groups](https://shopify.dev/("/docs/apps/build/purchase-options/subscriptions/selling-plans/build-a-selling-plan))
+   * A count of [selling plan groups](https://shopify.dev/docs/apps/build/purchase-options/subscriptions/selling-plans/build-a-selling-plan)
    * that are associated with the product.
    */
   sellingPlanGroupsCount?: Maybe<Count>;
@@ -35961,7 +35961,7 @@ export type Product = HasMetafieldDefinitions & HasMetafields & HasPublishedTran
   /** The quantity of inventory that's in stock. */
   totalInventory: Scalars['Int']['output'];
   /**
-   * The number of [variants](https://shopify.dev/("/docs/api/admin-graphql/latest/objects/ProductVariant))
+   * The number of [variants](https://shopify.dev/docs/api/admin-graphql/latest/objects/ProductVariant)
    * that are associated with the product.
    * @deprecated Use `variantsCount` instead.
    */
@@ -35990,10 +35990,10 @@ export type Product = HasMetafieldDefinitions & HasMetafields & HasPublishedTran
    * is counted as an update.
    */
   updatedAt: Scalars['DateTime']['output'];
-  /** A list of [variants](https://shopify.dev/("/docs/api/admin-graphql/latest/objects/ProductVariant)) associated with the product. */
+  /** A list of [variants](https://shopify.dev/docs/api/admin-graphql/latest/objects/ProductVariant) associated with the product. */
   variants: ProductVariantConnection;
   /**
-   * The number of [variants](https://shopify.dev/("/docs/api/admin-graphql/latest/objects/ProductVariant))
+   * The number of [variants](https://shopify.dev/docs/api/admin-graphql/latest/objects/ProductVariant)
    * that are associated with the product.
    */
   variantsCount?: Maybe<Count>;

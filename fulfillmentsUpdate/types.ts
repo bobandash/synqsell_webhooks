@@ -128,3 +128,29 @@ export const ORDER_PAYMENT_STATUS = {
     PAID: 'PAID',
     CANCELLED: 'CANCELLED',
 } as const;
+
+export const ROLES = {
+    RETAILER: 'RETAILER',
+    SUPPLIER: 'SUPPLIER',
+} as const;
+
+export type FulfillmentDetail = {
+    id: string;
+    supplierShopifyFulfillmentId: string;
+    retailerShopifyFulfillmentId: string;
+    orderId: string;
+};
+
+export type PayloadLineItem = {
+    id: string;
+    quantity: number;
+};
+
+export type PayloadTrackingInfo = {
+    company: string | null;
+    numbers: string[];
+    urls: string[];
+};
+
+export type OrderPaymentStatusProps = (typeof ORDER_PAYMENT_STATUS)[keyof typeof ORDER_PAYMENT_STATUS];
+export type RolesProps = (typeof ROLES)[keyof typeof ROLES];

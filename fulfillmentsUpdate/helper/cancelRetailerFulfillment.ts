@@ -1,6 +1,6 @@
 // case: supplier mistakenly bought incorrect tracking label, have to refund and update for the customer
 import { PoolClient } from 'pg';
-import { Session } from '../types';
+import { FulfillmentDetail, Session } from '../types';
 import { mutateAndValidateGraphQLData } from '../util';
 import { FulfillmentCancelMutation } from '../types/admin.generated';
 import { CANCEL_FULFILLMENT_MUTATION } from '../graphql';
@@ -27,44 +27,6 @@ async function getDbFulfillmentId(supplierShopifyFulfillmentId: string, client: 
         console.error(error);
         throw new Error(
             `Failed to retrieve database fulfillment id from supplierShopifyFulfillmentId ${supplierShopifyFulfillmentId}.`,
-        );
-    }
-}
-
-async function getDbOrderId(dbFulfillmentId: string, client: PoolClient) {
-    try {
-        const query = `
-          SELECT "orderId" FROM "Fulfillment"
-          WHERE "dbFulfillmentId" = $1
-          LIMIT 1
-        `;
-        const res = await client.query(query, [dbFulfillmentId]);
-        if (res.rows.length === 0) {
-            throw new Error(`No order id exists for dbFulfillmentId ${dbFulfillmentId}.`);
-        }
-        return res.rows[0].orderId as string;
-    } catch (error) {
-        console.error(error);
-        throw new Error(`Failed to retrieve database order id from supplierShopifyFulfillmentId ${dbFulfillmentId}.`);
-    }
-}
-
-async function getRetailerShopifyFulfillmentId(dbFulfillmentId: string, client: PoolClient) {
-    try {
-        const query = `
-          SELECT "retailerShopifyFulfillmentId" FROM "Fulfillment"
-          WHERE "id" = $1
-          LIMIT 1
-        `;
-        const res = await client.query(query, [dbFulfillmentId]);
-        if (res.rows.length === 0) {
-            throw new Error(`No fulfillment row exists for dbFulfillmentId ${dbFulfillmentId}.`);
-        }
-        return res.rows[0].retailerShopifyFulfillmentId as string;
-    } catch (error) {
-        console.error(error);
-        throw new Error(
-            `Failed to retrieve retailerShopifyFulfillmentId from database fuflfillment id ${dbFulfillmentId}.`,
         );
     }
 }
@@ -109,14 +71,31 @@ async function removeFulfillmentDatabase(dbFulfillmentId: string, client: PoolCl
     }
 }
 
+async function getDbFulfillmentDetails(dbFulfillmentId: string, client: PoolClient) {
+    try {
+        const query = `
+        SELECT * FROM "Fulfillment"
+        WHERE "id" = $1
+        LIMIT 1
+      `;
+        const res = await client.query(query, [dbFulfillmentId]);
+        if (res.rows.length === 0) {
+            throw new Error(`No fulfillment exists for dbFulfillmentId ${dbFulfillmentId}.`);
+        }
+        return res.rows[0] as FulfillmentDetail;
+    } catch (error) {
+        console.error(error);
+        throw new Error(`Failed to retrieve fulfillment details from dbFulfillmentId ${dbFulfillmentId}.`);
+    }
+}
+
 // ==============================================================================================================
 // START: END CANCEL FULFILLMENT ON RETAILER STORE LOGIC
 // ==============================================================================================================
 
 async function cancelRetailerFulfillment(supplierShopifyFulfillmentId: string, client: PoolClient) {
     const dbFulfillmentId = await getDbFulfillmentId(supplierShopifyFulfillmentId, client);
-    const dbOrderId = await getDbOrderId(dbFulfillmentId, client);
-    const retailerShopifyFulfillmentId = await getRetailerShopifyFulfillmentId(supplierShopifyFulfillmentId, client);
+    const { retailerShopifyFulfillmentId, orderId: dbOrderId } = await getDbFulfillmentDetails(dbFulfillmentId, client);
     const retailerSession = await getRetailerSession(dbOrderId, client);
     await removeRetailerFulfillmentShopify(retailerSession, retailerShopifyFulfillmentId);
     await removeFulfillmentDatabase(dbFulfillmentId, client);
