@@ -8,12 +8,14 @@
     "region": "us-east-1",
     "resources": [],
     "detail": {
-        "X-Shopify-Topic": "products/update",
-        "X-Shopify-Hmac-Sha256": "hmac_value",
-        "X-Shopify-Shop-Domain": "example.myshopify.com",
-        "X-Shopify-Webhook-Id": "webhook_id",
-        "X-Shopify-Triggered-At": "2024-08-15T12:34:56Z",
-        "X-Shopify-Event-Id": "event_id",
+        "metadata": {
+            "X-Shopify-Topic": "products/update",
+            "X-Shopify-Hmac-Sha256": "hmac_value",
+            "X-Shopify-Shop-Domain": "example.myshopify.com",
+            "X-Shopify-Webhook-Id": "webhook_id",
+            "X-Shopify-Triggered-At": "2024-08-15T12:34:56Z",
+            "X-Shopify-Event-Id": "event_id"
+        },
         "payload": {
             "admin_graphql_api_id": "gid://shopify/Product/788032119674292922",
             "body_html": "An example T-Shirt",
