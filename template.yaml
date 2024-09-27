@@ -464,3 +464,48 @@ Resources:
       Action: "lambda:InvokeFunction"
       Principal: "events.amazonaws.com"
       SourceArn: !GetAtt FulfillmentsCreateRule.Arn
+
+  # orders/cancelled webhook
+  OrdersCancelledRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: orders_cancelled_rule
+      EventPattern:
+        detail-type:
+          - "shopifyWebhook"
+        detail:
+          metadata:
+            X-Shopify-Topic:
+              - prefix: "orders/cancelled"
+      EventBusName: !Ref EventBusArn
+      Targets:
+        - Arn: !GetAtt OrdersCancelledFunction.Arn
+          Id: "OrdersCancelledFunctionTarget"
+
+  OrdersCancelledFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: synqsell_orders_cancelled
+      CodeUri: ordersCancelled/
+      Handler: app.lambdaHandler
+      MemorySize: 1028
+      Timeout: 30
+      Runtime: nodejs20.x
+      Architectures:
+        - x86_64
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: es2020
+        Sourcemap: false
+        EntryPoints:
+          - app.ts
+
+  OrdersCancelledPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref OrdersCancelledFunction
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt OrdersCancelledRule.Arn
