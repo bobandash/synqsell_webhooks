@@ -129,12 +129,13 @@ async function resyncRetailerFulfillment(
         getDbFulfillmentId(retailerShopifyFulfillmentId, client),
     ]);
     const shopifyRetailerFulfillmentOrderId = await getShopifyRetailerFulfillmentOrderId(dbFulfillmentId, client);
-    await updateRetailerFulfillmentOnShopify(
+    const newRetailerShopifyFulfillmentId = await updateRetailerFulfillmentOnShopify(
         shopifyRetailerFulfillmentOrderId,
         lineItems,
         trackingInfo,
         retailerSession,
     );
+    await updateFulfillmentInDatabase(dbFulfillmentId, newRetailerShopifyFulfillmentId, client);
 }
 
 export default resyncRetailerFulfillment;
