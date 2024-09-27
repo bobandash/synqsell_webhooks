@@ -32,16 +32,14 @@ async function isSynqsellOrder(shopifyOrderId: string, supplierSession: Session,
 export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProxyResult> => {
     let client: null | PoolClient = null;
     try {
-        console.log(event);
         const pool = initializePool();
         client = await pool.connect();
         const payload = event.detail.payload;
         const shop = event.detail.metadata['X-Shopify-Shop-Domain'];
-        const { order_id: orderId, fulfillment_id: fulfillmentId } = payload;
+        const { order_id: orderId, id: fulfillmentId } = payload;
         const shopifyOrderId = composeGid('Order', orderId);
-        const shopifyFulfillmentId = composeGid('Fulfillment', fulfillmentId);
         const supplierSession = await getSupplierSession(shop, client);
-
+        const shopifyFulfillmentId = composeGid('Fulfillment', fulfillmentId);
         const isRelevantOrder = await isSynqsellOrder(shopifyOrderId, supplierSession, client);
         if (!isRelevantOrder) {
             return {
@@ -51,6 +49,8 @@ export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProx
                 }),
             };
         }
+
+        // TODO: Not urgent; I started off with the wrong webhook, so this impl makes unnecessary fetches to tracking information and line items
         await createRetailerFulfillment(shopifyFulfillmentId, shopifyOrderId, supplierSession, client);
 
         return {

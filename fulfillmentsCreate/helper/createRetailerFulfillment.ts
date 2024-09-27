@@ -166,7 +166,7 @@ async function addRetailerFulfillmentOnShopify(
         await Promise.all([
             getFulfillmentDetails(supplierShopifyFulfillmentId, supplierSession),
             getSupplierAndRetailerOrderLineItems(supplierShopifyOrderId, client),
-            getRetailerShopifyFulfillmentOrderId(supplierShopifyFulfillmentId, client),
+            getRetailerShopifyFulfillmentOrderId(supplierShopifyOrderId, client),
         ]);
     const orderLineItemsIdMap = createMapIdToRestObj(
         supplierAndRetailerOrderLineItems,
@@ -176,6 +176,19 @@ async function addRetailerFulfillmentOnShopify(
     const { trackingInfo, lineItems } = supplierFulfillmentDetails;
 
     const fulfillmentCreateInput = {
+        notifyCustomer: true,
+        ...(trackingInfo.length > 1 && {
+            trackingInfo: trackingInfo.reduce(
+                (acc, tracking) => {
+                    return {
+                        company: tracking.company,
+                        numbers: [...acc.numbers, tracking.number],
+                        urls: [...acc.urls, tracking.url],
+                    };
+                },
+                { company: '', numbers: [] as string[], urls: [] as string[] },
+            ),
+        }),
         lineItemsByFulfillmentOrder: {
             fulfillmentOrderId: retailerShopifyFulfillmentOrderId,
             fulfillmentOrderLineItems: lineItems.map(({ shopifyLineItemId, quantity }) => {
@@ -190,19 +203,6 @@ async function addRetailerFulfillmentOnShopify(
                     id: retailerFulfillmentOrderLineItemId,
                     quantity: quantity,
                 };
-            }),
-            notifyCustomer: true,
-            ...(trackingInfo.length > 1 && {
-                trackingInfo: trackingInfo.reduce(
-                    (acc, tracking) => {
-                        return {
-                            company: tracking.company,
-                            numbers: [...acc.numbers, tracking.number],
-                            urls: [...acc.urls, tracking.url],
-                        };
-                    },
-                    { company: '', numbers: [] as string[], urls: [] as string[] },
-                ),
             }),
         },
     };
@@ -226,7 +226,7 @@ async function getDbOrderId(supplierShopifyOrderId: string, client: PoolClient) 
         const orderQuery = `
             SELECT "id" FROM "Order"
             WHERE "shopifySupplierOrderId" = $1
-            LIMIT = 1        
+            LIMIT 1        
         `;
         const orderRes = await client.query(orderQuery, [supplierShopifyOrderId]);
         if (orderRes.rows.length === 0) {
@@ -246,27 +246,27 @@ async function addFulfillmentToDatabase(
     dbOrderId: string,
     client: PoolClient,
 ) {
-    const fulfillmentInsertionQuery = `
-        INSERT INTO "Fulfillment" (
-            "id",
-            "supplierShopifyFulfillmentId",
-            "retailerShopifyFulfillmentId",
-            "orderId",
-        )
-        VALUES (
-            $1,  -- id
-            $2,  -- supplierShopifyFulfillmentId
-            $3,  -- retailerShopifyFulfillmentId
-            $4,  -- orderId
-        )
-    `;
+    try {
+        const fulfillmentInsertionQuery = `
+            INSERT INTO "Fulfillment" (
+                "id",
+                "supplierShopifyFulfillmentId",
+                "retailerShopifyFulfillmentId",
+                "orderId"
+            )
+            VALUES ( $1, $2, $3, $4 )
+        `;
 
-    await client.query(fulfillmentInsertionQuery, [
-        uuidv4(),
-        supplierShopifyFulfillmentId,
-        retailerShopifyFulfillmentId,
-        dbOrderId,
-    ]);
+        await client.query(fulfillmentInsertionQuery, [
+            uuidv4(),
+            supplierShopifyFulfillmentId,
+            retailerShopifyFulfillmentId,
+            dbOrderId,
+        ]);
+    } catch (error) {
+        console.error(error);
+        throw new Error('Failed to add fulfillment in database.');
+    }
 }
 
 // ==============================================================================================================

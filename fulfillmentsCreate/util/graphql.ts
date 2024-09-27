@@ -6,6 +6,7 @@ async function fetchAndValidateGraphQLData<T>(
     variables: any,
 ): Promise<T> {
     const url = `https://${shop}/admin/api/2024-07/graphql.json`;
+
     const response = await fetch(url, {
         method: 'POST',
         headers: {
