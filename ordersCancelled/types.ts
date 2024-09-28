@@ -310,3 +310,9 @@ export type LineItemDetail = {
     shopifyLineItemId: string;
     quantity: number;
 };
+
+export type RetailerLineItemDetail = {
+    shopifyFulfillmentLineItemId: string;
+    shopifyOrderLineItemId: string;
+    quantity: number;
+};

@@ -17,6 +17,27 @@ export type FulfillmentOrderQueryVariables = AdminTypes.Exact<{
 
 export type FulfillmentOrderQuery = { fulfillmentOrder?: AdminTypes.Maybe<Pick<AdminTypes.FulfillmentOrder, 'orderId'>> };
 
+export type OrderLineItemsQueryVariables = AdminTypes.Exact<{
+  id: AdminTypes.Scalars['ID']['input'];
+}>;
+
+
+export type OrderLineItemsQuery = { order?: AdminTypes.Maybe<{ lineItems: { edges: Array<{ node: (
+          Pick<AdminTypes.LineItem, 'id'>
+          & { variant?: AdminTypes.Maybe<Pick<AdminTypes.ProductVariant, 'id'>> }
+        ) }>, pageInfo: Pick<AdminTypes.PageInfo, 'hasNextPage' | 'endCursor'> } }> };
+
+export type SubsequentOrderLineItemsQueryVariables = AdminTypes.Exact<{
+  id: AdminTypes.Scalars['ID']['input'];
+  after: AdminTypes.Scalars['String']['input'];
+}>;
+
+
+export type SubsequentOrderLineItemsQuery = { order?: AdminTypes.Maybe<{ lineItems: { edges: Array<{ node: (
+          Pick<AdminTypes.LineItem, 'id'>
+          & { variant?: AdminTypes.Maybe<Pick<AdminTypes.ProductVariant, 'id'>> }
+        ) }>, pageInfo: Pick<AdminTypes.PageInfo, 'hasNextPage' | 'endCursor'> } }> };
+
 export type MMutationVariables = AdminTypes.Exact<{
   input: AdminTypes.RefundInput;
 }>;
@@ -29,6 +50,8 @@ export type MMutation = { refundCreate?: AdminTypes.Maybe<{ userErrors: Array<Pi
 
 interface GeneratedQueryTypes {
   "#graphql\n  query fulfillmentOrder($id: ID!){\n    fulfillmentOrder(id: $id){\n      orderId\n    }\n  }\n": {return: FulfillmentOrderQuery, variables: FulfillmentOrderQueryVariables},
+  "#graphql\n  query orderLineItems($id: ID!) {\n    order(id: $id){\n      lineItems(first: 10) {\n        edges {\n          node {\n            id\n            variant {\n              id\n            }\n          }\n        }\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n      }\n    }\n  }\n": {return: OrderLineItemsQuery, variables: OrderLineItemsQueryVariables},
+  "#graphql\n  query subsequentOrderLineItems($id: ID!, $after: String!) {\n    order(id: $id){\n      lineItems(first: 10, after: $after) {\n        edges {\n          node {\n            id\n            variant {\n              id\n            }\n          }\n        }\n        pageInfo {\n          hasNextPage\n          endCursor\n        }\n      }\n    }\n  }\n": {return: SubsequentOrderLineItemsQuery, variables: SubsequentOrderLineItemsQueryVariables},
 }
 
 interface GeneratedMutationTypes {

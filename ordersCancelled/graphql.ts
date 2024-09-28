@@ -22,6 +22,48 @@ export const GET_ORDER_ID = `#graphql
   }
 `;
 
+export const GET_ORDER_LINE_ITEMS = `#graphql
+  query orderLineItems($id: ID!) {
+    order(id: $id){
+      lineItems(first: 10) {
+        edges {
+          node {
+            id
+            variant {
+              id
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+`;
+
+export const GET_SUBSEQUENT_ORDER_LINE_ITEMS = `#graphql
+  query subsequentOrderLineItems($id: ID!, $after: String!) {
+    order(id: $id){
+      lineItems(first: 10, after: $after) {
+        edges {
+          node {
+            id
+            variant {
+              id
+            }
+          }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+`;
+
 export const CREATE_REFUND_MUTATION = `#graphql 
   mutation M($input: RefundInput!) {
     refundCreate(input: $input) {

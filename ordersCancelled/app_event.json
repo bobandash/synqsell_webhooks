@@ -8,7 +8,7 @@
     "region": "us-east-1",
     "resources": [],
     "detail": {
-        "X-Shopify-Topic": "products/update",
+        "X-Shopify-Topic": "orders/cancelled",
         "X-Shopify-Hmac-Sha256": "hmac_value",
         "X-Shopify-Shop-Domain": "example.myshopify.com",
         "X-Shopify-Webhook-Id": "webhook_id",
