@@ -226,6 +226,7 @@ async function refundRetailerOrderOnShopify(
     retailerLineItems: RetailerLineItemDetail[],
     retailerSession: Session,
 ) {
+    // TODO: add refund for shipping and amount paid
     const input = {
         orderId: shopifyRetailerOrderId,
         refundLineItems: retailerLineItems.map((lineItem) => {

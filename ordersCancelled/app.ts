@@ -16,7 +16,7 @@ async function getSession(shop: string, client: PoolClient) {
 }
 
 // TODO: I have to store the retailer's order id and handle the retailer cancelling the order as well
-
+// TODO: you can abuse the system; I need to set a check for like 7 days
 // checks whether or not we need to process the order and cancel the retailers' fulfillment order
 async function isProcessableOrder(shopifyOrderId: string, supplierId: string, client: PoolClient) {
     try {
