@@ -17,6 +17,11 @@ Parameters:
     Description: "The ARN of the Shopify Event Bus"
     Default: arn:aws:events:us-east-2:149536473043:event-bus/aws.partner/shopify.com/153436192769/aws
 
+  StripeSecretsManagerARN:
+    Type: String
+    Description: "The ARN of Stripe Secrets"
+    Default: arn:aws:secretsmanager:us-east-2:149536473043:secret:stripeTestKeys-iNuIql
+
   ShopifySourceName:
     Type: String
     Description: The source name for Shopify Events
@@ -53,6 +58,7 @@ Globals:
         DB_HOST: !GetAtt DatabaseRDS.Endpoint.Address
         DB_PORT: !GetAtt DatabaseRDS.Endpoint.Port
         DATABASE: !Ref RDSDatabaseName
+        STRIPE_SECRET_ARN: !Ref StripeSecretsManagerARN
     LoggingConfig:
       LogFormat: JSON
     VpcConfig:
@@ -583,6 +589,13 @@ Resources:
       Runtime: nodejs20.x
       Architectures:
         - x86_64
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - "secretsmanager:GetSecretValue"
+              Resource: !Ref StripeSecretsManagerARN
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
