@@ -154,3 +154,4 @@ export type PayloadTrackingInfo = {
 
 export type OrderPaymentStatusProps = (typeof ORDER_PAYMENT_STATUS)[keyof typeof ORDER_PAYMENT_STATUS];
 export type RolesProps = (typeof ROLES)[keyof typeof ROLES];
+export type Payload = ShopifyEvent['detail']['payload'];

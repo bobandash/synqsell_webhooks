@@ -1,35 +1,14 @@
 // case: supplier mistakenly bought incorrect tracking label, have to refund and update for the customer
 import { PoolClient } from 'pg';
-import { FulfillmentDetail, Session } from '../types';
-import { mutateAndValidateGraphQLData } from '../util';
-import { FulfillmentCancelMutation } from '../types/admin.generated';
-import { CANCEL_FULFILLMENT_MUTATION } from '../graphql';
+import { FulfillmentDetail, Session } from '../../types';
+import { mutateAndValidateGraphQLData } from '../../util';
+import { FulfillmentCancelMutation } from '../../types/admin.generated';
+import { CANCEL_FULFILLMENT_MUTATION } from '../../graphql';
+import { getDbFulfillmentIdFromSupplier } from '../util';
 
 // ==============================================================================================================
 // START: CANCEL FULFILLMENT ON RETAILER STORE LOGIC
 // ==============================================================================================================
-
-async function getDbFulfillmentId(supplierShopifyFulfillmentId: string, client: PoolClient) {
-    try {
-        const query = `
-          SELECT "id" FROM "Fulfillment"
-          WHERE "supplierShopifyFulfillmentId" = $1
-          LIMIT 1
-        `;
-        const res = await client.query(query, [supplierShopifyFulfillmentId]);
-        if (res.rows.length === 0) {
-            throw new Error(
-                `No fulfillment row exists for supplierShopifyFulfillmentId ${supplierShopifyFulfillmentId}.`,
-            );
-        }
-        return res.rows[0].id as string;
-    } catch (error) {
-        console.error(error);
-        throw new Error(
-            `Failed to retrieve database fulfillment id from supplierShopifyFulfillmentId ${supplierShopifyFulfillmentId}.`,
-        );
-    }
-}
 
 async function getRetailerSession(dbOrderId: string, client: PoolClient) {
     try {
@@ -94,7 +73,7 @@ async function getDbFulfillmentDetails(dbFulfillmentId: string, client: PoolClie
 // ==============================================================================================================
 
 async function cancelRetailerFulfillment(supplierShopifyFulfillmentId: string, client: PoolClient) {
-    const dbFulfillmentId = await getDbFulfillmentId(supplierShopifyFulfillmentId, client);
+    const dbFulfillmentId = await getDbFulfillmentIdFromSupplier(supplierShopifyFulfillmentId, client);
     const { retailerShopifyFulfillmentId, orderId: dbOrderId } = await getDbFulfillmentDetails(dbFulfillmentId, client);
     const retailerSession = await getRetailerSession(dbOrderId, client);
     await removeRetailerFulfillmentShopify(retailerSession, retailerShopifyFulfillmentId);

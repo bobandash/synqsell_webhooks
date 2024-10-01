@@ -1,20 +1,25 @@
 import { PoolClient } from 'pg';
-import { PayloadLineItem, PayloadTrackingInfo, Session } from '../types';
-import { mutateAndValidateGraphQLData } from '../util';
-import { FulfillmentCreateV2Mutation } from '../types/admin.generated';
-import { CREATE_FULFILLMENT_FULFILLMENT_ORDER_MUTATION } from '../graphql';
+import { PayloadLineItem, PayloadTrackingInfo, Session, ShopifyEvent } from '../../types';
+import { mutateAndValidateGraphQLData } from '../../util';
+import { FulfillmentCreateV2Mutation } from '../../types/admin.generated';
+import { CREATE_FULFILLMENT_FULFILLMENT_ORDER_MUTATION } from '../../graphql';
+import getSessionFromShop from '../util/getSessionFromShop';
 
 // ==============================================================================================================
 // START: RESYNC FULFILLMENT FOR RETAILER STORE LOGIC
 // ==============================================================================================================
-async function getSession(shop: string, client: PoolClient) {
-    const sessionQuery = `SELECT * FROM "Session" WHERE shop = $1 LIMIT 1`;
-    const sessionData = await client.query(sessionQuery, [shop]);
-    if (sessionData.rows.length === 0) {
-        throw new Error('Shop data is invalid.');
-    }
-    const session = sessionData.rows[0];
-    return session as Session;
+function getRelevantDetailsForResyncingRetailerFulfillment(payload: ShopifyEvent['detail']['payload']) {
+    const lineItems = payload.line_items.map((lineItem) => ({
+        id: lineItem.admin_graphql_api_id,
+        quantity: lineItem.quantity,
+    }));
+    const trackingInfo = {
+        company: payload.tracking_company,
+        numbers: payload.tracking_numbers,
+        urls: payload.tracking_urls,
+    };
+
+    return { lineItems, trackingInfo };
 }
 
 async function getDbFulfillmentId(retailerShopifyFulfillmentId: string, client: PoolClient) {
@@ -120,12 +125,12 @@ async function updateFulfillmentInDatabase(
 async function resyncRetailerFulfillment(
     retailerShopifyFulfillmentId: string,
     shop: string,
-    lineItems: PayloadLineItem[],
-    trackingInfo: PayloadTrackingInfo,
+    payload: ShopifyEvent['detail']['payload'],
     client: PoolClient,
 ) {
+    const { lineItems, trackingInfo } = getRelevantDetailsForResyncingRetailerFulfillment(payload);
     const [retailerSession, dbFulfillmentId] = await Promise.all([
-        getSession(shop, client),
+        getSessionFromShop(shop, client),
         getDbFulfillmentId(retailerShopifyFulfillmentId, client),
     ]);
     const shopifyRetailerFulfillmentOrderId = await getShopifyRetailerFulfillmentOrderId(dbFulfillmentId, client);
