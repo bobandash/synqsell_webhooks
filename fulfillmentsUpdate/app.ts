@@ -3,7 +3,6 @@ import { PoolClient } from 'pg';
 import { initializePool } from './db';
 import { ROLES, RolesProps, ShopifyEvent } from './types';
 import { handleFulfillmentUpdate, handleShipmentStatusUpdate } from './helper';
-import { getStripe } from './stripe';
 import { composeGid } from '@shopify/admin-graphql-api-utilities';
 
 // This function listens to when the fulfillment ever updates
