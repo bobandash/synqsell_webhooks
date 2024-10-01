@@ -516,51 +516,6 @@ Resources:
       Principal: "events.amazonaws.com"
       SourceArn: !GetAtt OrdersCancelledRule.Arn
 
-  # fulfillment_orders/cancelled webhook
-  FulfillmentOrdersCancelledRule:
-    Type: AWS::Events::Rule
-    Properties:
-      Name: fulfillment_orders_cancelled_rule
-      EventPattern:
-        detail-type:
-          - "shopifyWebhook"
-        detail:
-          metadata:
-            X-Shopify-Topic:
-              - prefix: "fulfillment_orders/cancelled"
-      EventBusName: !Ref EventBusArn
-      Targets:
-        - Arn: !GetAtt FulfillmentOrdersCancelledFunction.Arn
-          Id: "FulfillmentOrdersCancelledFunctionTarget"
-
-  FulfillmentOrdersCancelledFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: synqsell_fulfillment_orders_cancelled
-      CodeUri: fulfillmentOrdersCancelled/
-      Handler: app.lambdaHandler
-      MemorySize: 1028
-      Timeout: 30
-      Runtime: nodejs20.x
-      Architectures:
-        - x86_64
-    Metadata:
-      BuildMethod: esbuild
-      BuildProperties:
-        Minify: true
-        Target: es2020
-        Sourcemap: false
-        EntryPoints:
-          - app.ts
-
-  FulfillmentOrdersCancelledPermission:
-    Type: AWS::Lambda::Permission
-    Properties:
-      FunctionName: !Ref FulfillmentOrdersCancelledFunction
-      Action: "lambda:InvokeFunction"
-      Principal: "events.amazonaws.com"
-      SourceArn: !GetAtt FulfillmentOrdersCancelledRule.Arn
-
   # fulfillments/update webhook
   FulfillmentsUpdateRule:
     Type: AWS::Events::Rule
