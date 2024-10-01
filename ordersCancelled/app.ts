@@ -29,8 +29,6 @@ async function isProcessableOrder(shopifyOrderId: string, supplierId: string, cl
         if (orderData.rows.length === 0) {
             return false;
         }
-        // NOTE: because this app subscribes to both the orders/cancelled and fulfillment_orders/cancelled webhooks
-        // Must check payment status to see whether the order was already cancelled to prevent infinite webhook triggering
         const paymentStatus = orderData.rows[0].paymentStatus as string;
         return paymentStatus !== ORDER_PAYMENT_STATUS.CANCELLED;
     } catch (error) {
@@ -41,6 +39,7 @@ async function isProcessableOrder(shopifyOrderId: string, supplierId: string, cl
 
 export const lambdaHandler = async (event: ShopifyEvent): Promise<APIGatewayProxyResult> => {
     let client: null | PoolClient = null;
+
     try {
         const pool = initializePool();
         client = await pool.connect();
